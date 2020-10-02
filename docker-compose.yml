@@ -1,0 +1,62 @@
+version: '2'
+networks:
+  development:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.18.0.0/24
+        gateway: 172.18.0.1
+
+services:
+  system-mysql:
+    container_name: system-mysql
+    image: "mysql:8.0.19"
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_DATABASE: "core"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ~/system-mysql:/var/lib/mysql
+    networks:
+      - development
+    command: >
+      --server-id=1
+      --port 3306
+      --character-set-server=utf8
+      --collation-server=utf8_general_ci
+      --sync_binlog=1
+      --binlog-format=ROW
+      --bind-address=0.0.0.0
+      --innodb_flush_log_at_trx_commit=1
+      --relay_log_info_repository=TABLE
+      --master_info_repository=TABLE
+      --gtid-mode=ON
+      --log-bin=mysql-bin
+      --enforce-gtid-consistency
+  data-timescaledb:
+    container_name: data-timescaledb
+    image: "timescale/timescaledb:1.7.0-pg12"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=data
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/data-timescaledb:/var/lib/postgresql
+    networks:
+      - development
+    command: postgres -c shared_preload_libraries=timescaledb
+  ai-playground:
+    build: ./
+    container_name: ai-playground
+    image: artofimagination/ai-playground
+    ports:
+      - "8080:8080"
+    networks:
+      - development
+    depends_on:
+      - system-mysql
+      - data-timescaledb

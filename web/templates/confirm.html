@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AI Playground</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="/static/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="/static/stylesheets/navbar.css">
+  <link rel="stylesheet" type="text/css" href="/static/stylesheets/confirm.css">
+  <script src="/static/javascripts/confirm.js"></script>
+</head>
+
+<body>
+  <nav>
+    <ul>
+      <li class="left-bar"> <a href="/about">About Us</a> </li>
+      <li class="right-bar"> <a href="/login">Login</a> </li>
+      <li class="right-bar"> <a href="#" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign up</a> </li>
+    </ul>
+  </nav>
+   
+  <div class="background-image">
+    <div class="body-text"></div>
+      <h1>{{index .Data "title"}}</h1>
+      <h3>{{index .Data "body"}}</h3>
+
+  <div id="confirm-modal" class="modal">
+    <form class="modal-content" action="{{index .Data "route"}}" method="post">
+      <div class="container">
+        <p>{{index .Data "message"}}</p>
+
+        <div class="clearfix">
+          <button type="submit" class="confirmbtn">Ok</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
