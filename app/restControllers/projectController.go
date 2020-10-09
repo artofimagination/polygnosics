@@ -2,7 +2,6 @@ package restControllers
 
 import (
 	"aiplayground/app/utils/page"
-	"aiplayground/app/utils/webrtc"
 	"aiplayground/web/contents"
 	"fmt"
 	"strings"
@@ -12,7 +11,6 @@ import (
 
 func StartWebRTC(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	webrtc.Setup(w, r, r.FormValue("offer"))
 }
 
 func RunProject(w http.ResponseWriter, r *http.Request) {

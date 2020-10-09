@@ -49,10 +49,10 @@ services:
     networks:
       - development
     command: postgres -c shared_preload_libraries=timescaledb
-  ai-playground:
+  polygnosics:
     build: ./
-    container_name: ai-playground
-    image: artofimagination/ai-playground
+    container_name: polygnosics
+    image: artofimagination/polygnosics
     ports:
       - "8080:8080"
     networks:
