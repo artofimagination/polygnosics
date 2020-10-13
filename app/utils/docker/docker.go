@@ -8,6 +8,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
+	"github.com/pkg/errors"
 )
 
 // CreateNewContainer creates and starts a docker container using an existing image
@@ -15,7 +16,7 @@ import (
 func CreateNewContainer(imageName string, address string, port string) (string, error) {
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		err = fmt.Errorf("Unable to create docker client: %s", err.Error())
+		err = fmt.Errorf("Unable to create docker client: %s", errors.WithStack(err).Error())
 		return "", err
 	}
 
@@ -25,7 +26,7 @@ func CreateNewContainer(imageName string, address string, port string) (string, 
 	}
 	containerPort, err := nat.NewPort("tcp", port)
 	if err != nil {
-		err = fmt.Errorf("Failed to get port: %s", err.Error())
+		err = fmt.Errorf("Failed to get port: %s", errors.WithStack(err).Error())
 		return "", err
 	}
 
@@ -39,7 +40,7 @@ func CreateNewContainer(imageName string, address string, port string) (string, 
 			PortBindings: portBinding,
 		}, nil, "")
 	if err != nil {
-		err = fmt.Errorf("Failed to create docker container: %s", err.Error())
+		err = fmt.Errorf("Failed to create docker container: %s", errors.WithStack(err).Error())
 		return "", err
 	}
 
