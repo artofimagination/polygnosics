@@ -26,7 +26,7 @@ func main() {
 	// Create Server and Route Handlers
 	srv := &http.Server{
 		Handler:      restControllers.CreateRouter(),
-		Addr:         ":8080",
+		Addr:         ":8081",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

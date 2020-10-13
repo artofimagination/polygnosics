@@ -9,8 +9,8 @@ RUN apk add --update g++
 RUN go mod tidy
 RUN cd $GOPATH/src/aiplayground/ && go build main.go
 
-# This container exposes port 8080 to the outside world
-EXPOSE 8080
+# This container exposes port 8081 to the outside world
+EXPOSE 8081
 
 # Run the executable
 CMD ["./main"]
