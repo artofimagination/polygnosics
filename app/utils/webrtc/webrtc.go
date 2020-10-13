@@ -22,7 +22,7 @@ var OfferAddr *string = nil
 var AnswerAddr *string = nil
 
 // SendingFrequency determines how often a message is sent via webRTC.
-var SendingFrequency time.Duration = 5000 * time.Millisecond
+var SendingFrequency time.Duration = 500 * time.Millisecond
 
 func signalCandidate(addr string, c *webrtc.ICECandidate) error {
 	payload := []byte(c.ToJSON().Candidate)
