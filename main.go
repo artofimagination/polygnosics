@@ -12,15 +12,17 @@ import (
 
 	"aiplayground/app/restControllers"
 	"aiplayground/app/services/db"
+
+	"github.com/pkg/errors"
 )
 
 func main() {
 
 	if err := db.BootstrapSystem(); err != nil {
-		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", err.Error()))
+		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", errors.WithStack(err)))
 	}
 	if err := db.BootstrapData(); err != nil {
-		log.Fatal(fmt.Sprintf("Data bootstrap failed. %s", err.Error()))
+		log.Fatal(fmt.Sprintf("Data bootstrap failed. %s", errors.WithStack(err)))
 	}
 
 	// Create Server and Route Handlers
