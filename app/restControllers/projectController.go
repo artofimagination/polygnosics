@@ -1,9 +1,9 @@
 package restControllers
 
 import (
-	"aiplayground/app/utils/page"
-	"aiplayground/web/contents"
 	"fmt"
+	"polygnosics/app/utils/page"
+	"polygnosics/web/contents"
 	"strings"
 
 	"net/http"

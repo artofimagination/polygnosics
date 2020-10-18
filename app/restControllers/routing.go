@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"aiplayground/app/utils/page"
+	"polygnosics/app/utils/page"
 )
 
 // CreateRouter creates the page path structure.

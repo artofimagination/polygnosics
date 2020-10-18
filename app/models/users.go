@@ -1,8 +1,8 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"database/sql"
+	"polygnosics/app/services/db"
 
 	"golang.org/x/crypto/bcrypt"
 

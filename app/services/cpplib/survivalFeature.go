@@ -1,8 +1,8 @@
 package cpplib
 
 // #include "evoGame/GolangInterface.h"
-// #cgo CFLAGS: -I/go/src/aiplayground/app/services/cpplib/evoGame
-// #cgo LDFLAGS: -L/go/src/aiplayground/app/services/cpplib/evoGame -lstdc++ -lGolangInterface -lUtilsLib -lEvoGame
+// #cgo CFLAGS: -I/go/src/polygnosics/app/services/cpplib/evoGame
+// #cgo LDFLAGS: -L/go/src/polygnosics/app/services/cpplib/evoGame -lstdc++ -lGolangInterface -lUtilsLib -lEvoGame
 import "C"
 import (
 	"math"

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"encoding/json"
+	"polygnosics/app/services/db"
 )
 
 // Feature describes the available simulation features.
