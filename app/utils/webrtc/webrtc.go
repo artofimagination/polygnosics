@@ -2,6 +2,7 @@ package webrtc
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -24,9 +25,40 @@ var AnswerAddr *string = nil
 // SendingFrequency determines how often a message is sent via webRTC.
 var SendingFrequency time.Duration = 500 * time.Millisecond
 
-func signalCandidate(addr string, c *webrtc.ICECandidate) error {
+// TurnServerAddress holds the default turn server address. Must change to a valid address when deployed.
+var TurnServerAddress string = "turns:172.18.0.3:5349?transport=udp"
+
+// StunServerAddress holds the default stun server address. Must change to a valid address when deployed.
+var StunServerAddress string = "stun:172.18.0.3:5349?transport=udp"
+
+// TurnAuthCredential holds the default long term secret. it is used to access the turn server.
+// Must change to a valid address when deployed.
+var TurnAuthCredential string = "default123secret"
+
+// TurnAuthUserName holds the default long term credential user name. It is used to access the turn server.
+// Must change to a valid address when deployed.
+var TurnAuthUserName string = "defaultUser"
+
+// Certificates are used to create secure webrtc clients. Certificates are generated outside the app by generateCerts.sh script
+var Certificates tls.Certificate = tls.Certificate{}
+
+var config webrtc.Configuration = webrtc.Configuration{
+
+	ICEServers: []webrtc.ICEServer{
+		{
+			URLs:           []string{TurnServerAddress, StunServerAddress},
+			Username:       TurnAuthUserName,
+			Credential:     TurnAuthCredential,
+			CredentialType: webrtc.ICECredentialTypePassword,
+		},
+	},
+
+	ICETransportPolicy: webrtc.ICETransportPolicyAll,
+}
+
+func signalCandidate(client *http.Client, addr string, c *webrtc.ICECandidate) error {
 	payload := []byte(c.ToJSON().Candidate)
-	resp, err := http.Post(fmt.Sprintf("http://%s/candidate", addr), "application/json; charset=utf-8", bytes.NewReader(payload)) //nolint:noctx
+	resp, err := client.Post(fmt.Sprintf("https://%s/candidate", addr), "application/json; charset=utf-8", bytes.NewReader(payload)) //nolint:noctx
 	if err != nil {
 		return err
 	}
@@ -41,22 +73,18 @@ func signalCandidate(addr string, c *webrtc.ICECandidate) error {
 // SetupProductSide sets up the webrtc connection on the product project side
 // Each product project will have its own candidate id that is known for the platform side
 // for identification purposes.
-func SetupProductSide(businessLogic func() string, candiateID int) {
+func SetupProductSide(client *http.Client, businessLogic func() string, candiateID int) {
 	flag.Parse()
 
 	var candidatesMux sync.Mutex
 	pendingCandidates := make([]*webrtc.ICECandidate, 0)
 
-	// Prepare the configuration
-	config := webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			{
-				URLs: []string{"stun:stun.l.google.com:19302"},
-			},
-		},
-	}
-
 	// Create a new RTCPeerConnection
+	cert, err := webrtc.NewCertificate(Certificates.PrivateKey, *Certificates.Leaf)
+	if err != nil {
+		panic(err)
+	}
+	config.Certificates = []webrtc.Certificate{*cert}
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
 		panic(err)
@@ -75,7 +103,7 @@ func SetupProductSide(businessLogic func() string, candiateID int) {
 		desc := peerConnection.RemoteDescription()
 		if desc == nil {
 			pendingCandidates = append(pendingCandidates, c)
-		} else if onICECandidateErr := signalCandidate(*OfferAddr, c); onICECandidateErr != nil {
+		} else if onICECandidateErr := signalCandidate(client, *OfferAddr, c); onICECandidateErr != nil {
 			panic(onICECandidateErr)
 		}
 	})
@@ -117,7 +145,7 @@ func SetupProductSide(businessLogic func() string, candiateID int) {
 		if err != nil {
 			panic(err)
 		}
-		resp, err := http.Post(fmt.Sprintf("http://%s/sdp%d", *OfferAddr, candiateID), "application/json; charset=utf-8", bytes.NewReader(payload)) // nolint:noctx
+		resp, err := client.Post(fmt.Sprintf("https://%s/sdp%d", *OfferAddr, candiateID), "application/json; charset=utf-8", bytes.NewReader(payload)) // nolint:noctx
 		if err != nil {
 			panic(err)
 		} else if closeErr := resp.Body.Close(); closeErr != nil {
@@ -132,7 +160,7 @@ func SetupProductSide(businessLogic func() string, candiateID int) {
 
 		candidatesMux.Lock()
 		for _, c := range pendingCandidates {
-			onICECandidateErr := signalCandidate(*OfferAddr, c)
+			onICECandidateErr := signalCandidate(client, *OfferAddr, c)
 			if onICECandidateErr != nil {
 				panic(onICECandidateErr)
 			}
@@ -175,23 +203,17 @@ func SetupProductSide(businessLogic func() string, candiateID int) {
 
 // SetupPlatformSide initializes the webrtc connection and sends the initial offer
 // to the product project candidates identified by candidate id.
-func SetupPlatformSide(businessLogic func() string, candiateID int) {
+func SetupPlatformSide(client *http.Client, businessLogic func() string, candiateID int) {
 	flag.Parse()
 
 	var candidatesMux sync.Mutex
 	pendingCandidates := make([]*webrtc.ICECandidate, 0)
 
-	// Everything below is the Pion WebRTC API! Thanks for using it ❤️.
-
-	// Prepare the configuration
-	config := webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
-			{
-				URLs: []string{"stun:stun.l.google.com:19302"},
-			},
-		},
+	cert, err := webrtc.NewCertificate(Certificates.PrivateKey, *Certificates.Leaf)
+	if err != nil {
+		panic(err)
 	}
-
+	config.Certificates = []webrtc.Certificate{*cert}
 	// Create a new RTCPeerConnection
 	peerConnection, err := webrtc.NewPeerConnection(config)
 	if err != nil {
@@ -211,7 +233,7 @@ func SetupPlatformSide(businessLogic func() string, candiateID int) {
 		desc := peerConnection.RemoteDescription()
 		if desc == nil {
 			pendingCandidates = append(pendingCandidates, c)
-		} else if onICECandidateErr := signalCandidate(*AnswerAddr, c); err != nil {
+		} else if onICECandidateErr := signalCandidate(client, *AnswerAddr, c); err != nil {
 			panic(onICECandidateErr)
 		}
 	})
@@ -246,7 +268,7 @@ func SetupPlatformSide(businessLogic func() string, candiateID int) {
 		defer candidatesMux.Unlock()
 
 		for _, c := range pendingCandidates {
-			if onICECandidateErr := signalCandidate(*AnswerAddr, c); onICECandidateErr != nil {
+			if onICECandidateErr := signalCandidate(client, *AnswerAddr, c); onICECandidateErr != nil {
 				panic(onICECandidateErr)
 			}
 		}
@@ -302,7 +324,7 @@ func SetupPlatformSide(businessLogic func() string, candiateID int) {
 	if err != nil {
 		panic(err)
 	}
-	resp, err := http.Post(fmt.Sprintf("http://%s/sdp", *AnswerAddr), "application/json; charset=utf-8", bytes.NewReader(payload)) // nolint:noctx
+	resp, err := client.Post(fmt.Sprintf("https://%s/sdp", *AnswerAddr), "application/json; charset=utf-8", bytes.NewReader(payload)) // nolint:noctx
 	if err != nil {
 		panic(err)
 	} else if err := resp.Body.Close(); err != nil {
