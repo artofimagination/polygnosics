@@ -17,4 +17,4 @@ The controller is part of the main platform. On user request the following will 
 - The platform is using pion webrtc implementation https://github.com/pion/webrtc
 
 ## Known issues
-Using `ICETransportPolicyRelay` transport policy does not work. No messages are arriving through the webrtc data channel. See [Issue#14](https://github.com/artofimagination/polygnosics/issues/14)
+Using `ICETransportPolicyRelay` transport policy in the webrtc client ICE Servers does not work. No messages are arriving through the webrtc data channel. See [Issue#14](https://github.com/artofimagination/polygnosics/issues/14)
