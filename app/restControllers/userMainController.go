@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"aiplayground/app/models"
-	"aiplayground/app/services/cpplib"
 	"aiplayground/app/utils/jsonutils"
 	"aiplayground/app/utils/page"
 	"aiplayground/web/contents"
@@ -118,7 +117,6 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 				errorStr := fmt.Sprintf("Failed to save user data content. %s", err.Error())
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
 			}
-			cpplib.Generate(config)
 			id := strings.Replace(content.CurrentProject.ID.String(), "-", "", -1)
 			http.Redirect(w, r, fmt.Sprintf("/user-main/%s/run", id), http.StatusSeeOther)
 		}
