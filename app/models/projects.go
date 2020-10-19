@@ -1,14 +1,15 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"encoding/json"
+
+	"aiplayground/app/services/db"
 
 	"github.com/google/uuid"
 )
 
 type Data struct {
-	Id       int     `json:"id"`
+	ID       int     `json:"id"`
 	DataType int     `json:"type"`
 	Speed    float32 `json:"speed"`
 }
@@ -89,7 +90,9 @@ func GetProjectByName(name string) (Project, error) {
 	defer query.Close()
 
 	query.Next()
-	query.Scan(&project.ID, &project.Name, &project.Config)
+	if err := query.Scan(&project.ID, &project.Name, &project.Config); err != nil {
+		return project, err
+	}
 
 	return project, nil
 }

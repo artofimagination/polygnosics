@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,10 +18,10 @@ import (
 func main() {
 
 	if err := db.BootstrapSystem(); err != nil {
-		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", errors.WithStack(err)))
+		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
 	}
 	if err := db.BootstrapData(); err != nil {
-		log.Fatal(fmt.Sprintf("Data bootstrap failed. %s", errors.WithStack(err)))
+		log.Fatal("Data bootstrap failed. %s", errors.WithStack(err))
 	}
 
 	// Create Server and Route Handlers
@@ -55,7 +54,9 @@ func waitForShutdown(srv *http.Server) {
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	srv.Shutdown(ctx)
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("Shutting down")
 	os.Exit(0)

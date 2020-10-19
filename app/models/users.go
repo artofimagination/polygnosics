@@ -1,12 +1,12 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"database/sql"
 
-	"golang.org/x/crypto/bcrypt"
+	"aiplayground/app/services/db"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User defines the user structures.
@@ -35,7 +35,9 @@ func GetUserByEmail(email string) (User, error) {
 	defer query.Close()
 
 	query.Next()
-	query.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+	if err := query.Scan(&user.ID, &user.Username, &user.Email, &user.Password); err != nil {
+		return user, err
+	}
 
 	return user, nil
 }

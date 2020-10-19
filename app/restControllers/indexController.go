@@ -26,7 +26,10 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		page.HandleError("index", "Failed to parse form", w)
+		return
+	}
 	email := r.FormValue("email")
 	pwd := r.FormValue("psw")
 
@@ -42,7 +45,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			page.HandleError("index", fmt.Sprintf("Failed to get user. %s", err.Error()), w)
 			return
 		}
-		contents.CreateHome(user.Username)
+		if err := contents.CreateHome(user.Username); err != nil {
+			page.HandleError("index", fmt.Sprintf("Failed to create home page. %s", err.Error()), w)
+			return
+		}
 		if err := contents.CreateUserData(user); err != nil {
 			page.HandleError("index", fmt.Sprintf("Failed to create user data. %s", err.Error()), w)
 			return
@@ -56,7 +62,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		page.HandleError("index", "Failed to parse form", w)
+		return
+	}
 
 	uName := r.FormValue("username")
 	email := r.FormValue("email")

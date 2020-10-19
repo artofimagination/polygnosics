@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/mux"
-
 	"aiplayground/app/utils/page"
+
+	"github.com/gorilla/mux"
 )
 
 // CreateRouter creates the page path structure.
