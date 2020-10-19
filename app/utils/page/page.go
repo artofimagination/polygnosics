@@ -111,14 +111,6 @@ func Load(name string, data interface{}) error {
 	return nil
 }
 
-// IsEmpty returns true if the string data is empty.
-func IsEmpty(data string) bool {
-	if len(data) == 0 {
-		return true
-	}
-	return false
-}
-
 // HandleError creates page details and renders html template for an error modal.
 func HandleError(route string, errorStr string, w http.ResponseWriter) {
 	name := "confirm"

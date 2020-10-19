@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: sudo apt update && sudo apt install build-essential
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
@@ -25,7 +23,7 @@ jobs:
           # working-directory: somedir
 
           # Optional: golangci-lint command line arguments.
-          args: --print-issued-lines -v --timeout 2m -c .golangci.yml
+          args: -v --timeout 2m -c .golangci.yml
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
           # only-new-issues: true
