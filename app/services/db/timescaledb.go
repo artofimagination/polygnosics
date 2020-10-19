@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
+	// Using blank import
 	_ "github.com/go-sql-driver/mysql"
+	// Using blank import
 	_ "github.com/lib/pq"
 	"github.com/rubenv/sql-migrate"
 )

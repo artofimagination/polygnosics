@@ -115,9 +115,8 @@ func Load(name string, data interface{}) error {
 func IsEmpty(data string) bool {
 	if len(data) == 0 {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 // HandleError creates page details and renders html template for an error modal.
