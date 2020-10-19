@@ -1,12 +1,12 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"database/sql"
 
-	"golang.org/x/crypto/bcrypt"
+	"aiplayground/app/services/db"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User defines the user structures.

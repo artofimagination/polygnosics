@@ -1,14 +1,15 @@
 package models
 
 import (
-	"aiplayground/app/services/db"
 	"encoding/json"
+
+	"aiplayground/app/services/db"
 
 	"github.com/google/uuid"
 )
 
 type Data struct {
-	Id       int     `json:"id"`
+	ID       int     `json:"id"`
 	DataType int     `json:"type"`
 	Speed    float32 `json:"speed"`
 }

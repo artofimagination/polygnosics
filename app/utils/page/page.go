@@ -4,12 +4,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"sync"
-
-	"html/template"
 
 	"github.com/gorilla/mux"
 )
@@ -38,7 +37,7 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Content-Security-Policy", "default-src 'self' data: 'unsafe-inline' 'unsafe-eval'")
 		routeMatch := mux.RouteMatch{}
-		if matched := router.Match(r, &routeMatch); matched == false {
+		if matched := router.Match(r, &routeMatch); !matched {
 			http.Error(w, "Url does not exist", http.StatusInternalServerError)
 		}
 		fn(w, r)

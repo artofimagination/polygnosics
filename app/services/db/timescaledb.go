@@ -41,7 +41,7 @@ func BootstrapData() error {
 func ConnectData() (*sql.DB, error) {
 	fmt.Println("Connecting to TimescaleDB")
 
-	dbConnData := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
+	dbConnData := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
 	db, err := sql.Open("postgres", dbConnData)
 
 	// if there is an error opening the connection, handle it
