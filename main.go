@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -16,12 +17,11 @@ import (
 )
 
 func main() {
-
 	if err := db.BootstrapSystem(); err != nil {
-		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
+		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", errors.WithStack(err)))
 	}
 	if err := db.BootstrapData(); err != nil {
-		log.Fatal("Data bootstrap failed. %s", errors.WithStack(err))
+		log.Fatal(fmt.Sprintf("Data bootstrap failed. %s", errors.WithStack(err)))
 	}
 
 	// Create Server and Route Handlers
