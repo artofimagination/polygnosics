@@ -35,7 +35,9 @@ func GetUserByEmail(email string) (User, error) {
 	defer query.Close()
 
 	query.Next()
-	query.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+	if err := query.Scan(&user.ID, &user.Username, &user.Email, &user.Password); err != nil {
+		return user, err
+	}
 
 	return user, nil
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func StartWebRTC(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+
 }
 
 func RunProject(w http.ResponseWriter, r *http.Request) {

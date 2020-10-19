@@ -89,7 +89,9 @@ func GetProjectByName(name string) (Project, error) {
 	defer query.Close()
 
 	query.Next()
-	query.Scan(&project.ID, &project.Name, &project.Config)
+	if err := query.Scan(&project.ID, &project.Name, &project.Config); err != nil {
+		return project, err
+	}
 
 	return project, nil
 }

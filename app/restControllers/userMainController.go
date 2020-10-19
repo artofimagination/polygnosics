@@ -45,7 +45,10 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 
 		page.RenderTemplate(w, name, p)
 	} else {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			page.HandleError("user-main", "Failed to parse form", w)
+			return
+		}
 		if r.FormValue("submitButton") == "Select" {
 			selection, err := strconv.Atoi(r.Form["select"][0])
 			if err != nil {
