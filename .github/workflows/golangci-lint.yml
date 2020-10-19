@@ -10,7 +10,7 @@ on:
 jobs:
   golangci:
     name: lint
-    runs-on: golang:1.14-alpine
+    runs-on: golang-alpine
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
