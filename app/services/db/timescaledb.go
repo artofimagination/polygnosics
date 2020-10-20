@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	// Linter does not like this import. Forcing to ignore it.
-	"github.com/rubenv/sql-migrate" // nolint: goimports
+	_ "github.com/go-sql-driver/mysql" // nolint:golint
+	_ "github.com/lib/pq"              // nolint:golint
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 var host = "172.18.0.1"
