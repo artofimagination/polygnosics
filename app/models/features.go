@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/json"
-  
+
 	"polygnosics/app/services/db/mysqldb"
 )
 

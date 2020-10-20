@@ -18,10 +18,10 @@ import (
 
 func main() {
 	if err := mysqldb.BootstrapSystem(); err != nil {
-		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
+		log.Fatalf("System bootstrap failed. %s\n", errors.WithStack(err))
 	}
 	if err := timescaledb.BootstrapData(); err != nil {
-		log.Fatal("Data bootstrap failed. %s", errors.WithStack(err))
+		log.Fatalf("Data bootstrap failed. %s\n", errors.WithStack(err))
 	}
 
 	// Create Server and Route Handlers

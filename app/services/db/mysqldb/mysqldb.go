@@ -4,9 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	// Using blank import
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/rubenv/sql-migrate"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 var dbConnSystem = "root:password@tcp(172.18.0.1:3306)/core"

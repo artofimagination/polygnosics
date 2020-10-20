@@ -9,6 +9,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +20,6 @@ type User struct {
 	Email      string             `json:"email,omitempty"`
 	Password   string             `json:"password,omitempty"`
 	SettingsID primitive.ObjectID `bson:"_settings_id" json:"settings_id,omitempty"`
-	// ProjectIDList uuid.UUID          `json:"settings_id_list,omitempty"`
 }
 
 // AddUser creates a new user entry in the DB.
@@ -33,8 +33,6 @@ func AddUser(name string, email string, passwd string) (*mongo.InsertOneResult, 
 		return nil, err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	defer client.Disconnect(ctx)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(passwd), 16)
 	if err != nil {
 		return nil, err
@@ -63,10 +61,16 @@ func AddUser(name string, email string, passwd string) (*mongo.InsertOneResult, 
 		}
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	collection := client.Database("user_database").Collection("users")
-	insertResult, err := collection.InsertOne(context.TODO(), user)
+	insertResult, err := collection.InsertOne(ctx, user)
 	if err != nil {
 		return nil, err
+	}
+
+	if err = client.Disconnect(ctx); err != nil {
+		log.Printf("Failed to disconnect mongo client: %s\n", errors.WithStack(err))
 	}
 
 	return insertResult, nil
@@ -82,14 +86,17 @@ func GetUserByEmail(email string) (User, error) {
 		return User{}, err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	defer client.Disconnect(ctx)
-
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	collection := client.Database("user_database").Collection("users")
 	result := collection.FindOne(ctx, bson.M{"email": email})
 	user := User{}
 	if err := result.Decode(&user); err != nil {
 		return User{}, err
+	}
+
+	if err = client.Disconnect(ctx); err != nil {
+		log.Printf("Failed to disconnect mongo client: %s\n", errors.WithStack(err))
 	}
 
 	return user, nil
@@ -121,14 +128,18 @@ func deleteUserEntry(email string) (*mongo.DeleteResult, error) {
 		return nil, err
 	}
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	defer client.Disconnect(ctx)
-
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	collection := client.Database("user_database").Collection("users")
 	result, err := collection.DeleteOne(ctx, bson.M{"email": email})
 	if err != nil {
 		return nil, err
 	}
+
+	if err = client.Disconnect(ctx); err != nil {
+		log.Printf("Failed to disconnect mongo client: %s\n", errors.WithStack(err))
+	}
+
 	return result, nil
 }
 

@@ -4,11 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	// Using blank import
-	_ "github.com/go-sql-driver/mysql"
-	// Using blank import
-	_ "github.com/lib/pq"
-	"github.com/rubenv/sql-migrate"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 var host = "172.18.0.1"
