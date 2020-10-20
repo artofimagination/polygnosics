@@ -10,14 +10,13 @@ import (
 	"syscall"
 	"time"
 
-	"polygnosics/app/restControllers"
+	"polygnosics/app/restcontrollers"
 	"polygnosics/app/services/db"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
-
 	if err := db.BootstrapSystem(); err != nil {
 		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", errors.WithStack(err)))
 	}
@@ -27,7 +26,7 @@ func main() {
 
 	// Create Server and Route Handlers
 	srv := &http.Server{
-		Handler:      restControllers.CreateRouter(),
+		Handler:      restcontrollers.CreateRouter(),
 		Addr:         ":8081",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -55,7 +54,9 @@ func waitForShutdown(srv *http.Server) {
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	srv.Shutdown(ctx)
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("Shutting down")
 	os.Exit(0)

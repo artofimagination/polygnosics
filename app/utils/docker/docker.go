@@ -44,7 +44,10 @@ func CreateNewContainer(imageName string, address string, port string) (string, 
 		return "", err
 	}
 
-	cli.ContainerStart(context.Background(), cont.ID, types.ContainerStartOptions{})
+	if err := cli.ContainerStart(context.Background(), cont.ID, types.ContainerStartOptions{}); err != nil {
+		err = fmt.Errorf("Failed to start docker container: %s", errors.WithStack(err).Error())
+		return "", err
+	}
 	fmt.Printf("Container %s is started", cont.ID)
 	return cont.ID, nil
 }
