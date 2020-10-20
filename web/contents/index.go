@@ -1,7 +1,7 @@
 package contents
 
 import (
-	"aiplayground/app/utils/page"
+	"polygnosics/app/utils/page"
 )
 
 // CreateError returns the error page content, determined by the errorStr input parameter.

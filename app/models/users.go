@@ -2,8 +2,7 @@ package models
 
 import (
 	"database/sql"
-
-	"aiplayground/app/services/db"
+	"polygnosics/app/services/db"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

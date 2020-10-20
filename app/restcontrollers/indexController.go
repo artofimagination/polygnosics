@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"aiplayground/app/models"
-	"aiplayground/app/utils/page"
-	"aiplayground/web/contents"
+	"polygnosics/app/models"
+	"polygnosics/app/utils/page"
+	"polygnosics/web/contents"
 )
 
 func AboutUsHandler(w http.ResponseWriter, r *http.Request) {

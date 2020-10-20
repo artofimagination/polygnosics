@@ -3,8 +3,8 @@ package models
 import (
 	"encoding/json"
 
-	"aiplayground/app/services/db/mysqldb"
-	"aiplayground/app/services/db/timescaledb"
+	"polygnosics/app/services/db/mysqldb"
+	"polygnosics/app/services/db/timescaledb"
 
 	"github.com/google/uuid"
 )

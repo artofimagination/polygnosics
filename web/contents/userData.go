@@ -1,8 +1,8 @@
 package contents
 
 import (
-	"aiplayground/app/models"
-	"aiplayground/app/utils/page"
+	"polygnosics/app/models"
+	"polygnosics/app/utils/page"
 )
 
 // UserData stores the data that is used after the user is logged in

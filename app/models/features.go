@@ -2,8 +2,8 @@ package models
 
 import (
 	"encoding/json"
-
-	"aiplayground/app/services/db/mysqldb"
+  
+	"polygnosics/app/services/db/mysqldb"
 )
 
 // Feature describes the available simulation features.

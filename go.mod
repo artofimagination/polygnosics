@@ -1,4 +1,4 @@
-module aiplayground
+module polygnosics
 
 go 1.15
 

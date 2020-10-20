@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"aiplayground/app/models"
-	"aiplayground/app/utils/jsonutils"
-	"aiplayground/app/utils/page"
-	"aiplayground/web/contents"
+	"polygnosics/app/models"
+	"polygnosics/app/utils/jsonutils"
+	"polygnosics/app/utils/page"
+	"polygnosics/web/contents"
 )
 
 // NewProject is the handler for the page that is responsible for creating a new project.
