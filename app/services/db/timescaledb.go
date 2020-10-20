@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
-	"github.com/rubenv/sql-migrate"
+	_ "github.com/go-sql-driver/mysql" // nolint:golint
+	_ "github.com/lib/pq"              // nolint:golint
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 var host = "172.18.0.1"

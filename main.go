@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"aiplayground/app/restControllers"
+	"aiplayground/app/restcontrollers"
 	"aiplayground/app/services/db/mysqldb"
 	"aiplayground/app/services/db/timescaledb"
 
@@ -17,7 +17,6 @@ import (
 )
 
 func main() {
-
 	if err := mysqldb.BootstrapSystem(); err != nil {
 		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
 	}
@@ -27,7 +26,7 @@ func main() {
 
 	// Create Server and Route Handlers
 	srv := &http.Server{
-		Handler:      restControllers.CreateRouter(),
+		Handler:      restcontrollers.CreateRouter(),
 		Addr:         ":8081",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
