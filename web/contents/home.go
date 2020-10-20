@@ -1,7 +1,7 @@
 package contents
 
 import (
-	"aiplayground/app/utils/page"
+	"polygnosics/app/utils/page"
 )
 
 // CreateHome creates the content structure for the user home page.

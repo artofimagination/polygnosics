@@ -2,8 +2,7 @@ package models
 
 import (
 	"encoding/json"
-
-	"aiplayground/app/services/db"
+	"polygnosics/app/services/db"
 
 	"github.com/google/uuid"
 )

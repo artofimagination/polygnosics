@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"aiplayground/app/utils/page"
-	"aiplayground/web/contents"
+	"polygnosics/app/utils/page"
+	"polygnosics/web/contents"
 )
 
 func StartWebRTC(w http.ResponseWriter, r *http.Request) {

@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"aiplayground/app/restcontrollers"
-	"aiplayground/app/services/db"
+	"polygnosics/app/restcontrollers"
+	"polygnosics/app/services/db"
 
 	"github.com/pkg/errors"
 )

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"aiplayground/app/utils/page"
+	"polygnosics/app/utils/page"
 
 	"github.com/gorilla/mux"
 )
