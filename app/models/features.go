@@ -2,7 +2,8 @@ package models
 
 import (
 	"encoding/json"
-	"polygnosics/app/services/db"
+
+	"polygnosics/app/services/db/mysqldb"
 )
 
 // Feature describes the available simulation features.
@@ -15,7 +16,7 @@ type Feature struct {
 // GetAllFeatures returns all fetures stored in the database.
 func GetAllFeatures() ([]Feature, error) {
 	queryString := "select id, name, config from features"
-	db, err := db.ConnectSystem()
+	db, err := mysqldb.ConnectSystem()
 	if err != nil {
 		return nil, err
 	}

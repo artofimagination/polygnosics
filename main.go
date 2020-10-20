@@ -10,17 +10,18 @@ import (
 	"time"
 
 	"polygnosics/app/restcontrollers"
-	"polygnosics/app/services/db"
+	"polygnosics/app/services/db/mysqldb"
+	"polygnosics/app/services/db/timescaledb"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
-	if err := db.BootstrapSystem(); err != nil {
-		log.Fatalf("System bootstrap failed. %s", errors.WithStack(err))
+	if err := mysqldb.BootstrapSystem(); err != nil {
+		log.Fatalf("System bootstrap failed. %s\n", errors.WithStack(err))
 	}
-	if err := db.BootstrapData(); err != nil {
-		log.Fatalf("Data bootstrap failed. %s", errors.WithStack(err))
+	if err := timescaledb.BootstrapData(); err != nil {
+		log.Fatalf("Data bootstrap failed. %s\n", errors.WithStack(err))
 	}
 
 	// Create Server and Route Handlers

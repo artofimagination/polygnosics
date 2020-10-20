@@ -2,7 +2,9 @@ package models
 
 import (
 	"encoding/json"
-	"polygnosics/app/services/db"
+
+	"polygnosics/app/services/db/mysqldb"
+	"polygnosics/app/services/db/timescaledb"
 
 	"github.com/google/uuid"
 )
@@ -25,7 +27,7 @@ type Project struct {
 // UpdateProject updates the selected project.
 func UpdateProject(project Project) error {
 	query := "UPDATE projects set user_id = ?, features_id = ?, name = ?, config = ? where id = ?"
-	db, err := db.ConnectSystem()
+	db, err := mysqldb.ConnectSystem()
 	if err != nil {
 		return err
 	}
@@ -41,7 +43,7 @@ func UpdateProject(project Project) error {
 // AddProject adds a new project to the database.
 func AddProject(project Project) error {
 	query := "INSERT INTO projects (id, user_id, features_id, name, config) VALUES (UUID_TO_BIN(UUID()), UUID_TO_BIN(?), ?, ?, ?)"
-	db, err := db.ConnectSystem()
+	db, err := mysqldb.ConnectSystem()
 	if err != nil {
 		return err
 	}
@@ -57,7 +59,7 @@ func AddProject(project Project) error {
 // InsertData will insert data into timescale db.
 func InsertData(projectID int, data interface{}) error {
 	query := "INSERT INTO data VALUES (NOW(), ?, ?)"
-	db, err := db.ConnectData()
+	db, err := timescaledb.ConnectData()
 	if err != nil {
 		return err
 	}
@@ -74,7 +76,7 @@ func InsertData(projectID int, data interface{}) error {
 func GetProjectByName(name string) (Project, error) {
 	var project Project
 	queryString := "select BIN_TO_UUID(id), name, config from projects where name = ?"
-	db, err := db.ConnectSystem()
+	db, err := mysqldb.ConnectSystem()
 	if err != nil {
 		return project, err
 	}
