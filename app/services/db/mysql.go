@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	// Using blank import
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/rubenv/sql-migrate"
+	// Linter does not like this import. Forcing to ignore it.
+	"github.com/rubenv/sql-migrate" // nolint: goimports
 )
 
 var dbConnSystem = "root:password@tcp(172.18.0.1:3306)/core"
