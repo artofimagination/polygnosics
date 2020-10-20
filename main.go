@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,24 +10,23 @@ import (
 	"syscall"
 	"time"
 
-	"aiplayground/app/restControllers"
+	"aiplayground/app/restcontrollers"
 	"aiplayground/app/services/db"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
-
 	if err := db.BootstrapSystem(); err != nil {
-		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
+		log.Fatal(fmt.Sprintf("System bootstrap failed. %s", errors.WithStack(err)))
 	}
 	if err := db.BootstrapData(); err != nil {
-		log.Fatal("Data bootstrap failed. %s", errors.WithStack(err))
+		log.Fatal(fmt.Sprintf("Data bootstrap failed. %s", errors.WithStack(err)))
 	}
 
 	// Create Server and Route Handlers
 	srv := &http.Server{
-		Handler:      restControllers.CreateRouter(),
+		Handler:      restcontrollers.CreateRouter(),
 		Addr:         ":8081",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
