@@ -10,17 +10,18 @@ import (
 	"time"
 
 	"aiplayground/app/restControllers"
-	"aiplayground/app/services/db"
+	"aiplayground/app/services/db/mysqldb"
+	"aiplayground/app/services/db/timescaledb"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
 
-	if err := db.BootstrapSystem(); err != nil {
+	if err := mysqldb.BootstrapSystem(); err != nil {
 		log.Fatal("System bootstrap failed. %s", errors.WithStack(err))
 	}
-	if err := db.BootstrapData(); err != nil {
+	if err := timescaledb.BootstrapData(); err != nil {
 		log.Fatal("Data bootstrap failed. %s", errors.WithStack(err))
 	}
 

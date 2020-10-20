@@ -50,6 +50,20 @@ services:
       # - "traefik.http.routers.traefik.entrypoints=websecure"
       # Allow BasicAuth check. Only in conjuncion with https
       # - "traefik.http.middlewares.admin.basicauth.users=admin:polyadmin"
+  user-db:
+    container_name: user-db
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - poly_network
+    volumes: 
+      - /srv/user-settings:/data/db
+      - ./configuration/mongod.conf:/etc/mongod.conf
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${DB_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_NAME}"
+      MONGO_INITDB_DATABASE: "${DB_PASS}"
   system-mysql:
     container_name: system-mysql
     image: "mysql:8.0.19"
@@ -113,6 +127,7 @@ services:
     networks: 
       - poly_network
     depends_on:
+      - user-db
       - reverse-proxy
       - system-mysql
       - data-timescaledb
