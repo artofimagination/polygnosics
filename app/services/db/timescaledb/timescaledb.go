@@ -5,7 +5,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/pkg/errors"
 	migrate "github.com/rubenv/sql-migrate"
+
 	// Need to register postgres drivers with database/sql
 	_ "github.com/lib/pq"
 )
@@ -26,21 +28,18 @@ func BootstrapData() error {
 	}
 	log.Println("DB connection open")
 
-	retryCount := 5
 	n := 0
-	for retryCount > 0 {
+	for retryCount := 5; retryCount > 0; retryCount-- {
 		n, err = migrate.Exec(db, "postgres", migrations, migrate.Up)
-		if err != nil {
-			retryCount--
-			time.Sleep(1 * time.Second)
-			log.Printf("Failed to execute migration %s. Retrying...\n", err.Error())
-		} else {
+		if err == nil {
 			break
 		}
+		time.Sleep(1 * time.Second)
+		log.Printf("Failed to execute migration %s. Retrying...\n", err.Error())
 	}
 
 	if err != nil {
-		return err
+		return errors.Wrap(errors.WithStack(err), "Migration failed after multiple retries.")
 	}
 	log.Printf("Applied %d migrations!\n", n)
 	return nil
