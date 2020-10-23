@@ -12,13 +12,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var DBAddress = "postgres://root:password@172.18.0.1:5432/data?sslmode=disable"
+var DBAddress = "postgres://root:123secure@172.18.0.1:5432/data?sslmode=disable"
 
 func BootstrapData() error {
 	log.Println("Executing TimeScaleDB migration")
 
 	migrations := &migrate.FileMigrationSource{
-		Dir: "db/migrations",
+		Dir: "db/migrations/timescaledb",
 	}
 	log.Println("Getting migration files")
 
