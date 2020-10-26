@@ -59,14 +59,12 @@ func UserExists(username string) (bool, error) {
 	err = queryUser.Scan(&user.Name)
 	switch {
 	case err == sql.ErrNoRows:
-		break
+		return false, nil
 	case err != nil:
 		return false, err
 	default:
 		return true, err
 	}
-
-	return false, nil
 }
 
 func EmailExists(email string) (bool, error) {
@@ -85,14 +83,12 @@ func EmailExists(email string) (bool, error) {
 	err = queryEmail.Scan(&user.Email)
 	switch {
 	case err == sql.ErrNoRows:
-		break
+		return false, nil
 	case err != nil:
 		return false, err
 	default:
 		return true, err
 	}
-
-	return false, nil
 }
 
 // CheckPassword compares the password entered by the user with the stored password.

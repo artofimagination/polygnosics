@@ -12,7 +12,7 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-var dbConnSystem = "root:123secure@tcp(user-db:3306)/user_database?parseTime=true"
+var DBConnection = ""
 
 func BootstrapSystem() error {
 
@@ -22,7 +22,7 @@ func BootstrapSystem() error {
 	}
 	fmt.Printf("Getting migration files\n")
 
-	db, err := sql.Open("mysql", dbConnSystem)
+	db, err := sql.Open("mysql", DBConnection)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func BootstrapSystem() error {
 func ConnectSystem() (*sql.DB, error) {
 	fmt.Println("Connecting to MYSQL")
 
-	db, err := sql.Open("mysql", dbConnSystem)
+	db, err := sql.Open("mysql", DBConnection)
 
 	// if there is an error opening the connection, handle it
 	if err != nil {

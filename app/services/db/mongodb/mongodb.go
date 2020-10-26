@@ -8,10 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var address string = "mongodb://root:123secure@user-db:27017"
+var DBConnection string = ""
 
 func Connect() (*mongo.Client, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(address))
+	client, err := mongo.NewClient(options.Client().ApplyURI(DBConnection))
 	if err != nil {
 		return nil, err
 	}
