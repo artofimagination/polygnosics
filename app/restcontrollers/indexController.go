@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/models"
+	"polygnosics/app/services/db/mysqldb"
 	"polygnosics/app/utils/page"
 	"polygnosics/web/contents"
 )
@@ -33,32 +33,27 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	pwd := r.FormValue("psw")
 
-	match, err := models.CheckPassword(email, pwd)
+	err := mysqldb.CheckEmailAndPassword(email, pwd)
 	if err != nil {
-		page.HandleError("index", "Login failed! Incorrect email or password", w)
+		page.HandleError("index", err.Error(), w)
 		return
 	}
 
-	if match {
-		user, err := models.GetUserByEmail(email)
-		if err != nil {
-			page.HandleError("index", fmt.Sprintf("Failed to get user. %s", err.Error()), w)
-			return
-		}
-		if err := contents.CreateHome(user.Username); err != nil {
-			page.HandleError("index", fmt.Sprintf("Failed to create home page. %s", err.Error()), w)
-			return
-		}
-		if err := contents.CreateUserData(user); err != nil {
-			page.HandleError("index", fmt.Sprintf("Failed to create user data. %s", err.Error()), w)
-			return
-		}
-
-		http.Redirect(w, r, "/user-main", http.StatusSeeOther)
-	} else {
-		page.HandleError("index", "Login failed! Incorrect email or password", w)
+	user, err := mysqldb.GetUserByEmail(email)
+	if err != nil {
+		page.HandleError("index", fmt.Sprintf("Failed to get user. %s", err.Error()), w)
 		return
 	}
+	if err := contents.CreateHome(user.Name); err != nil {
+		page.HandleError("index", fmt.Sprintf("Failed to create home page. %s", err.Error()), w)
+		return
+	}
+	if err := contents.CreateUserData(user); err != nil {
+		page.HandleError("index", fmt.Sprintf("Failed to create user data. %s", err.Error()), w)
+		return
+	}
+
+	http.Redirect(w, r, "/user-main", http.StatusSeeOther)
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
@@ -71,23 +66,29 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	pwd := r.FormValue("psw")
 
-	emailExist, usernameExist, err := models.UserOrEmailExist(email, uName)
+	emailExist, err := mysqldb.EmailExists(email)
 	if emailExist {
 		page.HandleError("index", fmt.Sprintf("Email address %+v already in use", email), w)
 		return
 	}
 
+	if err != nil {
+		page.HandleError("index", fmt.Sprintf("Failed to check email. %s", err.Error()), w)
+		return
+	}
+
+	usernameExist, err := mysqldb.UserExists(uName)
 	if usernameExist {
 		page.HandleError("index", fmt.Sprintf("Username %+v already in use", uName), w)
 		return
 	}
 
 	if err != nil {
-		page.HandleError("index", fmt.Sprintf("Failed to user and email. %s", err.Error()), w)
+		page.HandleError("index", fmt.Sprintf("Failed to check username. %s", err.Error()), w)
 		return
 	}
 
-	if err = models.AddUser(uName, email, pwd); err != nil {
+	if err = mysqldb.AddUser(uName, email, pwd); err != nil {
 		page.HandleError("index", fmt.Sprintf("Failed to add user. %s", err.Error()), w)
 		return
 	}

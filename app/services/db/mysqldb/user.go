@@ -5,25 +5,17 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/uuid"
+	"polygnosics/app/models"
+
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User defines the user structures. Each user must have an associated settings entry.
-type User struct {
-	ID         uuid.UUID `json:"id,omitempty"`
-	Name       string    `json:"name,omitempty"`
-	Email      string    `json:"email,omitempty"`
-	Password   string    `json:"password,omitempty"`
-	SettingsID uuid.UUID `json:"user_settings_id,omitempty"`
-}
-
 // GetUserByEmail returns the user defined by the email and password.
-func GetUserByEmail(email string) (User, error) {
+func GetUserByEmail(email string) (models.User, error) {
 	email = strings.ReplaceAll(email, " ", "")
 
-	var user User
+	var user models.User
 	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id) from users where email = ?"
 	db, err := ConnectSystem()
 	if err != nil {
@@ -47,7 +39,7 @@ func GetUserByEmail(email string) (User, error) {
 }
 
 func UserExists(username string) (bool, error) {
-	var user User
+	var user models.User
 	db, err := ConnectSystem()
 	if err != nil {
 		return false, err
@@ -70,7 +62,7 @@ func UserExists(username string) (bool, error) {
 func EmailExists(email string) (bool, error) {
 	email = strings.ReplaceAll(email, " ", "")
 
-	var user User
+	var user models.User
 	queryString := "select email from users where email = ?"
 	db, err := ConnectSystem()
 	if err != nil {

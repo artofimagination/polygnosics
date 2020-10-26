@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"polygnosics/app/models"
+	"polygnosics/app/services/db/mysqldb"
 	"polygnosics/app/utils/jsonutils"
 	"polygnosics/app/utils/page"
 	"polygnosics/web/contents"
@@ -23,7 +23,7 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		features, err := models.GetAllFeatures()
+		features, err := mysqldb.GetAllFeatures()
 		if err != nil {
 			errorStr := "Failed to get project feature config. " + err.Error()
 			page.RenderTemplate(w, "error", contents.CreateError(errorStr))
@@ -56,7 +56,7 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
 			}
 
-			features, err := models.GetAllFeatures()
+			features, err := mysqldb.GetAllFeatures()
 			if err != nil {
 				errorStr := fmt.Sprintf("Failed to get feature config. %s", err.Error())
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
@@ -106,12 +106,12 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
 			}
 
-			if err := models.AddProject(content.CurrentProject); err != nil {
+			if err := mysqldb.AddProject(content.CurrentProject); err != nil {
 				errorStr := fmt.Sprintf("Failed to add project %s to database. %s", content.CurrentProject.Name, err.Error())
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
 			}
 
-			if content.CurrentProject, err = models.GetProjectByName(content.CurrentProject.Name); err != nil {
+			if content.CurrentProject, err = mysqldb.GetProjectByName(content.CurrentProject.Name); err != nil {
 				errorStr := fmt.Sprintf("Failed to get project %s from database. %s", content.CurrentProject.Name, err.Error())
 				page.RenderTemplate(w, "error", contents.CreateError(errorStr))
 			}
