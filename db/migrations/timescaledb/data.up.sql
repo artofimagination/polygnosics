@@ -1,17 +1,13 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS data_type(
-   id smallint NOT NULL PRIMARY KEY,
-   name varchar(64) NOT NULL,
-   description varchar(2048) NOT NULL,
-   created_at timestamp not NULL DEFAULT NOW(),
-   updated_at timestamp not NULL DEFAULT NOW()
-);
+CREATE extension IF NOT EXISTS "uuid-ossp";
 
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS project_data(
    created_at timestamp NOT NULL DEFAULT NOW() PRIMARY KEY,
-   project_id integer NOT NULL,
-   data_type_id smallint REFERENCES data_type(id),
+   project_id uuid NOT NULL,
    run_seq_no integer NOT NULL DEFAULT 0,
    data json
 );
+
+-- +migrate Up
+CREATE INDEX ON project_data (created_at DESC, project_id);

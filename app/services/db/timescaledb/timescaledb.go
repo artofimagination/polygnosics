@@ -2,45 +2,53 @@ package timescaledb
 
 import (
 	"database/sql"
-	"fmt"
+	"log"
+	"time"
 
+	"github.com/pkg/errors"
 	migrate "github.com/rubenv/sql-migrate"
+
+	// Need to register postgres drivers with database/sql
+	_ "github.com/lib/pq"
 )
 
-var host = "172.18.0.1"
-var port = "5432"
-var user = "root"
-var password = "password"
-var dbName = "data"
+var DBAddress = "postgres://root:password@172.18.0.1:5432/data?sslmode=disable"
 
 func BootstrapData() error {
-	fmt.Printf("Executing TimeScaleDB migration\n")
+	log.Println("Executing TimeScaleDB migration")
 
-	dbConnData := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbName)
 	migrations := &migrate.FileMigrationSource{
-		Dir: "db/migrations/timescaledb",
+		Dir: "db/migrations",
 	}
-	fmt.Printf("Getting migration files\n")
+	log.Println("Getting migration files")
 
-	db, err := sql.Open("postgres", dbConnData)
+	db, err := sql.Open("postgres", DBAddress)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("DB connection open\n")
+	log.Println("DB connection open")
 
-	n, err := migrate.Exec(db, "postgres", migrations, migrate.Up)
-	if err != nil {
-		return err
+	n := 0
+	for retryCount := 5; retryCount > 0; retryCount-- {
+		n, err = migrate.Exec(db, "postgres", migrations, migrate.Up)
+		if err == nil {
+			break
+		}
+		time.Sleep(1 * time.Second)
+		log.Printf("Failed to execute migration %s. Retrying...\n", err.Error())
 	}
-	fmt.Printf("Applied %d migrations!\n", n)
+
+	if err != nil {
+		return errors.Wrap(errors.WithStack(err), "Migration failed after multiple retries.")
+	}
+	log.Printf("Applied %d migrations!\n", n)
 	return nil
 }
 
 func ConnectData() (*sql.DB, error) {
-	fmt.Println("Connecting to TimescaleDB")
+	log.Println("Connecting to TimescaleDB")
 
-	dbConnData := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbName)
-	db, err := sql.Open("postgres", dbConnData)
+	db, err := sql.Open("postgres", DBAddress)
 
 	// if there is an error opening the connection, handle it
 	if err != nil {

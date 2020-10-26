@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"polygnosics/app/services/db/mysqldb"
-	"polygnosics/app/services/db/timescaledb"
 
 	"github.com/google/uuid"
 )
@@ -50,22 +49,6 @@ func AddProject(project Project) error {
 	defer db.Close()
 
 	_, err = db.Query(query, project.UserID, project.FeatureID, project.Name, project.Config)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// InsertData will insert data into timescale db.
-func InsertData(projectID int, data interface{}) error {
-	query := "INSERT INTO data VALUES (NOW(), ?, ?)"
-	db, err := timescaledb.ConnectData()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	_, err = db.Query(query, projectID, data)
 	if err != nil {
 		return err
 	}

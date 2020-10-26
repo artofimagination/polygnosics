@@ -1,11 +1,13 @@
 version: '3'
 networks:
-  poly_network:
+  poly_frontend:
     driver: bridge
     ipam:
       driver: default
       config:
-      - subnet: 172.18.0.0/24       
+      - subnet: 172.18.0.0/24
+  poly_backend:
+    internal: true       
 
 services:
   reverse-proxy:
@@ -35,8 +37,9 @@ services:
       - "443:443"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
-    networks: 
-      - poly_network
+    networks:
+      - poly_backend 
+      - poly_frontend
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -56,7 +59,7 @@ services:
     ports:
       - 27017:27017
     networks:
-      - poly_network
+      - poly_backend
     volumes: 
       - /srv/user-settings:/data/db
       - ./configuration/mongod.conf:/etc/mongod.conf
@@ -75,7 +78,7 @@ services:
     volumes:
       - ~/system-mysql:/var/lib/mysql
     networks: 
-      - poly_network
+      - poly_backend
     command: >
       --server-id=1
       --port 3306
@@ -100,9 +103,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ~/data-timescaledb:/var/lib/postgresql
+      - /srv/data-timescaledb:/var/lib/postgresql/data
     networks: 
-      - poly_network
+      - poly_backend
     command: postgres -c shared_preload_libraries=timescaledb
   polygnosics:
     build: ./
@@ -125,7 +128,7 @@ services:
       # Port the server instances can be accessed through
       - traefik.http.services.platform.loadbalancer.server.port=8081
     networks: 
-      - poly_network
+      - poly_backend
     depends_on:
       - user-db
       - reverse-proxy
