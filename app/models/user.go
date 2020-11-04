@@ -6,9 +6,9 @@ import (
 
 // User defines the user structures. Each user must have an associated settings entry.
 type User struct {
-	ID         uuid.UUID `json:"id,omitempty"`
-	Name       string    `json:"name,omitempty"`
-	Email      string    `json:"email,omitempty"`
-	Password   string    `json:"password,omitempty"`
-	SettingsID uuid.UUID `json:"user_settings_id,omitempty"`
+	ID         uuid.UUID `json:"id" validation:"required"`
+	Name       string    `json:"name,omitempty" validation:"required"`
+	Email      string    `json:"email,omitempty" validation:"required"`
+	Password   string    `json:"password,omitempty" validation:"required"`
+	SettingsID uuid.UUID `json:"user_settings_id" validation:"required"`
 }
