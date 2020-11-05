@@ -12,17 +12,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var DBAddress = "postgres://root:password@172.18.0.1:5432/data?sslmode=disable"
+var DBConnection = ""
 
 func BootstrapData() error {
 	log.Println("Executing TimeScaleDB migration")
 
 	migrations := &migrate.FileMigrationSource{
-		Dir: "db/migrations",
+		Dir: "db/migrations/timescaledb",
 	}
 	log.Println("Getting migration files")
 
-	db, err := sql.Open("postgres", DBAddress)
+	db, err := sql.Open("postgres", DBConnection)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func BootstrapData() error {
 func ConnectData() (*sql.DB, error) {
 	log.Println("Connecting to TimescaleDB")
 
-	db, err := sql.Open("postgres", DBAddress)
+	db, err := sql.Open("postgres", DBConnection)
 
 	// if there is an error opening the connection, handle it
 	if err != nil {

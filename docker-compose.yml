@@ -61,7 +61,7 @@ services:
     networks:
       - poly_backend
     volumes: 
-      - /srv/user-settings:/data/db
+      - /srv/user-database-mongo:/data/db
       - ./configuration/mongod.conf:/etc/mongod.conf
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${DB_USER}"
@@ -71,12 +71,12 @@ services:
     container_name: system-mysql
     image: "mysql:8.0.19"
     environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_DB_PASSWORD}"
-      MYSQL_DATABASE: "core"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DB_NAME}
     ports:
       - "3306:3306"
     volumes:
-      - ~/system-mysql:/var/lib/mysql
+      - /srv/user-database:/var/lib/mysql
     networks: 
       - poly_backend
     command: >

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,11 +13,37 @@ import (
 	"polygnosics/app/restcontrollers"
 	"polygnosics/app/services/db/mysqldb"
 	"polygnosics/app/services/db/timescaledb"
+	"polygnosics/app/utils/configloader"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
+	// Load DB configuration
+	config, err := configloader.LoadDBConfigFromEnv("MYSQL")
+	if err != nil {
+		log.Fatalf("Failed to load MYSQl DB config. %s\n", errors.WithStack(err))
+	}
+	mysqldb.DBConnection = fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/user_database?parseTime=true",
+		config.Username,
+		config.Password,
+		config.Address,
+		config.Port)
+
+	config, err = configloader.LoadDBConfigFromEnv("Timescale")
+	if err != nil {
+		log.Fatalf("Failed to load Timescale DB config. %s\n", errors.WithStack(err))
+	}
+
+	timescaledb.DBConnection = fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/data?sslmode=disable",
+		config.Username,
+		config.Password,
+		config.Address,
+		config.Port)
+
+	// Run DB migration
 	if err := mysqldb.BootstrapSystem(); err != nil {
 		log.Fatalf("System bootstrap failed. %s\n", errors.WithStack(err))
 	}

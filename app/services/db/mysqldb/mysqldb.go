@@ -3,11 +3,16 @@ package mysqldb
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"time"
 
+	// Need to register mysql drivers with database/sql
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-var dbConnSystem = "root:password@tcp(172.18.0.1:3306)/core"
+var DBConnection = ""
 
 func BootstrapSystem() error {
 
@@ -17,15 +22,24 @@ func BootstrapSystem() error {
 	}
 	fmt.Printf("Getting migration files\n")
 
-	db, err := sql.Open("mysql", dbConnSystem+"?parseTime=true")
+	db, err := sql.Open("mysql", DBConnection)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("DB connection open\n")
 
-	n, err := migrate.Exec(db, "mysql", migrations, migrate.Up)
+	n := 0
+	for retryCount := 10; retryCount > 0; retryCount-- {
+		n, err = migrate.Exec(db, "mysql", migrations, migrate.Up)
+		if err == nil {
+			break
+		}
+		time.Sleep(1 * time.Second)
+		log.Printf("Failed to execute migration %s. Retrying...\n", err.Error())
+	}
+
 	if err != nil {
-		return err
+		return errors.Wrap(errors.WithStack(err), "Migration failed after multiple retries.")
 	}
 	fmt.Printf("Applied %d migrations!\n", n)
 	return nil
@@ -34,7 +48,7 @@ func BootstrapSystem() error {
 func ConnectSystem() (*sql.DB, error) {
 	fmt.Println("Connecting to MYSQL")
 
-	db, err := sql.Open("mysql", dbConnSystem)
+	db, err := sql.Open("mysql", DBConnection)
 
 	// if there is an error opening the connection, handle it
 	if err != nil {

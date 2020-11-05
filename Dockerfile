@@ -10,9 +10,10 @@ RUN go mod tidy
 RUN apk --no-cache add curl && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.31.0
 RUN $GOPATH/bin/golangci-lint run -v
 RUN cd $GOPATH/src/polygnosics/ && go build main.go
+RUN chmod 0766 $GOPATH/src/polygnosics/scripts/init.sh
 
 # This container exposes port 8081 to the outside world
 EXPOSE 8081
 
 # Run the executable
-CMD ["./main"]
+CMD ["./scripts/init.sh"]
