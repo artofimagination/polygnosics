@@ -4,10 +4,8 @@
   <meta charset="utf-8">
   <title>AI Playground</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/main.css">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/navbar.css">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/signup-login.css">
-  <script src="/static/javascripts/signup-login.js"></script>
+  <link rel="stylesheet" type="text/css" href="/assets/css/main.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/navbar.css">
 </head>
 
 <body>
@@ -15,7 +13,7 @@
   <ul>
     <li class="left-bar"> <a href="/about">About Us</a> </li>
     <li class="right-bar"> <a href="#" onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Login</a> </li>
-    <li class="right-bar"> <a href="#" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign up</a> </li>
+    <li class="right-bar"> <a href="/auth_signup">Sign up</a><i class="ti-more"></i> </li>
   </ul>
 </nav>
 
@@ -23,80 +21,6 @@
   <div class="body-text"></div>
     <h1>{{index .Data "title"}}</h1>
     <h3>{{index .Data "body"}}</h3>
-
-<div id="id01" class="modal">
-  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
-  <form class="modal-content" action="/signup" method="post">
-    <div class="container">
-      <h1>Sign Up</h1>
-      <p>Please fill in this form to create an account.</p>
-      <hr>
-
-      <label for="username"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" id="username" name="username" minlength="6" title="Must be at least 6 characters" required>
-
-      <label for="email"><b>Email</b></label>
-      <input type="email" placeholder="Enter Email" id="email" name="email" required>
-
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" id="psw" name="psw" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number, one uppercase, lowercase letter, and at least 8 or more characters" required>
-
-      <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" id="psw-repeat" name="psw-repeat" required>
-
-      <div id="message-psw">
-        <h3>Password must contain the following:</h3>
-        <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
-        <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
-        <p id="number" class="invalid">A <b>number</b></p>
-        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-      </div>
-
-      <div id="message-psw-repeat">
-        <p id="confirmation" class="invalid">Password and confirmation <b>must</b> be equal. </p>
-      </div>
-
-      <div id="message-username">
-        <p id="username-valid" class="invalid">Username <b>must be at least 6 characters.</b> </p>
-      </div>
-
-      <div id="message-email">
-        <p id="email-valid" class="invalid">Email <b>must</b> be a valid address. </p>
-      </div>
-
-      <script src="/static/javascripts/signup-login.js"></script>
-
-      <div class="clearfix">
-        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-        <button type="submit" class="signupbtn">Sign Up</button>
-      </div>
-    </div>
-  </form>
-</div>
-
-<div id="id02" class="modal">
-  <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
-  <form class="modal-content" action="/login" method="post">
-    <div class="container">
-      <h1>Login</h1>
-      <p>Please fill in this form to login to your account.</p>
-      <hr>
-
-      <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" id="email" name="email" required>
-
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" id="psw" name="psw" required>
-
-      <script src="/static/javascripts/signup-login.js"></script>
-
-      <div class="clearfix">
-        <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
-        <button type="submit" class="signupbtn">Login</button>
-      </div>
-    </div>
-  </form>
-</div>
 
 </body>
 </html>

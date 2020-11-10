@@ -72,9 +72,9 @@ services:
     image: "mysql:8.0.19"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DB_NAME}
+      MYSQL_DATABASE: user_database
     ports:
-      - "3306:3306"
+      - ${MYSQL_DB_PORT}:${MYSQL_DB_PORT}
     volumes:
       - /srv/user-database:/var/lib/mysql
     networks: 
@@ -101,7 +101,7 @@ services:
       - POSTGRES_PASSWORD=${TIMESCALE_DB_PASSWORD}
       - POSTGRES_DB=data
     ports:
-      - "5432:5432"
+      - ${TIMESCALE_DB_PORT}:${TIMESCALE_DB_PORT}
     volumes:
       - /srv/data-timescaledb:/var/lib/postgresql/data
     networks: 
