@@ -46,8 +46,6 @@ func BootstrapSystem() error {
 }
 
 func ConnectSystem() (*sql.DB, error) {
-	fmt.Println("Connecting to MYSQL")
-
 	db, err := sql.Open("mysql", DBConnection)
 
 	// if there is an error opening the connection, handle it

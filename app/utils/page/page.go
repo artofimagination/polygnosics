@@ -26,7 +26,9 @@ var htmls = []string{
 	"/web/templates/user/user-main.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
-	"/web/templates/project/run.html"}
+	"/web/templates/project/run.html",
+	"/web/templates/auth_signup.html",
+	"/web/templates/auth_login.html"}
 var paths = []string{}
 var lock sync.Mutex
 

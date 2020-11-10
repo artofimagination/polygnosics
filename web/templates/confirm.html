@@ -1,40 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>AI Playground</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/main.css">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/navbar.css">
-  <link rel="stylesheet" type="text/css" href="/static/stylesheets/confirm.css">
-  <script src="/static/javascripts/confirm.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/assets/images/favicon.ico">
+
+    <title>Venusx Admin - Registration </title>
+  
+	<!-- Vendors Style-->
+	<link rel="stylesheet" href="/assets/css/vendors_css.css">
+	  
+	<!-- Style-->  
+	<link rel="stylesheet" href="/assets/css/style.css">
+	<link rel="stylesheet" href="/assets/css/skin_color.css">	
+
 </head>
 
-<body>
-  <nav>
-    <ul>
-      <li class="left-bar"> <a href="/about">About Us</a> </li>
-      <li class="right-bar"> <a href="/login">Login</a> </li>
-      <li class="right-bar"> <a href="#" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign up</a> </li>
-    </ul>
-  </nav>
-   
-  <div class="background-image">
-    <div class="body-text"></div>
-      <h1>{{index .Data "title"}}</h1>
-      <h3>{{index .Data "body"}}</h3>
+<body class="hold-transition theme-primary bg-gradient-primary">
+	
+	<div class="container h-p100">
+		<div class="row align-items-center justify-content-md-center h-p100">
+			
+			<div class="col-12">
+				<div class="row justify-content-center no-gutters">
+					<div class="col-lg-4 col-md-5 col-12">
+						<div class="bg-white-10 rounded5">
+							<div class="p-30">
+                <form action="{{index .Data "route"}}" method="get">
+                  <div class="col-12 text-center">
+                    <p class="mt-15 mb-0 text-white">{{index .Data "message"}}</p>
+                  </div>
+                  <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-info margin-top-10">{{index .Data "button_text"}}</button>
+                  </div>
+								</form>													
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+	</div>
 
-  <div id="confirm-modal" class="modal">
-    <form class="modal-content" action="{{index .Data "route"}}" method="post">
-      <div class="container">
-        <p>{{index .Data "message"}}</p>
-
-        <div class="clearfix">
-          <button type="submit" class="confirmbtn">Ok</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
+	<!-- Vendor JS -->
+	<script src="/assets/js/vendors.min.js"></script>
+  <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
 </body>
 </html>

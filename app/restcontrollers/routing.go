@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"polygnosics/app/restcontrollers/auth"
 	"polygnosics/app/utils/page"
 
 	"github.com/gorilla/mux"
@@ -17,7 +18,7 @@ func CreateRouter() *mux.Router {
 	flag.StringVar(&dir, "dir", "./web/assets", "the directory to serve files from. Defaults to the current dir")
 	flag.Parse()
 	r := mux.NewRouter()
-	r.HandleFunc("/signup", SignupHandler)
+	r.HandleFunc("/auth_signup", page.MakeHandler(auth.SignupHandler, r))
 	r.HandleFunc("/logout", page.MakeHandler(IndexHandler, r))
 	r.HandleFunc("/user-main", page.MakeHandler(UserMain, r))
 	r.HandleFunc("/user-settings", page.MakeHandler(UserSettings, r))
@@ -26,10 +27,10 @@ func CreateRouter() *mux.Router {
 	userMain.HandleFunc("/{project}/run", page.MakeHandler(RunProject, r))
 	userMain.HandleFunc("/{project}/webrtc", page.MakeHandler(StartWebRTC, r))
 	userMain.HandleFunc("/resume", page.MakeHandler(NewProject, r))
-	r.HandleFunc("/login", page.MakeHandler(LoginHandler, r))
+	r.HandleFunc("/auth_login", page.MakeHandler(LoginHandler, r))
 	r.HandleFunc("/about", page.MakeHandler(AboutUsHandler, r))
 	r.HandleFunc("/index", page.MakeHandler(IndexHandler, r))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir))))
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir(dir))))
 
 	err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()
