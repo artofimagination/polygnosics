@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"polygnosics/app/services/db/mysqldb"
@@ -11,7 +10,6 @@ import (
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		log.Println("GET html")
 		p := page.Page{}
 		page.RenderTemplate(w, "auth_signup", &p)
 	} else {
@@ -19,7 +17,6 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			page.HandleError("index", "Failed to parse form", w)
 			return
 		}
-		log.Println("POST html")
 		uName := r.FormValue("username")
 		email := r.FormValue("email")
 		pwd := r.FormValue("psw")
