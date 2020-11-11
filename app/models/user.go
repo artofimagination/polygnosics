@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+
 	"github.com/google/uuid"
 )
 
@@ -11,4 +13,9 @@ type User struct {
 	Email      string    `json:"email" validation:"required"`
 	Password   string    `json:"password" validation:"required"`
 	SettingsID uuid.UUID `json:"user_settings_id" validation:"required"`
+}
+
+type UserSetting struct {
+	ID       uuid.UUID       `json:"id" validation:"required"`
+	Settings json.RawMessage `json:"config" validation:"required"`
 }
