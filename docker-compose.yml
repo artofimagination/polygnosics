@@ -127,6 +127,8 @@ services:
       #- traefik.http.services.platform.loadBalancer.sticky.cookie=true
       # Port the server instances can be accessed through
       - traefik.http.services.platform.loadbalancer.server.port=8081
+    volumes:
+      - ./user-store:/user-store
     networks: 
       - poly_backend
     depends_on:

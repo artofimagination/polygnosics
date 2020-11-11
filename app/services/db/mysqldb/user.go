@@ -2,40 +2,65 @@ package mysqldb
 
 import (
 	"database/sql"
-	"fmt"
 	"strings"
 
 	"polygnosics/app/models"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GetUserByEmail returns the user defined by the email and password.
-func GetUserByEmail(email string) (models.User, error) {
+// GetUserByEmail returns the user defined by the email.
+func GetUserByEmail(email string) (*models.User, error) {
 	email = strings.ReplaceAll(email, " ", "")
 
 	var user models.User
 	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id) from users where email = ?"
 	db, err := ConnectSystem()
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 	defer db.Close()
 
 	query, err := db.Query(queryString, email)
 
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 	defer query.Close()
 
 	query.Next()
 	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID); err != nil {
-		return user, err
+		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
+}
+
+// GetUserByID returns the user defined by it uuid.
+func GetUserByID(ID uuid.UUID) (*models.User, error) {
+	var user models.User
+	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id) from users where id = UUID_TO_BIN(?)"
+	db, err := ConnectSystem()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	query, err := db.Query(queryString, ID)
+
+	if err != nil {
+		return nil, err
+	}
+	defer query.Close()
+
+	query.Next()
+	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func UserExists(username string) (bool, error) {
@@ -84,22 +109,11 @@ func EmailExists(email string) (bool, error) {
 }
 
 // CheckPassword compares the password entered by the user with the stored password.
-func CheckEmailAndPassword(email string, password string) error {
-	email = strings.ReplaceAll(email, " ", "")
-
-	user, err := GetUserByEmail(email)
-	if err == sql.ErrNoRows {
-		return fmt.Errorf("Incorrect email or password")
+func IsPasswordCorrect(password string, user *models.User) bool {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return false
 	}
-
-	if err != nil {
-		return err
-	}
-
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return fmt.Errorf("Incorrect email or password")
-	}
-	return nil
+	return true
 }
 
 // AddUser creates a new user entry in the DB.
