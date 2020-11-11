@@ -134,16 +134,6 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 
 // UserMain renders the main page after login.
 func UserMain(w http.ResponseWriter, r *http.Request) {
-	name := "user-main"
 	p := &page.Page{}
-	if err := page.Load(name, p); err != nil {
-		errorStr := fmt.Sprintf("Failed to load %s page content. %s", name, err.Error())
-		page.RenderTemplate(w, "error", contents.CreateError(errorStr))
-	}
-
-	if err := contents.CreateNewProjectConfig(); err != nil {
-		errorStr := fmt.Sprintf("Failed to create new project config page content. %s", err.Error())
-		page.RenderTemplate(w, "error", contents.CreateError(errorStr))
-	}
-	page.RenderTemplate(w, name, p)
+	page.RenderTemplate(w, "user-main", p)
 }
