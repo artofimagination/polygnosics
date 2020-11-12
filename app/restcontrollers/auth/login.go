@@ -75,7 +75,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	session, _ := session.Store.Get(r, "cookie-name")
+	session, err := session.Store.Get(r, "cookie-name")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get cookie. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false

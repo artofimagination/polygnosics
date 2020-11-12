@@ -13,6 +13,7 @@ type User struct {
 	Email      string    `json:"email" validation:"required"`
 	Password   string    `json:"password" validation:"required"`
 	SettingsID uuid.UUID `json:"user_settings_id" validation:"required"`
+	AssetsID   uuid.UUID `json:"user_assets_id" validation:"required"`
 }
 
 type UserSetting struct {
