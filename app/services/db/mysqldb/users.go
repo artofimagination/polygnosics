@@ -155,7 +155,7 @@ func IsPasswordCorrect(password string, user *models.User) bool {
 func AddUser(name string, email string, passwd string) error {
 	email = strings.ReplaceAll(email, " ", "")
 
-	queryString := "INSERT INTO users (id, name, email, password, user_settings_id, user_assets_id) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?), UUID_TO_BIN(?))"
+	queryString := "INSERT INTO users (id, name, email, password, user_settings_id, user_assets_id) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?))"
 	db, err := ConnectSystem()
 	if err != nil {
 		return err

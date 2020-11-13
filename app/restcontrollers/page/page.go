@@ -20,6 +20,7 @@ var htmls = []string{
 	"/web/templates/index.html",
 	"/web/templates/confirm.html",
 	"/web/templates/user/user-main.html",
+	"/web/templates/user/profile.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
 	"/web/templates/project/run.html",

@@ -36,6 +36,16 @@ func AddAsset() (*uuid.UUID, error) {
 	return &newID, nil
 }
 
+func convertToJSONRaw(references *models.References) (*json.RawMessage, error) {
+	refBytes, err := json.Marshal(&references)
+	if err != nil {
+		return nil, err
+	}
+
+	refRaw := json.RawMessage(refBytes)
+	return &refRaw, nil
+}
+
 func UpdateAsset(asset *models.Asset) error {
 	queryString := "UPDATE user_assets set refs = ? where id = UUID_TO_BIN(?)"
 	db, err := ConnectSystem()
@@ -44,8 +54,12 @@ func UpdateAsset(asset *models.Asset) error {
 	}
 
 	defer db.Close()
+	refRaw, err := convertToJSONRaw(&asset.References)
+	if err != nil {
+		return err
+	}
 
-	query, err := db.Query(queryString, asset.References, asset.ID)
+	query, err := db.Query(queryString, refRaw, asset.ID)
 	if err != nil {
 		return err
 	}
@@ -56,7 +70,7 @@ func UpdateAsset(asset *models.Asset) error {
 
 func GetAsset(assetID *uuid.UUID) (*models.Asset, error) {
 	asset := models.Asset{}
-	queryString := "SELECT refs FROM user_assets WHERE id = UUID_TO_BIN(?)"
+	queryString := "SELECT BIN_TO_UUID(id), refs FROM user_assets WHERE id = UUID_TO_BIN(?)"
 	db, err := ConnectSystem()
 	if err != nil {
 		return nil, err
@@ -69,7 +83,7 @@ func GetAsset(assetID *uuid.UUID) (*models.Asset, error) {
 	}
 
 	refs := json.RawMessage{}
-	if err := query.Scan(&refs); err != nil {
+	if err := query.Scan(&asset.ID, &refs); err != nil {
 		return nil, errors.Wrap(errors.WithStack(err), fmt.Sprintf("Asset %s not found", assetID.String()))
 	}
 

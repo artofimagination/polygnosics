@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"polygnosics/app/restcontrollers/auth"
@@ -12,11 +13,32 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var notFoundFile, notFoundErr = http.Dir("dummy").Open("does-not-exist")
+
+type FileSystem struct {
+	http.Dir
+}
+
+// Open is a custom implementation for the static file server
+// that prevents the server from listing the static files, when accessing the path in a browser
+func (m FileSystem) Open(name string) (result http.File, err error) {
+	f, err := m.Dir.Open(name)
+	if err != nil {
+		return
+	}
+
+	fi, err := f.Stat()
+	if err != nil {
+		return
+	}
+	if fi.IsDir() {
+		return notFoundFile, notFoundErr
+	}
+	return f, nil
+}
+
 // CreateRouter creates the page path structure.
 func CreateRouter() *mux.Router {
-	var dir string
-	flag.StringVar(&dir, "dir", "./web/assets", "the directory to serve files from. Defaults to the current dir")
-	flag.Parse()
 	r := mux.NewRouter()
 	// Publicly accessable pages
 	r.HandleFunc("/auth_signup", page.MakeHandler(auth.SignupHandler, r, true))
@@ -26,15 +48,27 @@ func CreateRouter() *mux.Router {
 
 	// Authenticated pages
 	r.HandleFunc("/auth_logout", page.MakeHandler(auth.LogoutHandler, r, false))
-	r.HandleFunc("/user-main", page.MakeHandler(UserMain, r, false))
+	r.HandleFunc("/user-main", page.MakeHandler(UserMainHandler, r, false))
 	r.HandleFunc("/user-settings", page.MakeHandler(UserSettings, r, false))
 	userMain := r.PathPrefix("/user-main").Subrouter()
+	userMain.HandleFunc("/upload-avatar", page.MakeHandler(UploadAvatarHandler, r, false))
+	userMain.HandleFunc("/profile", page.MakeHandler(ProfileHandler, r, false))
 	userMain.HandleFunc("/new", page.MakeHandler(NewProject, r, false))
 	userMain.HandleFunc("/{project}/run", page.MakeHandler(RunProject, r, false))
 	userMain.HandleFunc("/{project}/webrtc", page.MakeHandler(StartWebRTC, r, false))
 	userMain.HandleFunc("/resume", page.MakeHandler(NewProject, r, false))
 
-	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir(dir))))
+	// Static file servers
+	// Default web assets
+	var dirDefaultAssets string
+	var dirUserAssets string
+	flag.StringVar(&dirDefaultAssets, "dirDefaultAssets", "./web/assets", "the directory to serve default web assets from. Defaults to the current dir")
+	handlerDefaultAssets := http.FileServer(FileSystem{http.Dir(dirDefaultAssets)})
+	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", handlerDefaultAssets))
+	flag.StringVar(&dirUserAssets, "dirUserAssets", os.Getenv("USER_STORE_DOCKER"), "the directory to serve user asset files from. Defaults to the current dir")
+	flag.Parse()
+	handlerUserAssets := http.FileServer(FileSystem{http.Dir(dirUserAssets)})
+	r.PathPrefix("/user-assets/").Handler(http.StripPrefix("/user-assets/", handlerUserAssets))
 
 	err := r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		pathTemplate, err := route.GetPathTemplate()

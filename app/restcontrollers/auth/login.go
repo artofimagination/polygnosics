@@ -56,13 +56,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		sess.Options.MaxAge = 600
 		sess.Values["authenticated"] = true
 		sess.Values["user"] = user.ID.String()
+
 		cookieKey, err := session.EncryptUserAndOrigin(user.ID, r.RemoteAddr)
 		if err != nil {
 			p["message"] = fmt.Sprintf("Failed to generate cookie data. %s", errors.WithStack(err))
 			page.RenderTemplate(w, name, &p)
 			return
 		}
-		sess.Values["cookie_key"] = *cookieKey
+		sess.Values["cookie_key"] = cookieKey
 
 		if err := sess.Save(r, w); err != nil {
 			p["message"] = fmt.Sprintf("Failed to save cookie. %s", errors.WithStack(err))

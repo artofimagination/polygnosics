@@ -1,6 +1,7 @@
 package mysqldb
 
 import (
+	"encoding/json"
 	"polygnosics/app/models"
 
 	"github.com/google/uuid"
@@ -20,8 +21,12 @@ func AddSettings() (*uuid.UUID, error) {
 		return nil, err
 	}
 
-	settings := models.UserSetting{}
-	query, err := db.Query(queryString, newID, settings.Settings)
+	binary, err := json.Marshal(models.Settings{})
+	if err != nil {
+		return nil, err
+	}
+
+	query, err := db.Query(queryString, newID, binary)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +50,12 @@ func GetSettings(settingsID *uuid.UUID) (*models.UserSetting, error) {
 		return nil, err
 	}
 
-	if err := query.Scan(&settings.Settings); err != nil {
+	settingsJSON := json.RawMessage{}
+	if err := query.Scan(&settingsJSON); err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(settingsJSON, &settings.Settings); err != nil {
 		return nil, err
 	}
 

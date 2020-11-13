@@ -2,7 +2,6 @@ package timescaledb
 
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,7 +17,6 @@ type Data struct {
 // AddData will insert data into timescale db.
 // Project ID is always generated in the user DB.
 func AddData(projectID uuid.UUID, runSeqNo int, data interface{}) error {
-	log.Println(projectID)
 	query := "INSERT INTO project_data VALUES (NOW(), $1, $2, $3)"
 	db, err := ConnectData()
 	if err != nil {
@@ -68,7 +66,6 @@ func DeleteDataByProject(projectID uuid.UUID) error {
 // GetDataByProjectRunChunk returns a chunk of data belonging to the specific run of the project with projectID.
 // startTime defines the start time of the selection and itemCount refers to the number of rows to be returned after the startTime
 func GetDataByProjectRunChunk(projectID uuid.UUID, runSeqNo int, startTime time.Time, itemCount int) (*[]Data, error) {
-	log.Println(projectID)
 	query := "SELECT * FROM project_data WHERE project_id = $1 AND run_seq_no = $2 and created_at > $3 limit $4"
 	db, err := ConnectData()
 	if err != nil {
