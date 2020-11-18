@@ -13,12 +13,13 @@ import (
 )
 
 var DBConnection = ""
+var MigrationDirectory = ""
 
 func BootstrapData() error {
 	log.Println("Executing TimeScaleDB migration")
 
 	migrations := &migrate.FileMigrationSource{
-		Dir: "db/migrations/timescaledb",
+		Dir: MigrationDirectory,
 	}
 	log.Println("Getting migration files")
 

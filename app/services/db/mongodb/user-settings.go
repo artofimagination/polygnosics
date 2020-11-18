@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"polygnosics/app/models"
+	"github.com/artofimagination/mysql-user-db-go-interface/models"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"

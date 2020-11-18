@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/models"
 	"polygnosics/app/restcontrollers/page"
 	"polygnosics/app/restcontrollers/session"
-	"polygnosics/app/services/db/mysqldb"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/models"
+	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"

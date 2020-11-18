@@ -5,7 +5,8 @@ import (
 	"net/http"
 
 	"polygnosics/app/restcontrollers/page"
-	"polygnosics/app/services/db/mysqldb"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 )
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {

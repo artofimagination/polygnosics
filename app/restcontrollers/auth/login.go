@@ -7,7 +7,8 @@ import (
 
 	"polygnosics/app/restcontrollers/page"
 	"polygnosics/app/restcontrollers/session"
-	"polygnosics/app/services/db/mysqldb"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/pkg/errors"
 )

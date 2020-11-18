@@ -3,9 +3,10 @@ package page
 import (
 	"fmt"
 	"os"
-	"polygnosics/app/models"
-	"polygnosics/app/services/db/mysqldb"
 	"strings"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/models"
+	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/google/uuid"
 )

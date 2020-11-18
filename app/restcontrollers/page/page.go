@@ -7,7 +7,8 @@ import (
 	"text/template"
 
 	"polygnosics/app/restcontrollers/session"
-	"polygnosics/app/services/db/mysqldb"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
