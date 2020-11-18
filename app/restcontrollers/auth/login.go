@@ -54,7 +54,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			page.RenderTemplate(w, name, &p)
 			return
 		}
-		sess.Options.MaxAge = 600
+		sess.Options.MaxAge = 60000
 		sess.Values["authenticated"] = true
 		sess.Values["user"] = user.ID.String()
 

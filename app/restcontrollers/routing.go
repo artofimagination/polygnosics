@@ -45,6 +45,7 @@ func CreateRouter() *mux.Router {
 	r.HandleFunc("/auth_login", page.MakeHandler(auth.LoginHandler, r, true))
 	r.HandleFunc("/about", page.MakeHandler(AboutUsHandler, r, true))
 	r.HandleFunc("/index", page.MakeHandler(IndexHandler, r, true))
+	r.HandleFunc("/", page.MakeHandler(IndexHandler, r, true))
 
 	// Authenticated pages
 	r.HandleFunc("/auth_logout", page.MakeHandler(auth.LogoutHandler, r, false))
@@ -52,6 +53,8 @@ func CreateRouter() *mux.Router {
 	r.HandleFunc("/user-settings", page.MakeHandler(UserSettings, r, false))
 	userMain := r.PathPrefix("/user-main").Subrouter()
 	userMain.HandleFunc("/upload-avatar", page.MakeHandler(UploadAvatarHandler, r, false))
+	userMain.HandleFunc("/store", page.MakeHandler(StoreHandler, r, false))
+	userMain.HandleFunc("/my-products", page.MakeHandler(MyProductsHandler, r, false))
 	userMain.HandleFunc("/profile", page.MakeHandler(ProfileHandler, r, false))
 	userMain.HandleFunc("/new", page.MakeHandler(NewProject, r, false))
 	userMain.HandleFunc("/{project}/run", page.MakeHandler(RunProject, r, false))

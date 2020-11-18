@@ -24,9 +24,12 @@ var htmls = []string{
 	"/web/templates/user/profile.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
+	"/web/templates/user/my-products.html",
 	"/web/templates/project/run.html",
 	"/web/templates/auth_signup.html",
-	"/web/templates/auth_login.html"}
+	"/web/templates/auth_login.html",
+	"/web/templates/products/store.html",
+}
 var paths = []string{}
 
 // MakeHandler creates the page handler and check the route validity.

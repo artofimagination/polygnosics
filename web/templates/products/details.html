@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/assets/images/favicon.ico">
+
+    <title>Venusx Admin - Dashboard  Blank Page </title>
+  
+	<!-- Vendors Style-->
+	<link rel="stylesheet" href="/assets/css/vendors_css.css">
+	  
+	<!-- Style-->  
+	<link rel="stylesheet" href="/assets/css/style.css">
+	<link rel="stylesheet" href="/assets/css/skin_color.css">	
+
+</head>
+<body class="hold-transition dark-skin sidebar-mini theme-primary">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+  <header class="main-header">
+	<div class="d-flex align-items-center logo-box justify-content-between">	
+		<!-- Logo -->
+		<a href="index.html" class="logo">
+		  <!-- logo-->
+		  <div class="logo-lg">
+			  <span class="light-logo"><img src="/assets/images/logo-dark-text.png" alt="logo"></span>
+			  <span class="dark-logo"><img src="/assets/images/logo-light-text.png" alt="logo"></span>
+		  </div>
+		</a>	
+		<a href="#" class="waves-effect waves-light nav-link rounded d-none d-md-inline-block mx-10" data-toggle="push-menu" role="button">
+			<i class="nav-link-icon mdi mdi-menu text-dark"></i>
+		</a>
+	</div>  
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top pl-10">
+      <!-- Sidebar toggle button-->
+	  <div class="app-menu">
+		<ul class="header-megamenu nav">
+			<li class="btn-group nav-item d-md-none">
+				<a href="#" class="waves-effect waves-light nav-link rounded" data-toggle="push-menu" role="button">
+					<i class="nav-link-icon mdi mdi-menu text-dark"></i>
+			    </a>
+			</li>
+			<li class="btn-group nav-item">
+				<a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link rounded" title="Full Screen">
+					<i class="nav-link-icon mdi mdi-crop-free text-dark"></i>
+			    </a>
+			</li>
+			<li class="btn-group nav-item d-xl-inline-flex d-none">
+				<a href="#" class="waves-effect waves-light nav-link rounded" data-toggle="dropdown" aria-expanded="false">
+					<i class="nav-link-icon mdi mdi-view-dashboard text-dark mx-5 mx-lg-0"> </i>
+					<span class="d-xl-inline-block d-none">MEGA
+					<i class="mdi mdi-dots-vertical ml-2"></i></span>
+				</a>
+				<div class="dropdown-menu dropdown-grid">
+					<div class="dropdown-mega-menu">
+						<div class="row">
+							<div class="col-lg-4 col-12">
+								<ul class="nav flex-column">
+									<li class="nav-item-header nav-item">
+										Overview
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">
+											<i class="nav-link-icon fa fa-inbox mr-10">
+											</i>
+											<span>
+												Contacts
+											</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">
+											<i class="nav-link-icon fa fa-book mr-10">
+											</i>
+											<span>
+												Incidents
+											</span>
+											<div class="ml-auto badge badge-pill badge-danger">5
+											</div>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">
+											<i class="nav-link-icon fa fa-picture-o mr-10">
+											</i>
+											<span>
+												Companies
+											</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link disabled">
+											<i class="nav-link-icon fa fa-dashboard mr-10">
+											</i>
+											<span>
+												Dashboards
+											</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="col-lg-4 col-12 bx-1">
+								<ul class="nav flex-column">
+									<li class="nav-item-header nav-item">
+										Favourites
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">
+											Reports Conversions
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">
+											Quick Start
+											<div class="ml-auto badge badge-success">New</div>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Users &amp; Groups</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Proprieties</a>
+									</li>
+								</ul>
+							</div>
+							<div class="col-lg-4 col-12">
+								<ul class="nav flex-column">
+									<li class="nav-item-header nav-item">
+										Sales & Marketing
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Queues
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Resource Groups
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Goal Metrics
+											<div class="ml-auto badge badge-warning">3
+											</div>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="javascript:void(0);" class="nav-link">Campaigns
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul> 
+	  </div>
+		
+      <div class="navbar-custom-menu r-side">
+        <ul class="nav navbar-nav">
+		  <!-- full Screen -->
+	      <li class="search-bar">		  
+			  <div class="lookup lookup-circle lookup-right">
+			     <input type="text" name="s">
+			  </div>
+		  </li>			
+		  <!-- Notifications -->
+		  <li class="dropdown notifications-menu">
+			<a href="#" class="waves-effect waves-light dropdown-toggle" data-toggle="dropdown" title="Notifications">
+			  <i class="mdi mdi-bell"></i>
+			</a>
+			<ul class="dropdown-menu animated bounceIn">
+
+			  <li class="header">
+				<div class="p-20">
+					<div class="flexbox">
+						<div>
+							<h4 class="mb-0 mt-0">Notifications</h4>
+						</div>
+						<div>
+							<a href="#" class="text-danger">Clear All</a>
+						</div>
+					</div>
+				</div>
+			  </li>
+
+			  <li>
+				<!-- inner menu: contains the actual data -->
+				<ul class="menu sm-scrol">
+				  <li>
+					<a href="#">
+					  <i class="fa fa-users text-info"></i> Curabitur id eros quis nunc suscipit blandit.
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-warning text-warning"></i> Duis malesuada justo eu sapien elementum, in semper diam posuere.
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-users text-danger"></i> Donec at nisi sit amet tortor commodo porttitor pretium a erat.
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-shopping-cart text-success"></i> In gravida mauris et nisi
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-user text-danger"></i> Praesent eu lacus in libero dictum fermentum.
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-user text-primary"></i> Nunc fringilla lorem 
+					</a>
+				  </li>
+				  <li>
+					<a href="#">
+					  <i class="fa fa-user text-success"></i> Nullam euismod dolor ut quam interdum, at scelerisque ipsum imperdiet.
+					</a>
+				  </li>
+				</ul>
+			  </li>
+			  <li class="footer">
+				  <a href="#">View all</a>
+			  </li>
+			</ul>
+		  </li>			  
+		  
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar" title="Setting" class="waves-effect waves-light"><i class="fa fa-cog fa-spin"></i></a>
+          </li>
+			
+        </ul>
+      </div>
+    </nav>
+  </header>
+  
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar-->
+    <section class="sidebar">	
+		
+      <!-- sidebar menu-->
+      <ul class="sidebar-menu" data-widget="tree">
+	    <div class="user-profile px-20 py-5">
+			<div class="d-flex align-items-center">			
+				<div class="image">
+				  <img src="../images/avatar/1.jpg" class="avatar avatar-lg" alt="User Image">
+				</div>
+				<div class="info">
+					<a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">Johen Doe</a>
+					<div class="dropdown-menu">
+					  <a class="dropdown-item" href="#"><i class="ti-user"></i> Profile</a>
+					  <a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
+					  <a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
+					  <div class="dropdown-divider"></div>
+					  <a class="dropdown-item" href="#"><i class="ti-settings"></i> Settings</a>
+					</div>
+				</div>
+			</div>
+			<ul class="list-inline profile-setting mt-10 mb-0 d-flex justify-content-between">
+				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Search"><i data-feather="search"></i></a></li>
+				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Notification"><i data-feather="bell"></i></a></li>
+				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Chat"><i data-feather="message-square"></i></a></li>
+				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Logout"><i data-feather="log-out"></i></a></li>
+			</ul>
+        </div>
+		<li class="header">Back To Dashboard</li> 
+		<li>
+          <a href="index.html">
+            <i data-feather="shopping-cart"></i>
+			<span>Dashboard 1</span>
+          </a>
+        </li>
+		<li>
+          <a href="index2.html">
+            <i data-feather="pie-chart"></i>
+			<span>Dashboard 2</span>
+          </a>
+        </li>
+		<li class="header">STARTER TEMPLATES</li> 
+		<li>
+          <a href="collections.html">
+            <i data-feather="layers"></i>
+			<span>Introduction</span>
+          </a>
+        </li> 
+		<li class="treeview">
+          <a href="#">
+            <i data-feather="layout"></i>
+            <span>Layout Options</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="layout_boxed.html"><i class="ti-more"></i>Boxed</a></li>
+            <li><a href="layout_fixed.html"><i class="ti-more"></i>Fixed</a></li>
+            <li><a href="layout_collapsed_sidebar.html"><i class="ti-more"></i>Mini Sidebar</a></li>
+          </ul>
+        </li>
+		<li class="treeview">
+          <a href="#">
+            <i data-feather="archive"></i>
+            <span>Widgets</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="widgets_blog.html"><i class="ti-more"></i>Blog</a></li>
+            <li><a href="widgets_chart.html"><i class="ti-more"></i>Chart</a></li>
+            <li><a href="widgets_list.html"><i class="ti-more"></i>List</a></li>
+            <li><a href="widgets_social.html"><i class="ti-more"></i>Social</a></li>
+            <li><a href="widgets_statistic.html"><i class="ti-more"></i>Statistic</a></li>
+            <li><a href="widgets_weather.html"><i class="ti-more"></i>Weather</a></li>
+            <li><a href="widgets.html"><i class="ti-more"></i>Widgets</a></li>
+          </ul>
+        </li> 
+		<li class="treeview">
+          <a href="#">
+            <i data-feather="x-square"></i>
+            <span>Modals</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+			<li><a href="component_modals.html"><i class="ti-more"></i>Modals</a></li>
+            <li><a href="component_sweatalert.html"><i class="ti-more"></i>Sweet Alert</a></li>
+            <li><a href="component_notification.html"><i class="ti-more"></i>Toastr</a></li>
+          </ul>
+        </li> 
+		<li class="treeview">
+          <a href="#">
+            <i data-feather="shopping-bag"></i>
+			<span>Ecommerce Pages</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="ecommerce_products.html"><i class="ti-more"></i>Products</a></li>
+            <li><a href="ecommerce_cart.html"><i class="ti-more"></i>Products Cart</a></li>
+            <li><a href="ecommerce_products_edit.html"><i class="ti-more"></i>Products Edit</a></li>
+            <li><a href="ecommerce_details.html"><i class="ti-more"></i>Product Details</a></li>
+            <li><a href="ecommerce_orders.html"><i class="ti-more"></i>Product Orders</a></li>
+            <li><a href="ecommerce_checkout.html"><i class="ti-more"></i>Products Checkout</a></li>
+          </ul>
+        </li>
+		<li>
+          <a href="email_index.html">
+            <i data-feather="mail"></i>
+			<span>Emails</span>
+          </a>
+        </li>        
+      </ul>
+    </section>
+  </aside>
+  
+  
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	  <div class="container-full">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title">Details</h3>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">e-Commerce</li>
+								<li class="breadcrumb-item active" aria-current="page">Details</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class="right-title">
+					<div class="d-flex mt-10 justify-content-end">
+						<div class="d-lg-flex mr-20 ml-10 d-none">
+							<div class="chart-text mr-10">
+								<h6 class="mb-0"><small>THIS MONTH</small></h6>
+								<h4 class="mt-0 text-primary">$12,125</h4>
+							</div>
+							<div class="spark-chart">
+								<div id="thismonth"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+							</div>
+						</div>
+						<div class="d-lg-flex mr-20 ml-10 d-none">
+							<div class="chart-text mr-10">
+								<h6 class="mb-0"><small>LAST YEAR</small></h6>
+								<h4 class="mt-0 text-danger">$22,754</h4>
+							</div>
+							<div class="spark-chart">
+								<div id="lastyear"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+
+		  <div class="row">
+			<div class="col-lg-12">
+				<div class="box">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-4 col-sm-6">
+								<div class="box box-body b-1 text-center no-shadow">
+									<img src="../images/product/product-6.png" id="product-image" class="img-fluid" alt="" />
+								</div>
+								<div class="pro-photos">
+									<div class="photos-item item-active">
+										<img src="../images/product/product-6.png" alt="" >
+									</div>
+									<div class="photos-item">
+										<img src="../images/product/product-7.png" alt="" >
+									</div>
+									<div class="photos-item">
+										<img src="../images/product/product-8.png" alt="" >
+									</div>
+									<div class="photos-item">
+										<img src="../images/product/product-9.png" alt="" >
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="col-md-8 col-sm-6">
+								<h2 class="box-title mt-0">Product Title</h2>
+								<div class="list-inline">
+									<a class="text-warning"><i class="mdi mdi-star"></i></a>
+									<a class="text-warning"><i class="mdi mdi-star"></i></a>
+									<a class="text-warning"><i class="mdi mdi-star"></i></a>
+									<a class="text-warning"><i class="mdi mdi-star"></i></a>
+									<a class="text-warning"><i class="mdi mdi-star"></i></a>
+								</div>
+								<h1 class="pro-price mb-0 mt-20">&#36;270
+										<span class="old-price">&#36;540</span>
+										<span class="text-danger">50% off</span>
+									</h1>
+								<hr>
+								<p>Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. but the majority have suffered alteration in some form, by injected humour</p>
+								<div class="row">
+									<div class="col-sm-12">
+										<h6>Color</h6>
+										<div class="input-group">
+											<ul class="icolors">
+												<li class="bg-danger rounded-circle"></li>
+												<li class="bg-info rounded-circle"></li>
+												<li class="bg-primary rounded-circle active"></li>
+											</ul>
+										</div>
+										<h6 class="mt-20">Available Size</h6>
+										<p class="mb-0">
+											<span class="badge badge-pill badge-lg badge-default">S</span>
+											<span class="badge badge-pill badge-lg badge-default">M</span>
+											<span class="badge badge-pill badge-lg badge-default">L</span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="gap-items">
+									<button class="btn btn-success"><i class="mdi mdi-shopping"></i> Buy Now!</button>
+									<button class="btn btn-primary"><i class="mdi mdi-cart-plus"></i> Add To Cart</button>
+									<button class="btn btn-infomr"><i class="mdi mdi-compare"></i> Compare</button>
+									<button class="btn btn-danger"><i class="mdi mdi-heart"></i> Wishlist</button>
+								</div>
+								<h4 class="box-title mt-20">Key Highlights</h4>
+								<ul class="list-icons">
+									<li><i class="fa fa-check text-danger float-none"></i> Party Wear</li>
+									<li><i class="fa fa-check text-danger float-none"></i> Nam libero tempore, cum soluta nobis est</li>
+									<li><i class="fa fa-check text-danger float-none"></i> Omnis voluptas as placeat facere possimus omnis voluptas.</li>
+								</ul>
+							</div>
+							<div class="col-lg-12 col-md-12 col-sm-12">
+								<h4 class="box-title mt-40">General Info</h4>
+								<div class="table-responsive">
+									<table class="table">
+										<tbody>
+											<tr>
+												<td width="390">Brand</td>
+												<td> Brand Name </td>
+											</tr>
+											<tr>
+												<td>Delivery Condition</td>
+												<td> Lorem Ipsum </td>
+											</tr>
+											<tr>
+												<td>Type</td>
+												<td> Party Wear </td>
+											</tr>
+											<tr>
+												<td>Style</td>
+												<td> Modern </td>
+											</tr>
+											<tr>
+												<td>Product Number</td>
+												<td> FG1548952 </td>
+											</tr>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>				
+				</div>
+			</div>
+		</div>
+
+		</section>
+		<!-- /.content -->
+	  </div>
+  </div>
+  <!-- /.content-wrapper -->
+ 
+   <footer class="main-footer">
+    <div class="pull-right d-none d-sm-inline-block">
+        <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+		  <li class="nav-item">
+			<a class="nav-link" href="javascript:void(0)">FAQ</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="#">Purchase Now</a>
+		  </li>
+		</ul>
+    </div>
+	  &copy; 2020 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
+  </footer>
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-light">
+	  
+	<div class="rpanel-title"><span class="pull-right btn btn-circle btn-danger"><i class="ion ion-close text-white" data-toggle="control-sidebar"></i></span> </div>  <!-- Create the tabs -->
+    <ul class="nav nav-tabs control-sidebar-tabs">
+      <li class="nav-item"><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="mdi mdi-message-text"></i></a></li>
+      <li class="nav-item"><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="mdi mdi-playlist-check"></i></a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!-- Home tab content -->
+      <div class="tab-pane" id="control-sidebar-home-tab">
+          <div class="flexbox">
+			<a href="javascript:void(0)" class="text-grey">
+				<i class="ti-more"></i>
+			</a>	
+			<p>Users</p>
+			<a href="javascript:void(0)" class="text-right text-grey"><i class="ti-plus"></i></a>
+		  </div>
+		  <div class="lookup lookup-sm lookup-right d-none d-lg-block">
+			<input type="text" name="s" placeholder="Search" class="w-p100">
+		  </div>
+          <div class="media-list media-list-hover mt-20">
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-success" href="#">
+				<img src="../images/avatar/1.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Tyler</strong></a>
+				</p>
+				<p>Praesent tristique diam...</p>
+				  <span>Just now</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-danger" href="#">
+				<img src="../images/avatar/2.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Luke</strong></a>
+				</p>
+				<p>Cras tempor diam ...</p>
+				  <span>33 min ago</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-warning" href="#">
+				<img src="../images/avatar/3.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Evan</strong></a>
+				</p>
+				<p>In posuere tortor vel...</p>
+				  <span>42 min ago</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-primary" href="#">
+				<img src="../images/avatar/4.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Evan</strong></a>
+				</p>
+				<p>In posuere tortor vel...</p>
+				  <span>42 min ago</span>
+			  </div>
+			</div>			
+			
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-success" href="#">
+				<img src="../images/avatar/1.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Tyler</strong></a>
+				</p>
+				<p>Praesent tristique diam...</p>
+				  <span>Just now</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-danger" href="#">
+				<img src="../images/avatar/2.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Luke</strong></a>
+				</p>
+				<p>Cras tempor diam ...</p>
+				  <span>33 min ago</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-warning" href="#">
+				<img src="../images/avatar/3.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Evan</strong></a>
+				</p>
+				<p>In posuere tortor vel...</p>
+				  <span>42 min ago</span>
+			  </div>
+			</div>
+
+			<div class="media py-10 px-0">
+			  <a class="avatar avatar-lg status-primary" href="#">
+				<img src="../images/avatar/4.jpg" alt="...">
+			  </a>
+			  <div class="media-body">
+				<p class="font-size-16">
+				  <a class="hover-primary" href="#"><strong>Evan</strong></a>
+				</p>
+				<p>In posuere tortor vel...</p>
+				  <span>42 min ago</span>
+			  </div>
+			</div>
+			  
+		  </div>
+
+      </div>
+      <!-- /.tab-pane -->
+      <!-- Settings tab content -->
+      <div class="tab-pane" id="control-sidebar-settings-tab">
+          <div class="flexbox">
+			<a href="javascript:void(0)" class="text-grey">
+				<i class="ti-more"></i>
+			</a>	
+			<p>Todo List</p>
+			<a href="javascript:void(0)" class="text-right text-grey"><i class="ti-plus"></i></a>
+		  </div>
+        <ul class="todo-list mt-20">
+			<li class="py-15 px-5 by-1">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_51" class="filled-in">
+			  <label for="basic_checkbox_51" class="mb-0 h-15"></label>
+			  <!-- todo text -->
+			  <span class="text-line">Nulla vitae purus</span>
+			  <!-- Emphasis label -->
+			  <small class="badge bg-danger"><i class="fa fa-clock-o"></i> 2 mins</small>
+			  <!-- General tools such as edit or delete-->
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_52" class="filled-in">
+			  <label for="basic_checkbox_52" class="mb-0 h-15"></label>
+			  <span class="text-line">Phasellus interdum</span>
+			  <small class="badge bg-info"><i class="fa fa-clock-o"></i> 4 hours</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5 by-1">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_53" class="filled-in">
+			  <label for="basic_checkbox_53" class="mb-0 h-15"></label>
+			  <span class="text-line">Quisque sodales</span>
+			  <small class="badge bg-warning"><i class="fa fa-clock-o"></i> 1 day</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_54" class="filled-in">
+			  <label for="basic_checkbox_54" class="mb-0 h-15"></label>
+			  <span class="text-line">Proin nec mi porta</span>
+			  <small class="badge bg-success"><i class="fa fa-clock-o"></i> 3 days</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5 by-1">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_55" class="filled-in">
+			  <label for="basic_checkbox_55" class="mb-0 h-15"></label>
+			  <span class="text-line">Maecenas scelerisque</span>
+			  <small class="badge bg-primary"><i class="fa fa-clock-o"></i> 1 week</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_56" class="filled-in">
+			  <label for="basic_checkbox_56" class="mb-0 h-15"></label>
+			  <span class="text-line">Vivamus nec orci</span>
+			  <small class="badge bg-info"><i class="fa fa-clock-o"></i> 1 month</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5 by-1">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_57" class="filled-in">
+			  <label for="basic_checkbox_57" class="mb-0 h-15"></label>
+			  <!-- todo text -->
+			  <span class="text-line">Nulla vitae purus</span>
+			  <!-- Emphasis label -->
+			  <small class="badge bg-danger"><i class="fa fa-clock-o"></i> 2 mins</small>
+			  <!-- General tools such as edit or delete-->
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_58" class="filled-in">
+			  <label for="basic_checkbox_58" class="mb-0 h-15"></label>
+			  <span class="text-line">Phasellus interdum</span>
+			  <small class="badge bg-info"><i class="fa fa-clock-o"></i> 4 hours</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5 by-1">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_59" class="filled-in">
+			  <label for="basic_checkbox_59" class="mb-0 h-15"></label>
+			  <span class="text-line">Quisque sodales</span>
+			  <small class="badge bg-warning"><i class="fa fa-clock-o"></i> 1 day</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+			<li class="py-15 px-5">
+			  <!-- checkbox -->
+			  <input type="checkbox" id="basic_checkbox_60" class="filled-in">
+			  <label for="basic_checkbox_60" class="mb-0 h-15"></label>
+			  <span class="text-line">Proin nec mi porta</span>
+			  <small class="badge bg-success"><i class="fa fa-clock-o"></i> 3 days</small>
+			  <div class="tools">
+				<i class="fa fa-edit"></i>
+				<i class="fa fa-trash-o"></i>
+			  </div>
+			</li>
+		  </ul>
+      </div>
+      <!-- /.tab-pane -->
+    </div>
+  </aside>
+  <!-- /.control-sidebar -->
+  
+  <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+
+	<!-- Vendor JS -->
+	<script src="/assets/js/vendors.min.js"></script>
+    <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+	
+	<!-- Venusx Admin App -->
+	<script src="/assets/js/template.js"></script>
+	<script src="/assets/js/demo.js"></script>
+	<script src="/assets/js/pages/ecommerce_details.js"></script>
+	
+
+</body>
+</html>

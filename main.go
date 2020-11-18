@@ -33,6 +33,7 @@ func main() {
 		config.Password,
 		config.Address,
 		config.Port)
+	mysqldb.DBInterface = mysqldb.MYSQLInterface{}
 
 	config, err = configloader.LoadDBConfigFromEnv("Timescale")
 	if err != nil {
