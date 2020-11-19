@@ -65,9 +65,13 @@ func CreateRouter() *mux.Router {
 	// Default web assets
 	var dirDefaultAssets string
 	var dirUserAssets string
+	var dirTemplates string
 	flag.StringVar(&dirDefaultAssets, "dirDefaultAssets", "./web/assets", "the directory to serve default web assets from. Defaults to the current dir")
 	handlerDefaultAssets := http.FileServer(FileSystem{http.Dir(dirDefaultAssets)})
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", handlerDefaultAssets))
+	flag.StringVar(&dirTemplates, "dirTemplates", "./web/templates", "the directory to serve default web assets from. Defaults to the current dir")
+	handlerTemplates := http.FileServer(FileSystem{http.Dir(dirTemplates)})
+	r.PathPrefix("/templates/").Handler(http.StripPrefix("/templates/", handlerTemplates))
 	flag.StringVar(&dirUserAssets, "dirUserAssets", os.Getenv("USER_STORE_DOCKER"), "the directory to serve user asset files from. Defaults to the current dir")
 	flag.Parse()
 	handlerUserAssets := http.FileServer(FileSystem{http.Dir(dirUserAssets)})

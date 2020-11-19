@@ -15,7 +15,7 @@
 		
 	<!-- Style-->  
 	<link rel="stylesheet" href="/assets/css/style.css">
-	<link rel="stylesheet" href="/assets/css/skin_color.css">  
+	<link rel="stylesheet" href="/assets/css/skin_color.css"> 
 </head>
 
 <body class="hold-transition dark-skin sidebar-mini theme-primary fixed">
@@ -243,105 +243,8 @@
 			</nav>
 		</header>
 
-		<!-- Left side column. contains the logo and sidebar -->
-		<aside class="main-sidebar">
-			<!-- sidebar-->
-			<section class="sidebar">	
-				<div class="user-profile px-20 py-5">
-					<div class="d-flex align-items-center">			
-						<div class="image">
-							<img src="{{index .assets "avatar"}}" class="avatar avatar-lg" alt="User Image">
-						</div>
-						<div class="info">
-							<a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">{{index .texts "username"}}</a>
-							<div class="dropdown-menu">
-								<a class="dropdown-item" href="/user-main/profile"><i class="ti-user"></i> Profile</a>
-								<a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
-								<a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="#"><i class="ti-settings"></i> Settings</a>
-							</div>
-						</div>
-					</div>
-					<ul class="list-inline profile-setting mt-10 mb-0 d-flex justify-content-between">
-						<li><a href="#" data-toggle="tooltip" data-placement="top" title="Search"><i data-feather="search"></i></a></li>
-						<li><a href="#" data-toggle="tooltip" data-placement="top" title="Notification"><i data-feather="bell"></i></a></li>
-						<li><a href="#" data-toggle="tooltip" data-placement="top" title="Chat"><i data-feather="message-square"></i></a></li>
-						<li><a href="/auth_logout" data-toggle="tooltip" data-placement="top" title="Logout"><i data-feather="log-out"></i></a></li>
-					</ul>
-				</div>	
-			
-				<!-- sidebar menu-->
-				<ul class="sidebar-menu" data-widget="tree">
-					<li class="header">Dashboard</li> 
-					<li>
-						<a href="index.html">
-							<i data-feather="shopping-cart"></i>
-							<span>Main board</span>
-						</a>
-					</li>
-					<li>
-						<a href="index2.html">
-							<i data-feather="pie-chart"></i>
-							<span>Project statistics</span>
-						</a>
-					</li>
-					<li>
-						<a href="index2.html">
-							<i data-feather="pie-chart"></i>
-							<span>Product statistics</span>
-						</a>
-					</li>
-					<li class="header">Projects</li>
-					<li class="header">Products</li>
-					<li>
-						<a href="user-main/store">
-							<i data-feather="shopping-cart"></i>
-							<span>MarketPlace</span>
-						</a>
-					</li>
-					<li>
-						<a href="user-main/my-products">
-							<i data-feather="shopping-bag"></i>
-							<span>My Products</span>
-						</a>
-					</li>  
-					<li class="header">Social</li>
-					<li>
-						<a href="contact_app_chat.html">
-							<i data-feather="message-circle"></i>
-							<span>Chat</span>
-						</a>
-					</li> 
-					<li>
-						<a href="extra_calendar.html">
-							<i data-feather="calendar"></i>
-							<span>Calendar</span>
-						</a>
-					</li>
-					<li class="treeview">
-						<a href="#">
-							<i data-feather="mail"></i> 
-							<span>Mailbox</span>
-							<span class="pull-right-container">
-								<i class="fa fa-angle-right pull-right"></i>
-							</span>
-						</a>
-						<ul class="treeview-menu">
-							<li><a href="mailbox_inbox.html"><i class="ti-more"></i>Inbox</a></li>
-							<li><a href="mailbox_compose.html"><i class="ti-more"></i>Compose</a></li>
-							<li><a href="mailbox_read_mail.html"><i class="ti-more"></i>Read</a></li>
-						</ul>
-					</li>		
-					<li>
-						<a href="contact_app.html">
-							<i data-feather="users"></i>
-							<span>Contact</span>
-						</a>
-					</li>  
-				</ul>
-			</section>
-		</aside>
+		<!-- Side bar-->
+		{{template "side-bar" .}}
 
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
@@ -999,7 +902,5 @@
 	<script src="/assets/js/template.js"></script>
 	<script src="/assets/js/pages/dashboard.js"></script>
 	<script src="/assets/js/demo.js"></script>
-
-
 </body>
 </html>
