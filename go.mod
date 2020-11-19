@@ -11,6 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.7.4
+	github.com/gorilla/sessions v1.2.1
 	github.com/lib/pq v1.2.0
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pion/webrtc/v3 v3.0.0-beta.8

@@ -3,21 +3,21 @@ package restcontrollers
 import (
 	"net/http"
 
-	"polygnosics/app/utils/page"
+	"polygnosics/app/restcontrollers/page"
 )
 
 func AboutUsHandler(w http.ResponseWriter, r *http.Request) {
 	name := "about"
-	p := page.CreatePage(name)
-	p.Data["title"] = "About Us"
-	p.Data["body"] = "We are awesome"
-	page.RenderTemplate(w, name, p)
+	p := make(map[string]interface{})
+	p["title"] = "About Us"
+	p["body"] = "We are awesome"
+	page.RenderTemplate(w, name, &p)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	name := "index"
-	p := page.CreatePage(name)
-	p.Data["title"] = "Welcome!"
-	p.Data["body"] = "Welcome to AI Playground"
-	page.RenderTemplate(w, name, p)
+	p := make(map[string]interface{})
+	p["title"] = "Welcome!"
+	p["body"] = "Welcome to AI Playground"
+	page.RenderTemplate(w, name, &p)
 }
