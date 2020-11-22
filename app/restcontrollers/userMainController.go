@@ -20,7 +20,7 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 func UserSettings(w http.ResponseWriter, r *http.Request) {
 }
 
-func getContent(w http.ResponseWriter, r *http.Request) (*map[string]interface{}, *map[string]interface{}) {
+func getContent(w http.ResponseWriter, r *http.Request) (map[string]interface{}, map[string]interface{}) {
 	session, err := session.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get cookie. %s", errors.WithStack(err)), http.StatusInternalServerError)
@@ -63,19 +63,19 @@ func getContent(w http.ResponseWriter, r *http.Request) (*map[string]interface{}
 	data := make(map[string]interface{})
 	data["user-data"] = user
 	data["user-assets"] = asset
-	return &p, &data
+	return p, data
 }
 
 // UserMainHandler renders the main page after login.
 func UserMainHandler(w http.ResponseWriter, r *http.Request) {
 	p, _ := getContent(w, r)
-	page.RenderTemplate(w, "user-main", p)
+	page.RenderTemplate(w, "user-main", &p)
 }
 
 // ProfileHandler renders the profile page template.
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	p, _ := getContent(w, r)
-	page.RenderTemplate(w, "profile", p)
+	page.RenderTemplate(w, "profile", &p)
 }
 
 // UploadAvatarHandler processes avatar upload request.
@@ -84,7 +84,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 func UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	p, data := getContent(w, r)
 
-	asset := (*data)["user-assets"].(*models.Asset)
+	asset := data["user-assets"].(models.Asset)
 	if err := asset.SetID(models.Avatar); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update avatar asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
@@ -104,10 +104,10 @@ func UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := page.SaveAssetReferences(asset); err != nil {
+	if err := page.SaveAssetReferences(&asset); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to save asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	(*p)["assets"].(map[string]interface{})[models.Avatar] = path
+	p["assets"].(map[string]interface{})[models.Avatar] = path
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }
