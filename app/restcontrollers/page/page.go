@@ -6,9 +6,8 @@ import (
 	"os"
 	"text/template"
 
+	"polygnosics/app"
 	"polygnosics/app/restcontrollers/session"
-
-	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -54,7 +53,14 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router
 				http.Error(w, "Unable to decode session cookie.", http.StatusInternalServerError)
 				return
 			}
-			user, err := mysqldb.GetUserByID(uuid.MustParse(uuidString))
+
+			userUUID, err := uuid.Parse(uuidString)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Failed to get user id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				return
+			}
+
+			user, err := app.ContextData.UserDBController.GetUser(&userUUID)
 			if err != nil {
 				http.Error(w, "Unable to retrieve user info", http.StatusInternalServerError)
 				return
@@ -77,7 +83,7 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router
 }
 
 // RenderTemplate renders html.
-func RenderTemplate(w http.ResponseWriter, tmpl string, p *map[string]interface{}) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, p map[string]interface{}) {
 	wd, err := os.Getwd()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -103,5 +109,5 @@ func HandleError(route string, errorStr string, w http.ResponseWriter) {
 	p := make(map[string]interface{})
 	p["message"] = errorStr
 	p["route"] = fmt.Sprintf("/%s", route)
-	RenderTemplate(w, name, &p)
+	RenderTemplate(w, name, p)
 }

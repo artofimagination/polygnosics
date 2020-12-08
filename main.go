@@ -10,31 +10,22 @@ import (
 	"syscall"
 	"time"
 
+	"polygnosics/app"
 	"polygnosics/app/restcontrollers"
 	"polygnosics/app/services/db/timescaledb"
 	"polygnosics/app/utils/configloader"
-
-	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
 
 	"github.com/pkg/errors"
 )
 
 func main() {
-	// Load DB configuration
-	config, err := configloader.LoadDBConfigFromEnv("MYSQL")
+	context, err := app.NewContext()
 	if err != nil {
-		log.Fatalf("Failed to load MYSQl DB config. %s\n", errors.WithStack(err))
+		log.Fatalf("Failed to initiate context. %s\n", errors.WithStack(err))
 	}
+	app.ContextData = context
 
-	mysqldb.MigrationDirectory = config.MigrationDir
-	mysqldb.DBConnection = fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/user_database?parseTime=true",
-		config.Username,
-		config.Password,
-		config.Address,
-		config.Port)
-
-	config, err = configloader.LoadDBConfigFromEnv("Timescale")
+	config, err := configloader.LoadDBConfigFromEnv("Timescale")
 	if err != nil {
 		log.Fatalf("Failed to load Timescale DB config. %s\n", errors.WithStack(err))
 	}
@@ -46,12 +37,6 @@ func main() {
 		config.Password,
 		config.Address,
 		config.Port)
-
-	// Run DB migration
-	dbInterface := mysqldb.MYSQLInterface{}
-	if err := dbInterface.BootstrapSystem(); err != nil {
-		log.Fatalf("System bootstrap failed. %s", errors.WithStack(err))
-	}
 
 	if err := timescaledb.BootstrapData(); err != nil {
 		log.Fatalf("Data bootstrap failed. %s\n", errors.WithStack(err))

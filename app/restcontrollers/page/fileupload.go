@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/pkg/errors"
 )
@@ -24,6 +25,12 @@ func UploadFile(destination string, r *http.Request) error {
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
 	// Create file
+	rootPath := os.Getenv("USER_STORE_DOCKER")
+	destination = path.Join(rootPath, destination)
+	if err := os.MkdirAll(destination, os.ModePerm); err != nil {
+		return err
+	}
+
 	dst, err := os.Create(destination)
 	if err != nil {
 		if err2 := dst.Close(); err2 != nil {
