@@ -3,21 +3,20 @@ package page
 import (
 	"fmt"
 	"os"
+	"path"
 	"polygnosics/app/models"
 	"polygnosics/app/services/db/mysqldb"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
 )
 
 func generatePath(assetID *uuid.UUID) string {
-	path := ""
-	increment := 4
-	assetIDString := assetID.String()
-	assetIDString = strings.Replace(assetIDString, "-", "", -1)
-	for i := 0; i < 31; i = i + increment {
-		path = fmt.Sprintf("%s/%s", path, assetIDString[i:i+increment])
-	}
+	re := regexp.MustCompile(`(\S{4})`)
+	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
+	assetStringSplit := re.FindAllString(assetIDString, -1)
+	path := path.Join(assetStringSplit...)
 	return path
 }
 
