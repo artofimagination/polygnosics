@@ -6,10 +6,11 @@ WORKDIR $GOPATH/src/polygnosics
 COPY . .
 
 RUN apk add --update g++ git
-RUN git clone -b issue_2_minimum_unit_test_coverage_for_products https://github.com/artofimagination/mysql-user-db-go-interface /tmp/mysql-user-db-go-interface && \
+RUN git clone -b issue_11_add_functional_testing_interface https://github.com/artofimagination/mysql-user-db-go-interface /tmp/mysql-user-db-go-interface && \
   cp -r /tmp/mysql-user-db-go-interface/db $GOPATH/src/polygnosics && \
   rm -fr /tmp/mysql-user-db-go-interface
 
+#RUN go get -u github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers@00a2e1fc749d4a2c0f09d8aa706138b1d6f24ba8
 RUN go mod tidy
 
 RUN cd $GOPATH/src/polygnosics/ && go build main.go

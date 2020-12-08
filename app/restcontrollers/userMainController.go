@@ -2,11 +2,12 @@ package restcontrollers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
+	"polygnosics/app"
+	"polygnosics/app/restcontrollers/auth"
 	"polygnosics/app/restcontrollers/page"
-
-	"github.com/artofimagination/mysql-user-db-go-interface/models"
 
 	"github.com/pkg/errors"
 )
@@ -20,13 +21,14 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 
 // UserMainHandler renders the main page after login.
 func UserMainHandler(w http.ResponseWriter, r *http.Request) {
-	p, _ := getContent(w, r)
+	p := getContent()
+	log.Println(p)
 	page.RenderTemplate(w, "user-main", p)
 }
 
 // ProfileHandler renders the profile page template.
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	p, _ := getContent(w, r)
+	p := getContent()
 	page.RenderTemplate(w, "profile", p)
 }
 
@@ -34,32 +36,27 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 // Stores the image in the location defined by the asset ID and avatar ID.
 // The file is named by the avatar ID and the folder is determined by the asset ID.
 func UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
-	p, data := getContent(w, r)
+	p := getContent()
 
-	asset := (*data)["user-assets"].(*models.Asset)
-	if err := asset.SetID(models.Avatar); err != nil {
+	if err := auth.UserData.Assets.SetImagePath(UserAvatar); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update avatar asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	path, err := asset.GetPath(models.Avatar)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to load assets path. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
+	path := auth.UserData.Assets.GetImagePath(UserAvatar, DefaultAvatarPath)
 
-	if err := page.UploadFile(path, r); err != nil {
-		if err2 := asset.ClearID(models.Avatar); err2 != nil {
+	if err := uploadFile(path, r); err != nil {
+		if err2 := auth.UserData.Assets.ClearAsset(UserAvatar); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		http.Error(w, fmt.Sprintf("Failed to upload file. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	if err := page.SaveAssetReferences(asset); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to save asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
+	if err := app.ContextData.UserDBController.UpdateUserAssets(auth.UserData); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	(*p)["assets"].(map[string]interface{})[models.Avatar] = path
+	p["assets"].(map[string]interface{})[UserAvatar] = path
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }

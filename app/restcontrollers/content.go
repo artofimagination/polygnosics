@@ -2,60 +2,67 @@ package restcontrollers
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"polygnosics/app/restcontrollers/auth"
 
-	"polygnosics/app/restcontrollers/page"
-	"polygnosics/app/restcontrollers/session"
-
-	"github.com/artofimagination/mysql-user-db-go-interface/models"
-	"github.com/artofimagination/mysql-user-db-go-interface/mysqldb"
-
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
-func getContent(w http.ResponseWriter, r *http.Request) (*map[string]interface{}, *map[string]interface{}) {
-	session, err := session.Store.Get(r, "cookie-name")
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get cookie. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return nil, nil
-	}
+const (
+	DefaultAvatarPath = "/assets/images/avatar.jpg"
+)
 
-	user, err := mysqldb.GetUserByID(uuid.MustParse(session.Values["user"].(string)))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to load user. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return nil, nil
-	}
+const (
+	UserAvatar     = "user_avatar"
+	UserBackground = "user_background"
 
-	// Assets are introduced later, some users will have no assets associated yet.
-	// Second solution could be to do this during migration, but with a large database it would take long time
-	if user.AssetsID == models.NullUUID {
-		if err := mysqldb.UpdateAssetID(user); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to update user assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
-			return nil, nil
-		}
-	}
+	ProductDescription = "product_description"
+)
 
-	asset, err := page.LoadAssetReferences(&user.AssetsID)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to load user assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return nil, nil
-	}
-
+func getContent() map[string]interface{} {
 	p := make(map[string]interface{})
 	p["assets"] = make(map[string]interface{})
-	path, err := asset.GetPath(models.Avatar)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to load assets path. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return nil, nil
-	}
-	p["assets"].(map[string]interface{})[models.Avatar] = path
+	path := auth.UserData.Assets.GetImagePath(UserAvatar, DefaultAvatarPath)
+	p["assets"].(map[string]interface{})[UserAvatar] = path
 	p["texts"] = make(map[string]interface{})
 	p["texts"].(map[string]interface{})["avatar-upload"] = "Upload your avatar"
-	p["texts"].(map[string]interface{})["username"] = user.Name
+	p["texts"].(map[string]interface{})["username"] = auth.UserData.Name
 
-	data := make(map[string]interface{})
-	data["user-data"] = user
-	data["user-assets"] = asset
-	return &p, &data
+	return p
+}
+
+func uploadFile(destination string, r *http.Request) error {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		return err
+	}
+
+	file, handler, err := r.FormFile("asset")
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
+	fmt.Printf("File Size: %+v\n", handler.Size)
+	fmt.Printf("MIME Header: %+v\n", handler.Header)
+
+	// Create file
+	dst, err := os.Create(destination)
+	if err != nil {
+		if err2 := dst.Close(); err2 != nil {
+			err = errors.Wrap(errors.WithStack(err), err2.Error())
+		}
+		return err
+	}
+
+	// Copy the uploaded file to the created file on the file system.
+	if _, err := io.Copy(dst, file); err != nil {
+		if err2 := dst.Close(); err2 != nil {
+			err = errors.Wrap(errors.WithStack(err), err2.Error())
+		}
+		return err
+	}
+
+	return nil
 }

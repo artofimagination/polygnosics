@@ -6,6 +6,6 @@ import (
 )
 
 func MyProductsHandler(w http.ResponseWriter, r *http.Request) {
-	p, _ := getContent(w, r)
+	p := getContent()
 	page.RenderTemplate(w, "my-products", p)
 }
