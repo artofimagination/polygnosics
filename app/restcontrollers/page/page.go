@@ -28,7 +28,9 @@ var htmls = []string{
 	"/web/templates/auth_signup.html",
 	"/web/templates/auth_login.html",
 	"/web/templates/products/store.html",
+	"/web/templates/products/new-product-wizard.html",
 	"/web/templates/components/side-bar.html",
+	"/web/templates/components/content-header.html",
 }
 var paths = []string{}
 

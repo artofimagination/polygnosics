@@ -38,6 +38,8 @@ github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208025208-f
 github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208025208-f9c56f946e82/go.mod h1:eIk7HbXDcOqQ65L7XCo5/hDJTtFrEdLAR5VvfgMTVE0=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208210557-dcf35d196d29 h1:u3DHKk8ZasmgJlvoT4+NnuF3KOUyAhliw2QJA++8qC8=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208210557-dcf35d196d29/go.mod h1:eIk7HbXDcOqQ65L7XCo5/hDJTtFrEdLAR5VvfgMTVE0=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208231413-00a2e1fc749d h1:dmdPxvLm8Z67+qatsHYsN88MwTehkL8W3C+WpeER+uo=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208231413-00a2e1fc749d/go.mod h1:eIk7HbXDcOqQ65L7XCo5/hDJTtFrEdLAR5VvfgMTVE0=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.8 h1:7mjv8ss7e6+sUtoxOSMUXtjeaZGtLFoJ05IHBw6vojk=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.8/go.mod h1:eIk7HbXDcOqQ65L7XCo5/hDJTtFrEdLAR5VvfgMTVE0=
 github.com/aryann/difflib v0.0.0-20170710044230-e206f873d14a/go.mod h1:DAHtR1m6lCRdSC2Tm3DSWRPvIPr6xNKyeHdqDQSQT+A=

@@ -6,6 +6,6 @@ import (
 )
 
 func StoreHandler(w http.ResponseWriter, r *http.Request) {
-	p := getContent()
+	p := getUserContent()
 	page.RenderTemplate(w, "store", p)
 }

@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path"
@@ -25,7 +24,7 @@ func encryptPassword(password []byte) ([]byte, error) {
 	return hashedPassword, nil
 }
 
-func generatePath(assetID *uuid.UUID) (string, error) {
+func GeneratePath(assetID *uuid.UUID) (string, error) {
 	re := regexp.MustCompile(`(\S{4})`)
 	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
 	assetStringSplit := re.FindAllString(assetIDString, -1)
@@ -35,7 +34,6 @@ func generatePath(assetID *uuid.UUID) (string, error) {
 	if err := os.MkdirAll(assetPath, os.ModePerm); err != nil {
 		return "", err
 	}
-	log.Println(assetPath)
 	return assetPath, nil
 }
 
@@ -58,7 +56,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		p["route"] = "/index"
 		p["button_text"] = "OK"
 
-		_, err := app.ContextData.UserDBController.CreateUser(uName, email, pwd, generatePath, encryptPassword)
+		_, err := app.ContextData.UserDBController.CreateUser(uName, email, pwd, GeneratePath, encryptPassword)
 		if err != nil {
 			p["message"] = fmt.Sprintf("Failed to add user. %s", err.Error())
 		}

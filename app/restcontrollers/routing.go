@@ -55,6 +55,7 @@ func CreateRouter() *mux.Router {
 	userMain.HandleFunc("/upload-avatar", page.MakeHandler(UploadAvatarHandler, r, false))
 	userMain.HandleFunc("/store", page.MakeHandler(StoreHandler, r, false))
 	userMain.HandleFunc("/my-products", page.MakeHandler(MyProductsHandler, r, false))
+	userMain.HandleFunc("/new-product-wizard", page.MakeHandler(CreateProduct, r, false))
 	userMain.HandleFunc("/profile", page.MakeHandler(ProfileHandler, r, false))
 	userMain.HandleFunc("/new", page.MakeHandler(NewProject, r, false))
 	userMain.HandleFunc("/{project}/run", page.MakeHandler(RunProject, r, false))
