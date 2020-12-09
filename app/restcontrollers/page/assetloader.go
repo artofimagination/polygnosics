@@ -12,10 +12,11 @@ import (
 	"github.com/google/uuid"
 )
 
+var splitRegexp = regexp.MustCompile(`(\S{4})`)
+
 func generatePath(assetID *uuid.UUID) string {
-	re := regexp.MustCompile(`(\S{4})`)
 	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
-	assetStringSplit := re.FindAllString(assetIDString, -1)
+	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
 	path := path.Join(assetStringSplit...)
 	return path
 }
