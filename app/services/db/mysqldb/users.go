@@ -16,7 +16,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 	email = strings.ReplaceAll(email, " ", "")
 
 	var user models.User
-	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id) from users where email = ?"
+	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id), BIN_TO_UUID(user_assets_id) from users where email = ?"
 	db, err := ConnectSystem()
 	if err != nil {
 		return nil, err
@@ -31,17 +31,32 @@ func GetUserByEmail(email string) (*models.User, error) {
 	defer query.Close()
 
 	query.Next()
-	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID); err != nil {
+	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID, &user.AssetsID); err != nil {
 		return nil, err
 	}
 
 	return &user, nil
 }
 
+// Adds a new assetID if there is non assigned yet.
+// This only can happen if the user was generated before introduction of assets.
+func UpdateAssetID(user *models.User) error {
+	assetID, err := AddAsset()
+	if err != nil {
+		return err
+	}
+
+	user.AssetsID = *assetID
+	if err := addUserAssetID(user); err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetUserByID returns the user defined by it uuid.
 func GetUserByID(ID uuid.UUID) (*models.User, error) {
 	var user models.User
-	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id) from users where id = UUID_TO_BIN(?)"
+	queryString := "select BIN_TO_UUID(id), name, email, password, BIN_TO_UUID(user_settings_id), BIN_TO_UUID(user_assets_id) from users where id = UUID_TO_BIN(?)"
 	db, err := ConnectSystem()
 	if err != nil {
 		return nil, err
@@ -56,11 +71,29 @@ func GetUserByID(ID uuid.UUID) (*models.User, error) {
 	defer query.Close()
 
 	query.Next()
-	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID); err != nil {
+	if err := query.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.SettingsID, &user.AssetsID); err != nil {
 		return nil, err
 	}
 
 	return &user, nil
+}
+
+func addUserAssetID(user *models.User) error {
+	queryString := "UPDATE users set user_assets_id = UUID_TO_BIN(?) where id = UUID_TO_BIN(?)"
+	db, err := ConnectSystem()
+	if err != nil {
+		return err
+	}
+
+	defer db.Close()
+
+	query, err := db.Query(queryString, user.AssetsID, user.ID)
+	if err != nil {
+		return err
+	}
+
+	defer query.Close()
+	return nil
 }
 
 func UserExists(username string) (bool, error) {
@@ -122,7 +155,7 @@ func IsPasswordCorrect(password string, user *models.User) bool {
 func AddUser(name string, email string, passwd string) error {
 	email = strings.ReplaceAll(email, " ", "")
 
-	queryString := "INSERT INTO users (id, name, email, password, user_settings_id) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, UUID_TO_BIN(?))"
+	queryString := "INSERT INTO users (id, name, email, password, user_settings_id, user_assets_id) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, UUID_TO_BIN(?), UUID_TO_BIN(?))"
 	db, err := ConnectSystem()
 	if err != nil {
 		return err
@@ -135,6 +168,11 @@ func AddUser(name string, email string, passwd string) error {
 		return err
 	}
 
+	assetID, err := AddAsset()
+	if err != nil {
+		return err
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(passwd), 16)
 	if err != nil {
 		if err := DeleteSettings(settingsID); err != nil {
@@ -143,7 +181,7 @@ func AddUser(name string, email string, passwd string) error {
 		return err
 	}
 
-	query, err := db.Query(queryString, name, email, hashedPassword, &settingsID)
+	query, err := db.Query(queryString, name, email, hashedPassword, &settingsID, &assetID)
 	if err != nil {
 		if err := DeleteSettings(settingsID); err != nil {
 			return errors.Wrap(errors.WithStack(err), "Failed to revert settings creation")

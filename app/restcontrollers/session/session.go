@@ -1,14 +1,15 @@
 package session
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -16,35 +17,33 @@ var (
 	Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")), []byte(os.Getenv("SESSION_ENCRYPTION")))
 )
 
-func EncryptUserAndOrigin(userid uuid.UUID, origin string) (*[]byte, error) {
+func EncryptUserAndOrigin(userid uuid.UUID, origin string) (string, error) {
 	data := make(map[string]interface{})
 	data["userid"] = userid.String()
-	data["origin"] = origin
+	data["origin"] = strings.Split(origin, ":")[0]
 
 	binary, err := json.Marshal(data)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword(binary, 4)
-	if err != nil {
-		return nil, err
-	}
+	encoded := base64.StdEncoding.EncodeToString(binary)
 
-	return &hashedPassword, nil
+	return encoded, nil
 }
 
-func matchingUserAndOrigin(userid uuid.UUID, origin string, cookieData *[]byte) (bool, error) {
+func matchingUserAndOrigin(userid uuid.UUID, origin string, cookieData string) (bool, error) {
 	data := make(map[string]interface{})
 	data["userid"] = userid.String()
-	data["origin"] = origin
+	data["origin"] = strings.Split(origin, ":")[0]
 
 	binary, err := json.Marshal(data)
 	if err != nil {
 		return false, err
 	}
 
-	if err = bcrypt.CompareHashAndPassword(*cookieData, binary); err != nil {
+	encoded := base64.StdEncoding.EncodeToString(binary)
+	if encoded != cookieData {
 		return false, nil
 	}
 
@@ -57,12 +56,12 @@ func IsAuthenticated(userID uuid.UUID, session *sessions.Session, r *http.Reques
 		return false, nil
 	}
 
-	binary, ok := session.Values["cookie_key"].([]byte)
+	cookieKey, ok := session.Values["cookie_key"].(string)
 	if !ok {
 		return false, errors.New("Failed to decode cookie key")
 	}
 
-	match, err := matchingUserAndOrigin(userID, r.RemoteAddr, &binary)
+	match, err := matchingUserAndOrigin(userID, r.RemoteAddr, cookieKey)
 	if err != nil {
 		return false, err
 	}
