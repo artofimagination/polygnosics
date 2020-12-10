@@ -3,6 +3,8 @@ package auth
 import (
 	"fmt"
 	"net/http"
+	"path"
+	"regexp"
 	"strings"
 
 	"polygnosics/app"
@@ -11,6 +13,8 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var splitRegexp = regexp.MustCompile(`(\S{4})`)
 
 func encryptPassword(password []byte) ([]byte, error) {
 	var hashedPassword []byte
@@ -22,13 +26,9 @@ func encryptPassword(password []byte) ([]byte, error) {
 }
 
 func generatePath(assetID *uuid.UUID) string {
-	path := ""
-	increment := 4
-	assetIDString := assetID.String()
-	assetIDString = strings.Replace(assetIDString, "-", "", -1)
-	for i := 0; i < 31; i = i + increment {
-		path = fmt.Sprintf("%s/%s", path, assetIDString[i:i+increment])
-	}
+	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
+	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
+	path := path.Join(assetStringSplit...)
 	return path
 }
 
