@@ -15,6 +15,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var splitRegexp = regexp.MustCompile(`(\S{4})`)
+
 func encryptPassword(password []byte) ([]byte, error) {
 	var hashedPassword []byte
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, 16)
@@ -25,9 +27,8 @@ func encryptPassword(password []byte) ([]byte, error) {
 }
 
 func GeneratePath(assetID *uuid.UUID) (string, error) {
-	re := regexp.MustCompile(`(\S{4})`)
 	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
-	assetStringSplit := re.FindAllString(assetIDString, -1)
+	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
 	assetPath := path.Join(assetStringSplit...)
 	rootPath := os.Getenv("USER_STORE_DOCKER")
 	assetPath = path.Join(rootPath, assetPath)
