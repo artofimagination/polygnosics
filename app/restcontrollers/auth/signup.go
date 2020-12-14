@@ -29,9 +29,8 @@ func encryptPassword(password []byte) ([]byte, error) {
 func GeneratePath(assetID *uuid.UUID) (string, error) {
 	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
 	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
-	assetPath := path.Join(assetStringSplit...)
 	rootPath := os.Getenv("USER_STORE_DOCKER")
-	assetPath = path.Join(rootPath, assetPath)
+	assetPath := path.Join(rootPath, assetStringSplit...)
 	if err := os.MkdirAll(assetPath, os.ModePerm); err != nil {
 		return "", err
 	}
