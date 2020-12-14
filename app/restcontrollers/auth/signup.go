@@ -3,15 +3,39 @@ package auth
 import (
 	"fmt"
 	"net/http"
+	"path"
+	"regexp"
+	"strings"
 
+	"polygnosics/app"
 	"polygnosics/app/restcontrollers/page"
-	"polygnosics/app/services/db/mysqldb"
+
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
+
+var splitRegexp = regexp.MustCompile(`(\S{4})`)
+
+func encryptPassword(password []byte) ([]byte, error) {
+	var hashedPassword []byte
+	hashedPassword, err := bcrypt.GenerateFromPassword(password, 16)
+	if err != nil {
+		return hashedPassword, err
+	}
+	return hashedPassword, nil
+}
+
+func generatePath(assetID *uuid.UUID) string {
+	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
+	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
+	path := path.Join(assetStringSplit...)
+	return path
+}
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		p := make(map[string]interface{})
-		page.RenderTemplate(w, "auth_signup", &p)
+		page.RenderTemplate(w, "auth_signup", p)
 	} else {
 		if err := r.ParseForm(); err != nil {
 			page.HandleError("index", "Failed to parse form", w)
@@ -19,7 +43,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		uName := r.FormValue("username")
 		email := r.FormValue("email")
-		pwd := r.FormValue("psw")
+		pwd := []byte(r.FormValue("psw"))
 
 		name := "confirm"
 		p := make(map[string]interface{})
@@ -27,27 +51,10 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		p["route"] = "/index"
 		p["button_text"] = "OK"
 
-		emailExist, err := mysqldb.EmailExists(email)
-		if emailExist {
-			p["message"] = fmt.Sprintf("Email address %+v already in use", email)
-		}
-
+		_, err := app.ContextData.UserDBController.CreateUser(uName, email, pwd, generatePath, encryptPassword)
 		if err != nil {
-			p["message"] = fmt.Sprintf("Failed to check email. %s", err.Error())
-		}
-
-		usernameExist, err := mysqldb.UserExists(uName)
-		if usernameExist {
-			p["message"] = fmt.Sprintf("Username %+v already in use", uName)
-		}
-
-		if err != nil {
-			p["message"] = fmt.Sprintf("Failed to check username. %s", err.Error())
-		}
-
-		if err = mysqldb.AddUser(uName, email, pwd); err != nil {
 			p["message"] = fmt.Sprintf("Failed to add user. %s", err.Error())
 		}
-		page.RenderTemplate(w, name, &p)
+		page.RenderTemplate(w, name, p)
 	}
 }

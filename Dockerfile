@@ -5,10 +5,13 @@ WORKDIR $GOPATH/src/polygnosics
 # Copy everything from the current directory to the PWD(Present Working Directory) inside the container
 COPY . .
 
-RUN apk add --update g++
+RUN apk add --update g++ git
+RUN git clone -b issue_11_add_functional_testing_interface https://github.com/artofimagination/mysql-user-db-go-interface /tmp/mysql-user-db-go-interface && \
+  cp -r /tmp/mysql-user-db-go-interface/db $GOPATH/src/polygnosics && \
+  rm -fr /tmp/mysql-user-db-go-interface
+
 RUN go mod tidy
-RUN apk --no-cache add curl && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.31.0
-RUN $GOPATH/bin/golangci-lint run -v
+
 RUN cd $GOPATH/src/polygnosics/ && go build main.go
 RUN chmod 0766 $GOPATH/src/polygnosics/scripts/init.sh
 

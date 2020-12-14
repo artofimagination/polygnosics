@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
+	github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208210557-dcf35d196d29
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0
@@ -16,7 +17,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pion/webrtc/v3 v3.0.0-beta.8
 	github.com/pkg/errors v0.9.1
-	github.com/rubenv/sql-migrate v0.0.0-20200402132117-435005d389bc
+	github.com/rubenv/sql-migrate v0.0.0-20200616145509-8d140a17f351
 	go.mongodb.org/mongo-driver v1.4.2
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 )
