@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers/auth"
-	"polygnosics/app/restcontrollers/page"
+	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/pkg/errors"
 )
@@ -19,36 +17,36 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 }
 
 // UserMainHandler renders the main page after login.
-func UserMainHandler(w http.ResponseWriter, r *http.Request) {
-	p := getUserContent()
-	page.RenderTemplate(w, "user-main", p)
+func (c *RESTController) UserMainHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	c.RenderTemplate(w, "user-main", p)
 }
 
 // ProfileHandler renders the profile page template.
-func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	p := getUserContent()
-	page.RenderTemplate(w, "profile", p)
+func (c *RESTController) ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	c.RenderTemplate(w, "profile", p)
 }
 
 // UploadAvatarHandler processes avatar upload request.
 // Stores the image in the location defined by the asset ID and avatar ID.
 // The file is named by the avatar ID and the folder is determined by the asset ID.
-func UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
-	p := getUserContent()
+func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
 
-	path, err := uploadUserFile(UserAvatar, DefaultUserAvatarPath, "asset", r)
+	path, err := c.ContentController.UploadUserFile(contents.UserAvatar, contents.DefaultUserAvatarPath, "asset", r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
 
-	if err := app.ContextData.UserDBController.UpdateUserAssets(auth.UserData); err != nil {
+	if err := c.UserDBController.UpdateUserAssets(c.ContentController.UserData); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	p["assets"].(map[string]interface{})[UserAvatar] = path
+	p["assets"].(map[string]interface{})[contents.UserAvatar] = path
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }

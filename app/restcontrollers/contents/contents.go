@@ -1,18 +1,22 @@
-package restcontrollers
+package contents
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers/auth"
+	"path"
+	"regexp"
+	"strings"
 
+	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
 	"github.com/pkg/errors"
 
 	"github.com/google/uuid"
 )
+
+// TODO Issue#40: Replace with redis storage.
 
 const (
 	DefaultUserAvatarPath    = "/assets/images/avatar.jpg"
@@ -38,7 +42,11 @@ const (
 	User
 )
 
-var ProductData *models.ProductData
+type ContentController struct {
+	UserData         *models.UserData
+	ProductData      *models.ProductData
+	UserDBController *dbcontrollers.MYSQLController
+}
 
 func isRequired(formName string) bool {
 	switch formName {
@@ -50,21 +58,21 @@ func isRequired(formName string) bool {
 	}
 }
 
-func getUserContent() map[string]interface{} {
+func (c *ContentController) GetUserContent() map[string]interface{} {
 	p := make(map[string]interface{})
 	p["assets"] = make(map[string]interface{})
-	path := auth.UserData.Assets.GetImagePath(UserAvatar, DefaultUserAvatarPath)
+	path := c.UserData.Assets.GetImagePath(UserAvatar, DefaultUserAvatarPath)
 	p["assets"].(map[string]interface{})[UserAvatar] = path
 	p["texts"] = make(map[string]interface{})
 	p["texts"].(map[string]interface{})["avatar-upload"] = "Upload your avatar"
-	p["texts"].(map[string]interface{})["username"] = auth.UserData.Name
+	p["texts"].(map[string]interface{})["username"] = c.UserData.Name
 
 	return p
 }
 
-func getUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
+func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
 
-	products, err := app.ContextData.UserDBController.GetProductsByUserID(userID)
+	products, err := c.UserDBController.GetProductsByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
@@ -83,18 +91,18 @@ func getUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
 	return p, nil
 }
 
-func uploadUserFile(fileType string, defaultPath string, formName string, r *http.Request) (string, error) {
-	if auth.UserData == nil {
+func (c *ContentController) UploadUserFile(fileType string, defaultPath string, formName string, r *http.Request) (string, error) {
+	if c.UserData == nil {
 		return "", errors.New("User is not configured")
 	}
 
-	if err := auth.UserData.Assets.SetImagePath(fileType); err != nil {
+	if err := c.UserData.Assets.SetImagePath(fileType); err != nil {
 		return "", err
 	}
-	path := auth.UserData.Assets.GetImagePath(fileType, defaultPath)
+	path := c.UserData.Assets.GetImagePath(fileType, defaultPath)
 
 	if err := createFile(path, formName, r); err != nil {
-		if err2 := auth.UserData.Assets.ClearAsset(fileType); err2 != nil {
+		if err2 := c.UserData.Assets.ClearAsset(fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return "", err
@@ -102,7 +110,7 @@ func uploadUserFile(fileType string, defaultPath string, formName string, r *htt
 	return path, nil
 }
 
-func uploadProductFile(fileType string, defaultPath string, formName string, r *http.Request) error {
+func (c *ContentController) UploadProductFile(fileType string, defaultPath string, formName string, r *http.Request) error {
 	file, _, _ := r.FormFile(formName)
 	if isRequired(formName) && file == nil {
 		return fmt.Errorf("Missing form value for %s", formName)
@@ -110,17 +118,17 @@ func uploadProductFile(fileType string, defaultPath string, formName string, r *
 		return nil
 	}
 
-	if ProductData == nil {
+	if c.ProductData == nil {
 		return errors.New("Product is not configured")
 	}
 
-	if err := ProductData.Assets.SetImagePath(fileType); err != nil {
+	if err := c.ProductData.Assets.SetImagePath(fileType); err != nil {
 		return err
 	}
-	path := ProductData.Assets.GetImagePath(fileType, defaultPath)
+	path := c.ProductData.Assets.GetImagePath(fileType, defaultPath)
 
 	if err := createFile(path, formName, r); err != nil {
-		if err2 := ProductData.Assets.ClearAsset(fileType); err2 != nil {
+		if err2 := c.ProductData.Assets.ClearAsset(fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
@@ -157,4 +165,18 @@ func createFile(destination string, formName string, r *http.Request) error {
 	}
 
 	return nil
+}
+
+var splitRegexp = regexp.MustCompile(`(\S{4})`)
+
+func (*ContentController) GeneratePath(assetID *uuid.UUID) (string, error) {
+	assetIDString := strings.Replace(assetID.String(), "-", "", -1)
+	assetStringSplit := splitRegexp.FindAllString(assetIDString, -1)
+	assetPath := path.Join(assetStringSplit...)
+	rootPath := os.Getenv("USER_STORE_DOCKER")
+	assetPath = path.Join(rootPath, assetPath)
+	if err := os.MkdirAll(assetPath, os.ModePerm); err != nil {
+		return "", err
+	}
+	return assetPath, nil
 }

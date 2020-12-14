@@ -3,16 +3,15 @@ package restcontrollers
 import (
 	"fmt"
 	"net/http"
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers/auth"
-	"polygnosics/app/restcontrollers/page"
+
+	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/pkg/errors"
 )
 
-func MyProductsHandler(w http.ResponseWriter, r *http.Request) {
-	pUser := getUserContent()
-	pProduct, err := getUserProductContent(&auth.UserData.ID)
+func (c *RESTController) MyProductsHandler(w http.ResponseWriter, r *http.Request) {
+	pUser := c.ContentController.GetUserContent()
+	pProduct, err := c.ContentController.GetUserProductContent(&c.ContentController.UserData.ID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
@@ -20,19 +19,19 @@ func MyProductsHandler(w http.ResponseWriter, r *http.Request) {
 	for k, v := range pProduct {
 		pUser[k] = v
 	}
-	page.RenderTemplate(w, "my-products", pUser)
+	c.RenderTemplate(w, "my-products", pUser)
 }
 
-func CreateProduct(w http.ResponseWriter, r *http.Request) {
-	p := getUserContent()
-	if r.Method == "GET" {
-		page.RenderTemplate(w, "new-product-wizard", p)
+func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	if r.Method == GET {
+		c.RenderTemplate(w, "new-product-wizard", p)
 	} else {
 		name := "user-main"
 
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
 			p["message"] = "Failed to parse form"
-			page.RenderTemplate(w, name, p)
+			c.RenderTemplate(w, name, p)
 			return
 		}
 
@@ -41,16 +40,20 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			isPublic = true
 		}
 
-		product, err := app.ContextData.UserDBController.CreateProduct(r.FormValue("productName"), isPublic, &auth.UserData.ID, auth.GeneratePath)
+		product, err := c.UserDBController.CreateProduct(
+			r.FormValue("productName"),
+			isPublic,
+			&c.ContentController.UserData.ID,
+			c.ContentController.GeneratePath)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Failed to create product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
-		ProductData = product
+		c.ContentController.ProductData = product
 
-		err = uploadProductFile(ProductAvatar, DefaultUserAvatarPath, "product-avatar", r)
+		err = c.ContentController.UploadProductFile(contents.ProductAvatar, contents.DefaultUserAvatarPath, "product-avatar", r)
 		if err != nil {
-			if errDelete := app.ContextData.UserDBController.DeleteProduct(&ProductData.ID); errDelete != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&c.ContentController.ProductData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -58,9 +61,9 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = uploadProductFile(ProductMainApp, "", "main-app", r)
+		err = c.ContentController.UploadProductFile(contents.ProductMainApp, "", "main-app", r)
 		if err != nil {
-			if errDelete := app.ContextData.UserDBController.DeleteProduct(&ProductData.ID); errDelete != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&c.ContentController.ProductData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -68,9 +71,9 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = uploadProductFile(ProductClientApp, "", "client-app", r)
+		err = c.ContentController.UploadProductFile(contents.ProductClientApp, "", "client-app", r)
 		if err != nil {
-			if errDelete := app.ContextData.UserDBController.DeleteProduct(&ProductData.ID); errDelete != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&c.ContentController.ProductData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -78,12 +81,12 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		ProductData.Details.SetURL(ProductName, r.FormValue("productName"))
-		ProductData.Details.SetURL(ProductRequires3D, r.FormValue("requires3D"))
-		ProductData.Details.SetURL(ProductPublic, r.FormValue("publicProduct"))
-		ProductData.Details.SetURL(ProductURL, r.FormValue("productUrl"))
-		if err := app.ContextData.UserDBController.UpdateProductDetails(ProductData); err != nil {
-			if errDelete := app.ContextData.UserDBController.DeleteProduct(&ProductData.ID); errDelete != nil {
+		c.ContentController.ProductData.Details.SetURL(contents.ProductName, r.FormValue("productName"))
+		c.ContentController.ProductData.Details.SetURL(contents.ProductRequires3D, r.FormValue("requires3D"))
+		c.ContentController.ProductData.Details.SetURL(contents.ProductPublic, r.FormValue("publicProduct"))
+		c.ContentController.ProductData.Details.SetURL(contents.ProductURL, r.FormValue("productUrl"))
+		if err := c.UserDBController.UpdateProductDetails(c.ContentController.ProductData); err != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&c.ContentController.ProductData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -91,8 +94,8 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := app.ContextData.UserDBController.UpdateProductAssets(ProductData); err != nil {
-			if errDelete := app.ContextData.UserDBController.DeleteProduct(&ProductData.ID); errDelete != nil {
+		if err := c.UserDBController.UpdateProductAssets(c.ContentController.ProductData); err != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&c.ContentController.ProductData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -100,6 +103,6 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		page.RenderTemplate(w, name, p)
+		c.RenderTemplate(w, name, p)
 	}
 }

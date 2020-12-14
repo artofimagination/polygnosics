@@ -7,9 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"polygnosics/app/restcontrollers/auth"
-	"polygnosics/app/restcontrollers/page"
-
 	"github.com/gorilla/mux"
 )
 
@@ -38,29 +35,29 @@ func (m FileSystem) Open(name string) (result http.File, err error) {
 }
 
 // CreateRouter creates the page path structure.
-func CreateRouter() *mux.Router {
+func CreateRouter(c *RESTController) *mux.Router {
 	r := mux.NewRouter()
 	// Publicly accessable pages
-	r.HandleFunc("/auth_signup", page.MakeHandler(auth.SignupHandler, r, true))
-	r.HandleFunc("/auth_login", page.MakeHandler(auth.LoginHandler, r, true))
-	r.HandleFunc("/about", page.MakeHandler(AboutUsHandler, r, true))
-	r.HandleFunc("/index", page.MakeHandler(IndexHandler, r, true))
-	r.HandleFunc("/", page.MakeHandler(IndexHandler, r, true))
+	r.HandleFunc("/auth_signup", c.MakeHandler(c.SignupHandler, r, true))
+	r.HandleFunc("/auth_login", c.MakeHandler(c.LoginHandler, r, true))
+	r.HandleFunc("/about", c.MakeHandler(c.AboutUsHandler, r, true))
+	r.HandleFunc("/index", c.MakeHandler(c.IndexHandler, r, true))
+	r.HandleFunc("/", c.MakeHandler(c.IndexHandler, r, true))
 
 	// Authenticated pages
-	r.HandleFunc("/auth_logout", page.MakeHandler(auth.LogoutHandler, r, false))
-	r.HandleFunc("/user-main", page.MakeHandler(UserMainHandler, r, false))
-	r.HandleFunc("/user-settings", page.MakeHandler(UserSettings, r, false))
+	r.HandleFunc("/auth_logout", c.MakeHandler(c.LogoutHandler, r, false))
+	r.HandleFunc("/user-main", c.MakeHandler(c.UserMainHandler, r, false))
+	r.HandleFunc("/user-settings", c.MakeHandler(UserSettings, r, false))
 	userMain := r.PathPrefix("/user-main").Subrouter()
-	userMain.HandleFunc("/upload-avatar", page.MakeHandler(UploadAvatarHandler, r, false))
-	userMain.HandleFunc("/store", page.MakeHandler(StoreHandler, r, false))
-	userMain.HandleFunc("/my-products", page.MakeHandler(MyProductsHandler, r, false))
-	userMain.HandleFunc("/new-product-wizard", page.MakeHandler(CreateProduct, r, false))
-	userMain.HandleFunc("/profile", page.MakeHandler(ProfileHandler, r, false))
-	userMain.HandleFunc("/new", page.MakeHandler(NewProject, r, false))
-	userMain.HandleFunc("/{project}/run", page.MakeHandler(RunProject, r, false))
-	userMain.HandleFunc("/{project}/webrtc", page.MakeHandler(StartWebRTC, r, false))
-	userMain.HandleFunc("/resume", page.MakeHandler(NewProject, r, false))
+	userMain.HandleFunc("/upload-avatar", c.MakeHandler(c.UploadAvatarHandler, r, false))
+	userMain.HandleFunc("/store", c.MakeHandler(c.StoreHandler, r, false))
+	userMain.HandleFunc("/my-products", c.MakeHandler(c.MyProductsHandler, r, false))
+	userMain.HandleFunc("/new-product-wizard", c.MakeHandler(c.CreateProduct, r, false))
+	userMain.HandleFunc("/profile", c.MakeHandler(c.ProfileHandler, r, false))
+	userMain.HandleFunc("/new", c.MakeHandler(NewProject, r, false))
+	userMain.HandleFunc("/{project}/run", c.MakeHandler(RunProject, r, false))
+	userMain.HandleFunc("/{project}/webrtc", c.MakeHandler(StartWebRTC, r, false))
+	userMain.HandleFunc("/resume", c.MakeHandler(NewProject, r, false))
 
 	// Static file servers
 	// Default web assets

@@ -23,7 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initiate context. %s\n", errors.WithStack(err))
 	}
-	app.ContextData = context
 
 	config, err := configloader.LoadDBConfigFromEnv("Timescale")
 	if err != nil {
@@ -44,7 +43,7 @@ func main() {
 
 	// Create Server and Route Handlers
 	srv := &http.Server{
-		Handler:      restcontrollers.CreateRouter(),
+		Handler:      restcontrollers.CreateRouter(context.RESTController),
 		Addr:         ":8081",
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,

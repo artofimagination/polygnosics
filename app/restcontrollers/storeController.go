@@ -2,10 +2,9 @@ package restcontrollers
 
 import (
 	"net/http"
-	"polygnosics/app/restcontrollers/page"
 )
 
-func StoreHandler(w http.ResponseWriter, r *http.Request) {
-	p := getUserContent()
-	page.RenderTemplate(w, "store", p)
+func (c *RESTController) StoreHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	c.RenderTemplate(w, "store", p)
 }
