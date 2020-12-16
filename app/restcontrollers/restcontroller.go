@@ -1,18 +1,24 @@
-package page
+package restcontrollers
 
 import (
 	"fmt"
 	"net/http"
 	"os"
+	"polygnosics/app/restcontrollers/contents"
+	"polygnosics/app/restcontrollers/session"
 	"text/template"
 
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers/session"
-
+	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
+
+type RESTController struct {
+	UserDBController    *dbcontrollers.MYSQLController
+	ProjectDBController *dbcontrollers.ProjectDBDummy
+	ContentController   *contents.ContentController
+}
 
 var htmls = []string{
 	"/web/templates/about.html",
@@ -23,13 +29,34 @@ var htmls = []string{
 	"/web/templates/user/profile.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
+	"/web/templates/user/my-products.html",
 	"/web/templates/project/run.html",
 	"/web/templates/auth_signup.html",
-	"/web/templates/auth_login.html"}
+	"/web/templates/auth_login.html",
+	"/web/templates/products/store.html",
+	"/web/templates/products/new-product-wizard.html",
+	"/web/templates/components/side-bar.html",
+	"/web/templates/components/content-header.html",
+}
 var paths = []string{}
 
+const (
+	GET     = "GET"
+	Confirm = "confirm"
+)
+
+func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {
+	controller := &RESTController{
+		UserDBController: userDB,
+		ContentController: &contents.ContentController{
+			UserDBController: userDB,
+		},
+	}
+	return controller
+}
+
 // MakeHandler creates the page handler and check the route validity.
-func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router, isPublicPage bool) http.HandlerFunc {
+func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router, isPublicPage bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
@@ -60,7 +87,7 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router
 				return
 			}
 
-			user, err := app.ContextData.UserDBController.GetUser(&userUUID)
+			user, err := c.UserDBController.GetUser(&userUUID)
 			if err != nil {
 				http.Error(w, "Unable to retrieve user info", http.StatusInternalServerError)
 				return
@@ -83,7 +110,7 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router
 }
 
 // RenderTemplate renders html.
-func RenderTemplate(w http.ResponseWriter, tmpl string, p map[string]interface{}) {
+func (c *RESTController) RenderTemplate(w http.ResponseWriter, tmpl string, p map[string]interface{}) {
 	wd, err := os.Getwd()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -104,10 +131,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p map[string]interface{}
 }
 
 // HandleError creates page details and renders html template for an error modal.
-func HandleError(route string, errorStr string, w http.ResponseWriter) {
-	name := "confirm"
+func (c *RESTController) HandleError(route string, errorStr string, w http.ResponseWriter) {
 	p := make(map[string]interface{})
 	p["message"] = errorStr
 	p["route"] = fmt.Sprintf("/%s", route)
-	RenderTemplate(w, name, p)
+	c.RenderTemplate(w, Confirm, p)
 }

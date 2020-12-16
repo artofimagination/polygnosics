@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect
-	github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208210557-dcf35d196d29
+	github.com/artofimagination/mysql-user-db-go-interface v0.0.8-0.20201208231413-00a2e1fc749d
 	github.com/docker/distribution v2.7.1+incompatible // indirect
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0

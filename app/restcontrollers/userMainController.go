@@ -4,16 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers/auth"
-	"polygnosics/app/restcontrollers/page"
+	"polygnosics/app/restcontrollers/contents"
 
-	"github.com/artofimagination/mysql-user-db-go-interface/models"
 	"github.com/pkg/errors"
-)
-
-const (
-	DefaultAvatarPath = "/assets/images/avatar.jpg"
 )
 
 // NewProject is the handler for the page that is responsible for creating a new project.
@@ -23,55 +16,37 @@ func NewProject(w http.ResponseWriter, r *http.Request) {
 func UserSettings(w http.ResponseWriter, r *http.Request) {
 }
 
-func getContent() map[string]interface{} {
-	p := make(map[string]interface{})
-	p["assets"] = make(map[string]interface{})
-	path := auth.UserData.Assets.GetImagePath(models.UserAvatar, DefaultAvatarPath)
-	p["assets"].(map[string]interface{})[models.UserAvatar] = path
-	p["texts"] = make(map[string]interface{})
-	p["texts"].(map[string]interface{})["avatar-upload"] = "Upload your avatar"
-	p["texts"].(map[string]interface{})["username"] = auth.UserData.Name
-
-	return p
-}
-
 // UserMainHandler renders the main page after login.
-func UserMainHandler(w http.ResponseWriter, r *http.Request) {
-	p := getContent()
-	page.RenderTemplate(w, "user-main", p)
+func (c *RESTController) UserMainHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	c.RenderTemplate(w, "user-main", p)
 }
 
 // ProfileHandler renders the profile page template.
-func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	p := getContent()
-	page.RenderTemplate(w, "profile", p)
+func (c *RESTController) ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
+	c.RenderTemplate(w, "profile", p)
 }
 
 // UploadAvatarHandler processes avatar upload request.
 // Stores the image in the location defined by the asset ID and avatar ID.
 // The file is named by the avatar ID and the folder is determined by the asset ID.
-func UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
-	p := getContent()
+func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
+	p := c.ContentController.GetUserContent()
 
-	if err := auth.UserData.Assets.SetImagePath(models.UserAvatar); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to update avatar asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
 
-	path := auth.UserData.Assets.GetImagePath(models.UserAvatar, DefaultAvatarPath)
-
-	if err := page.UploadFile(path, r); err != nil {
-		if err2 := auth.UserData.Assets.ClearAsset(models.UserAvatar); err2 != nil {
-			err = errors.Wrap(errors.WithStack(err), err2.Error())
-		}
-		http.Error(w, fmt.Sprintf("Failed to upload file. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
+	path, err := c.ContentController.UploadUserFile(contents.UserAvatar, contents.DefaultUserAvatarPath, "asset", r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
 
-	if err := app.ContextData.UserDBController.UpdateUserAssets(auth.UserData); err != nil {
+	if err := c.UserDBController.UpdateUserAssets(c.ContentController.UserData); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	p["assets"].(map[string]interface{})[models.UserAvatar] = path
+	p["assets"].(map[string]interface{})[contents.UserAvatar] = path
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }
