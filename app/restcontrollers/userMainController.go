@@ -19,7 +19,7 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 // UserMainHandler renders the main page after login.
 func (c *RESTController) UserMainHandler(w http.ResponseWriter, r *http.Request) {
 	p := c.ContentController.GetUserContent()
-	c.RenderTemplate(w, "user-main", p)
+	c.RenderTemplate(w, UserMain, p)
 }
 
 // ProfileHandler renders the profile page template.
@@ -38,7 +38,11 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
 
-	path, err := c.ContentController.UploadUserFile(contents.UserAvatar, contents.DefaultUserAvatarPath, "asset", r)
+	if c.ContentController.UserData == nil {
+		http.Error(w, "User is not configured", http.StatusInternalServerError)
+	}
+
+	err := c.ContentController.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatar, contents.DefaultUserAvatarPath, "asset", r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
@@ -47,6 +51,6 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	p["assets"].(map[string]interface{})[contents.UserAvatar] = path
+	p["assets"].(map[string]interface{})[contents.UserAvatar] = c.ContentController.UserData.Assets.GetFilePath(contents.UserAvatar, contents.DefaultUserAvatarPath)
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }

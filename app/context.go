@@ -7,9 +7,8 @@ import (
 )
 
 type Context struct {
-	UserDBController    *dbcontrollers.MYSQLController
-	ProjectDBController *dbcontrollers.ProjectDBDummy
-	RESTController      *restcontrollers.RESTController
+	UserDBController *dbcontrollers.MYSQLController
+	RESTController   *restcontrollers.RESTController
 }
 
 func NewContext() (*Context, error) {
@@ -19,11 +18,9 @@ func NewContext() (*Context, error) {
 	}
 
 	context := &Context{
-		UserDBController:    userDBController,
-		ProjectDBController: &dbcontrollers.ProjectDBDummy{},
-		RESTController:      restcontrollers.NewRESTController(userDBController),
+		UserDBController: userDBController,
+		RESTController:   restcontrollers.NewRESTController(userDBController),
 	}
 
-	dbcontrollers.SetProjectDB(context.ProjectDBController)
 	return context, nil
 }

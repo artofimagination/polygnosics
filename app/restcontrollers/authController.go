@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"polygnosics/app/restcontrollers/contents"
 	"polygnosics/app/restcontrollers/session"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -34,7 +35,7 @@ func (c *RESTController) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		p["button_text"] = "OK"
 
 		if err := r.ParseForm(); err != nil {
-			p["message"] = "Failed to parse form"
+			p["message"] = contents.ErrFailedToParseForm
 			c.RenderTemplate(w, name, p)
 			return
 		}
@@ -132,7 +133,7 @@ func (c *RESTController) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		c.RenderTemplate(w, "auth_signup", p)
 	} else {
 		if err := r.ParseForm(); err != nil {
-			c.HandleError("index", "Failed to parse form", w)
+			c.HandleError("index", contents.ErrFailedToParseForm, w)
 			return
 		}
 		uName := r.FormValue("username")

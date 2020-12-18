@@ -15,7 +15,7 @@
 	  
 	<!-- Style-->  
 	<link rel="stylesheet" href="/assets/css/style.css">
-	<link rel="stylesheet" href="/assets/css/skin_color.css">	
+	<link rel="stylesheet" href="/assets/css/skin_color.css">
 
 </head>
 <body class="hold-transition dark-skin sidebar-mini theme-primary">
@@ -246,16 +246,85 @@
   </header>
   
 	<!-- Side bar-->
-	{{template "side-bar" .}} 
-
+	{{template "side-bar" .}}
+  
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 	  <div class="container-full">
-		<!-- Content header-->
-		{{template "content-header" .}}	 
-		
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title">Projects</h3>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">e-Commerce</li>
+								<li class="breadcrumb-item active" aria-current="page">Products</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div class="right-title">
+					<div class="d-flex mt-10 justify-content-end">
+						<div class="d-lg-flex mr-20 ml-10 d-none">
+							<div class="chart-text mr-10">
+								<h6 class="mb-0"><small>THIS MONTH</small></h6>
+								<h4 class="mt-0 text-primary">$12,125</h4>
+							</div>
+							<div class="spark-chart">
+								<div id="thismonth"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+							</div>
+						</div>
+						<div class="d-lg-flex mr-20 ml-10 d-none">
+							<div class="chart-text mr-10">
+								<h6 class="mb-0"><small>LAST YEAR</small></h6>
+								<h4 class="mt-0 text-danger">$22,754</h4>
+							</div>
+							<div class="spark-chart">
+								<div id="lastyear"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>   
+
 		<!-- Main content -->
 		<section class="content">
+
+		  <div class="row fx-element-overlay">
+				{{range $i, $a := .project}}
+					<div class="col-12 col-lg-6 col-xl-4">
+						<div class="box box-default">
+						<div class="fx-card-item">
+							<div class="fx-card-avatar fx-overlay-1"> <img src="{{index $a "project_avatar"}}" alt="project">
+								<div class="fx-overlay scrl-up">						
+									<ul class="fx-info">
+										<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-application"></i></a></li>
+										<li><a class="btn btn-outline" href="{{index $a "project_path"}}"><i class="mdi mdi-magnify"></i></a></li>
+										<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-delete"></i></a></li>
+										<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-settings"></i></a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="fx-card-content text-left mb-0">							
+								<div class="product-text">
+									<h2 class="pro-price" id="project_state">{{index $a "project_state"}}</h2>
+									<h4 class="box-title mb-0">{{index $a "name"}}</h4>
+									<small class="text-muted db">Lorem Ipsum Dummy Text</small>
+								</div>
+							</div>
+						</div>
+						</div>
+						<script>
+							document.getElementById("project_state").style.color = "{{index $a "project_state_color"}}";
+						</script>
+						<!-- /.box -->				  
+					</div>
+				{{end}} 
+		  </div>
 
 		</section>
 		<!-- /.content -->
@@ -275,8 +344,8 @@
 		</ul>
     </div>
 	  &copy; 2020 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
-  </footer>
-  
+	</footer>
+	
 	<!-- Side bar-->
 	{{template "side-bar" .}}
   
@@ -289,11 +358,13 @@
 	<!-- Vendor JS -->
 	<script src="/assets/js/vendors.min.js"></script>
     <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+    
+    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
 	
 	<!-- Venusx Admin App -->
 	<script src="/assets/js/template.js"></script>
 	<script src="/assets/js/demo.js"></script>
-	<script src="/assets/js/pages/ecommerce_details.js"></script>
 	
 
 </body>

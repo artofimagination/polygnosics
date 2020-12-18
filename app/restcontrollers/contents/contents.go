@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
+	"polygnosics/app/businesslogic/project"
 	"regexp"
 	"strings"
 
@@ -21,6 +23,7 @@ import (
 const (
 	DefaultUserAvatarPath    = "/assets/images/avatar.jpg"
 	DefaultProductAvatarPath = "/assets/images/avatar.jpg"
+	DefaultProjectAvatarPath = "/assets/images/avatar.jpg"
 )
 
 const (
@@ -32,9 +35,21 @@ const (
 	ProductClientApp   = "client-app"
 	ProductDescription = "product_description"
 	ProductName        = "product_name"
+	ProductPath        = "product_path"
 	ProductRequires3D  = "requires_3d"
 	ProductURL         = "product_url"
 	ProductPublic      = "is_public"
+
+	ProjectAvatar        = "project_avatar"
+	ProjectPath          = "project_path"
+	ProjectName          = "name"
+	ProjectVisibility    = "visibility"
+	ProjectServerLogging = "server_logging"
+	ProjectClientLogging = "client_logging"
+	NewProject           = "new_project"
+	RunProject           = "run_project"
+	ProjectState         = "project_state"
+	ProjectStateColor    = "project_state_color"
 )
 
 const (
@@ -42,26 +57,60 @@ const (
 	User
 )
 
+const (
+	Public    = "Public"
+	Protected = "Protected"
+	Private   = "Private"
+)
+
+var ErrFailedToParseForm = "Failed to parse form"
+
+type AssetInterface interface {
+	SetFilePath(typeString string, extension string) error
+	GetFilePath(typeString string, defaultPath string) string
+	SetField(typeString string, value interface{})
+	GetField(typeString string, defaultURL string) string
+	ClearAsset(typeString string) error
+}
+
 type ContentController struct {
 	UserData         *models.UserData
 	ProductData      *models.ProductData
+	ProjectData      *models.ProjectData
 	UserDBController *dbcontrollers.MYSQLController
 }
 
-func isRequired(formName string) bool {
-	switch formName {
-	case ProductMainApp,
-		ProductName:
-		return true
-	default:
-		return false
+func GetBooleanString(input string) string {
+	if input == "" {
+		return "No"
 	}
+	return input
+}
+
+func GetProjectStateColorString(state string) string {
+	switch state {
+	case project.NotRunning:
+		return "#f5cf0a" // orange
+	case project.Running:
+		return "#00ff00" // green
+	case project.Stopped:
+		return "#ff0000" // red
+	default:
+		return "#e0dfd6" // lightgray
+	}
+}
+
+func ValidateVisibility(value string) error {
+	if value != Public && value != Protected && value != Private {
+		return fmt.Errorf("Invalid visibility: %s", value)
+	}
+	return nil
 }
 
 func (c *ContentController) GetUserContent() map[string]interface{} {
 	p := make(map[string]interface{})
 	p["assets"] = make(map[string]interface{})
-	path := c.UserData.Assets.GetImagePath(UserAvatar, DefaultUserAvatarPath)
+	path := c.UserData.Assets.GetFilePath(UserAvatar, DefaultUserAvatarPath)
 	p["assets"].(map[string]interface{})[UserAvatar] = path
 	p["texts"] = make(map[string]interface{})
 	p["texts"].(map[string]interface{})["avatar-upload"] = "Upload your avatar"
@@ -70,8 +119,46 @@ func (c *ContentController) GetUserContent() map[string]interface{} {
 	return p
 }
 
-func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
+func generateProductContent(productData *models.ProductData) map[string]interface{} {
+	content := make(map[string]interface{})
+	content[ProductAvatar] = productData.Assets.GetFilePath(ProductAvatar, DefaultProductAvatarPath)
+	content[ProductName] = productData.Details.GetField(ProductName, "")
+	content[ProductPublic] = productData.Details.GetField(ProductPublic, "")
+	content[ProductDescription] = productData.Details.GetField(ProductDescription, "")
+	content[ProductPath] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
+	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
+	return content
+}
 
+func generateProjectContent(projectData *models.ProjectData) map[string]interface{} {
+	content := make(map[string]interface{})
+	content[ProjectAvatar] = projectData.Assets.GetFilePath(ProjectAvatar, DefaultProjectAvatarPath)
+	content[ProjectName] = projectData.Details.GetField(ProjectName, "")
+	content[ProjectVisibility] = projectData.Details.GetField(ProjectVisibility, "")
+	content[ProjectPath] = fmt.Sprintf("/user-main/my-projects/details?project=%s", projectData.ID.String())
+	content[ProjectState] = projectData.Details.GetField(ProjectState, "")
+	content[ProjectStateColor] = GetProjectStateColorString(projectData.Details.GetField(ProjectState, ""))
+	content[RunProject] = fmt.Sprintf("/user-main/my-projects/run?project=%s", projectData.ID.String())
+	return content
+}
+
+func (c *ContentController) GetProductContent(productID *uuid.UUID) (map[string]interface{}, error) {
+	product, err := c.UserDBController.GetProduct(productID)
+	if err != nil {
+		return nil, err
+	}
+	return generateProductContent(product), nil
+}
+
+func (c *ContentController) GetProjectContent(projectID *uuid.UUID) (map[string]interface{}, error) {
+	project, err := c.UserDBController.GetProject(projectID)
+	if err != nil {
+		return nil, err
+	}
+	return generateProjectContent(project), nil
+}
+
+func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
 	products, err := c.UserDBController.GetProductsByUserID(userID)
 	if err != nil {
 		return nil, err
@@ -81,76 +168,54 @@ func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string
 
 	productContent := make([]map[string]interface{}, len(products))
 	for i, product := range products {
-		content := make(map[string]interface{})
-		content[ProductAvatar] = product.ProductData.Assets.GetImagePath(ProductAvatar, DefaultProductAvatarPath)
-		content[ProductName] = product.ProductData.Details.GetURL(ProductName, "")
-		productContent[i] = content
+		productContent[i] = generateProductContent(&product.ProductData)
 	}
 	p["product"] = productContent
 
 	return p, nil
 }
 
-func (c *ContentController) UploadUserFile(fileType string, defaultPath string, formName string, r *http.Request) (string, error) {
-	if c.UserData == nil {
-		return "", errors.New("User is not configured")
+func (c *ContentController) GetUserProjectContent(userID *uuid.UUID) (map[string]interface{}, error) {
+	projects, err := c.UserDBController.GetProjectsByUserID(userID)
+	if err != nil {
+		return nil, err
 	}
 
-	if err := c.UserData.Assets.SetImagePath(fileType); err != nil {
-		return "", err
-	}
-	path := c.UserData.Assets.GetImagePath(fileType, defaultPath)
+	p := make(map[string]interface{})
 
-	if err := createFile(path, formName, r); err != nil {
-		if err2 := c.UserData.Assets.ClearAsset(fileType); err2 != nil {
-			err = errors.Wrap(errors.WithStack(err), err2.Error())
-		}
-		return "", err
+	projectContent := make([]map[string]interface{}, len(projects))
+	for i, project := range projects {
+		projectContent[i] = generateProjectContent(project.ProjectData)
 	}
-	return path, nil
+	p["project"] = projectContent
+
+	return p, nil
 }
 
-func (c *ContentController) UploadProductFile(fileType string, defaultPath string, formName string, r *http.Request) error {
-	file, _, _ := r.FormFile(formName)
-	if isRequired(formName) && file == nil {
-		return fmt.Errorf("Missing form value for %s", formName)
-	} else if !isRequired(formName) && file == nil {
-		return nil
-	}
-
-	if c.ProductData == nil {
-		return errors.New("Product is not configured")
-	}
-
-	if err := c.ProductData.Assets.SetImagePath(fileType); err != nil {
-		return err
-	}
-	path := c.ProductData.Assets.GetImagePath(fileType, defaultPath)
-
-	if err := createFile(path, formName, r); err != nil {
-		if err2 := c.ProductData.Assets.ClearAsset(fileType); err2 != nil {
-			err = errors.Wrap(errors.WithStack(err), err2.Error())
-		}
-		return err
-	}
-	return nil
-}
-
-func createFile(destination string, formName string, r *http.Request) error {
+func (c *ContentController) UploadFile(asset AssetInterface, fileType string, defaultPath string, formName string, r *http.Request) error {
 	file, handler, err := r.FormFile(formName)
 	if err != nil {
 		return err
 	}
 
-	defer file.Close()
 	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
 	fmt.Printf("File Size: %+v\n", handler.Size)
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
 
+	defer file.Close()
+
+	if err := asset.SetFilePath(fileType, filepath.Ext(handler.Filename)); err != nil {
+		return err
+	}
+	path := asset.GetFilePath(fileType, defaultPath)
+
 	// Create file
-	dst, err := os.Create(destination)
+	dst, err := os.Create(path)
 	if err != nil {
 		if err2 := dst.Close(); err2 != nil {
+			err = errors.Wrap(errors.WithStack(err), err2.Error())
+		}
+		if err2 := asset.ClearAsset(fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
@@ -159,6 +224,9 @@ func createFile(destination string, formName string, r *http.Request) error {
 	// Copy the uploaded file to the created file on the file system.
 	if _, err := io.Copy(dst, file); err != nil {
 		if err2 := dst.Close(); err2 != nil {
+			err = errors.Wrap(errors.WithStack(err), err2.Error())
+		}
+		if err2 := asset.ClearAsset(fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
