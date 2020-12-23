@@ -6,6 +6,7 @@ import (
 
 	"polygnosics/app/restcontrollers/contents"
 
+	"github.com/artofimagination/golang-docker/docker"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
@@ -99,13 +100,21 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = c.ContentController.UploadFile(product.Assets, contents.ProductClientApp, "", "client-app", r)
-		if err != nil {
+		if err := c.ContentController.UploadFile(product.Assets, contents.ProductClientApp, "", "client-app", r); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
 			http.Error(w, fmt.Sprintf("Failed to upload client app. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := docker.CreateImage("/srv/survival-game", "artofimagination/survival-game:latest"); err != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
+				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
+				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			}
+			http.Error(w, fmt.Sprintf("Failed to create product image. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
@@ -134,4 +143,5 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		c.RenderTemplate(w, name, p)
 	}
+
 }

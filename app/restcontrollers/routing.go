@@ -56,7 +56,6 @@ func CreateRouter(c *RESTController) *mux.Router {
 	userMain.HandleFunc("/new-product-wizard", c.MakeHandler(c.CreateProduct, r, false))
 	userMain.HandleFunc("/profile", c.MakeHandler(c.ProfileHandler, r, false))
 	userMain.HandleFunc("/new", c.MakeHandler(NewProject, r, false))
-	userMain.HandleFunc("/{project}/webrtc", c.MakeHandler(StartWebRTC, r, false))
 	userMain.HandleFunc("/resume", c.MakeHandler(NewProject, r, false))
 	myProducts := userMain.PathPrefix("/my-products").Subrouter()
 	myProducts.HandleFunc("/details", c.MakeHandler(c.ProductDetails, r, false))

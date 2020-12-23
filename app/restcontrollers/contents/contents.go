@@ -50,6 +50,7 @@ const (
 	RunProject           = "run_project"
 	ProjectState         = "project_state"
 	ProjectStateColor    = "project_state_color"
+	ProjectContainerID   = "project_container_id"
 )
 
 const (
@@ -135,6 +136,7 @@ func generateProjectContent(projectData *models.ProjectData) map[string]interfac
 	content[ProjectAvatar] = projectData.Assets.GetFilePath(ProjectAvatar, DefaultProjectAvatarPath)
 	content[ProjectName] = projectData.Details.GetField(ProjectName, "")
 	content[ProjectVisibility] = projectData.Details.GetField(ProjectVisibility, "")
+	content[ProjectContainerID] = projectData.Details.GetField(ProjectContainerID, "")
 	content[ProjectPath] = fmt.Sprintf("/user-main/my-projects/details?project=%s", projectData.ID.String())
 	content[ProjectState] = projectData.Details.GetField(ProjectState, "")
 	content[ProjectStateColor] = GetProjectStateColorString(projectData.Details.GetField(ProjectState, ""))
