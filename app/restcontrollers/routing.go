@@ -51,13 +51,19 @@ func CreateRouter(c *RESTController) *mux.Router {
 	userMain := r.PathPrefix("/user-main").Subrouter()
 	userMain.HandleFunc("/upload-avatar", c.MakeHandler(c.UploadAvatarHandler, r, false))
 	userMain.HandleFunc("/store", c.MakeHandler(c.StoreHandler, r, false))
-	userMain.HandleFunc("/my-products", c.MakeHandler(c.MyProductsHandler, r, false))
+	userMain.HandleFunc("/my-products", c.MakeHandler(c.MyProducts, r, false))
+	userMain.HandleFunc("/my-projects", c.MakeHandler(c.MyProjects, r, false))
 	userMain.HandleFunc("/new-product-wizard", c.MakeHandler(c.CreateProduct, r, false))
 	userMain.HandleFunc("/profile", c.MakeHandler(c.ProfileHandler, r, false))
 	userMain.HandleFunc("/new", c.MakeHandler(NewProject, r, false))
-	userMain.HandleFunc("/{project}/run", c.MakeHandler(RunProject, r, false))
 	userMain.HandleFunc("/{project}/webrtc", c.MakeHandler(StartWebRTC, r, false))
 	userMain.HandleFunc("/resume", c.MakeHandler(NewProject, r, false))
+	myProducts := userMain.PathPrefix("/my-products").Subrouter()
+	myProducts.HandleFunc("/details", c.MakeHandler(c.ProductDetails, r, false))
+	myProducts.HandleFunc("/new-project-wizard", c.MakeHandler(c.CreateProject, r, false))
+	myProjects := userMain.PathPrefix("/my-projects").Subrouter()
+	myProjects.HandleFunc("/details", c.MakeHandler(c.ProjectDetails, r, false))
+	myProjects.HandleFunc("/run", c.MakeHandler(c.RunProject, r, false))
 
 	// Static file servers
 	// Default web assets

@@ -15,9 +15,8 @@ import (
 )
 
 type RESTController struct {
-	UserDBController    *dbcontrollers.MYSQLController
-	ProjectDBController *dbcontrollers.ProjectDBDummy
-	ContentController   *contents.ContentController
+	UserDBController  *dbcontrollers.MYSQLController
+	ContentController *contents.ContentController
 }
 
 var htmls = []string{
@@ -29,20 +28,25 @@ var htmls = []string{
 	"/web/templates/user/profile.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
-	"/web/templates/user/my-products.html",
 	"/web/templates/project/run.html",
+	"/web/templates/project/project-details.html",
+	"/web/templates/project/my-projects.html",
+	"/web/templates/project/new-project-wizard.html",
 	"/web/templates/auth_signup.html",
 	"/web/templates/auth_login.html",
 	"/web/templates/products/store.html",
 	"/web/templates/products/new-product-wizard.html",
+	"/web/templates/products/my-products.html",
+	"/web/templates/products/details.html",
 	"/web/templates/components/side-bar.html",
 	"/web/templates/components/content-header.html",
 }
 var paths = []string{}
 
 const (
-	GET     = "GET"
-	Confirm = "confirm"
+	GET      = "GET"
+	Confirm  = "confirm"
+	UserMain = "user-main"
 )
 
 func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {

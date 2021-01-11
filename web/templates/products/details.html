@@ -245,174 +245,15 @@
     </nav>
   </header>
   
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar-->
-    <section class="sidebar">	
-		
-      <!-- sidebar menu-->
-      <ul class="sidebar-menu" data-widget="tree">
-	    <div class="user-profile px-20 py-5">
-			<div class="d-flex align-items-center">			
-				<div class="image">
-				  <img src="../images/avatar/1.jpg" class="avatar avatar-lg" alt="User Image">
-				</div>
-				<div class="info">
-					<a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">Johen Doe</a>
-					<div class="dropdown-menu">
-					  <a class="dropdown-item" href="#"><i class="ti-user"></i> Profile</a>
-					  <a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
-					  <a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
-					  <div class="dropdown-divider"></div>
-					  <a class="dropdown-item" href="#"><i class="ti-settings"></i> Settings</a>
-					</div>
-				</div>
-			</div>
-			<ul class="list-inline profile-setting mt-10 mb-0 d-flex justify-content-between">
-				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Search"><i data-feather="search"></i></a></li>
-				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Notification"><i data-feather="bell"></i></a></li>
-				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Chat"><i data-feather="message-square"></i></a></li>
-				<li><a href="#" data-toggle="tooltip" data-placement="top" title="Logout"><i data-feather="log-out"></i></a></li>
-			</ul>
-        </div>
-		<li class="header">Back To Dashboard</li> 
-		<li>
-          <a href="index.html">
-            <i data-feather="shopping-cart"></i>
-			<span>Dashboard 1</span>
-          </a>
-        </li>
-		<li>
-          <a href="index2.html">
-            <i data-feather="pie-chart"></i>
-			<span>Dashboard 2</span>
-          </a>
-        </li>
-		<li class="header">STARTER TEMPLATES</li> 
-		<li>
-          <a href="collections.html">
-            <i data-feather="layers"></i>
-			<span>Introduction</span>
-          </a>
-        </li> 
-		<li class="treeview">
-          <a href="#">
-            <i data-feather="layout"></i>
-            <span>Layout Options</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="layout_boxed.html"><i class="ti-more"></i>Boxed</a></li>
-            <li><a href="layout_fixed.html"><i class="ti-more"></i>Fixed</a></li>
-            <li><a href="layout_collapsed_sidebar.html"><i class="ti-more"></i>Mini Sidebar</a></li>
-          </ul>
-        </li>
-		<li class="treeview">
-          <a href="#">
-            <i data-feather="archive"></i>
-            <span>Widgets</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="widgets_blog.html"><i class="ti-more"></i>Blog</a></li>
-            <li><a href="widgets_chart.html"><i class="ti-more"></i>Chart</a></li>
-            <li><a href="widgets_list.html"><i class="ti-more"></i>List</a></li>
-            <li><a href="widgets_social.html"><i class="ti-more"></i>Social</a></li>
-            <li><a href="widgets_statistic.html"><i class="ti-more"></i>Statistic</a></li>
-            <li><a href="widgets_weather.html"><i class="ti-more"></i>Weather</a></li>
-            <li><a href="widgets.html"><i class="ti-more"></i>Widgets</a></li>
-          </ul>
-        </li> 
-		<li class="treeview">
-          <a href="#">
-            <i data-feather="x-square"></i>
-            <span>Modals</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-			<li><a href="component_modals.html"><i class="ti-more"></i>Modals</a></li>
-            <li><a href="component_sweatalert.html"><i class="ti-more"></i>Sweet Alert</a></li>
-            <li><a href="component_notification.html"><i class="ti-more"></i>Toastr</a></li>
-          </ul>
-        </li> 
-		<li class="treeview">
-          <a href="#">
-            <i data-feather="shopping-bag"></i>
-			<span>Ecommerce Pages</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="ecommerce_products.html"><i class="ti-more"></i>Products</a></li>
-            <li><a href="ecommerce_cart.html"><i class="ti-more"></i>Products Cart</a></li>
-            <li><a href="ecommerce_products_edit.html"><i class="ti-more"></i>Products Edit</a></li>
-            <li><a href="ecommerce_details.html"><i class="ti-more"></i>Product Details</a></li>
-            <li><a href="ecommerce_orders.html"><i class="ti-more"></i>Product Orders</a></li>
-            <li><a href="ecommerce_checkout.html"><i class="ti-more"></i>Products Checkout</a></li>
-          </ul>
-        </li>
-		<li>
-          <a href="email_index.html">
-            <i data-feather="mail"></i>
-			<span>Emails</span>
-          </a>
-        </li>        
-      </ul>
-    </section>
-  </aside>
-  
-  
+	<!-- Side bar-->
+	{{template "side-bar" .}} 
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 	  <div class="container-full">
-		<!-- Content Header (Page header) -->
-		<div class="content-header">
-			<div class="d-flex align-items-center">
-				<div class="mr-auto">
-					<h3 class="page-title">Details</h3>
-					<div class="d-inline-block align-items-center">
-						<nav>
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-								<li class="breadcrumb-item" aria-current="page">e-Commerce</li>
-								<li class="breadcrumb-item active" aria-current="page">Details</li>
-							</ol>
-						</nav>
-					</div>
-				</div>
-				<div class="right-title">
-					<div class="d-flex mt-10 justify-content-end">
-						<div class="d-lg-flex mr-20 ml-10 d-none">
-							<div class="chart-text mr-10">
-								<h6 class="mb-0"><small>THIS MONTH</small></h6>
-								<h4 class="mt-0 text-primary">$12,125</h4>
-							</div>
-							<div class="spark-chart">
-								<div id="thismonth"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
-							</div>
-						</div>
-						<div class="d-lg-flex mr-20 ml-10 d-none">
-							<div class="chart-text mr-10">
-								<h6 class="mb-0"><small>LAST YEAR</small></h6>
-								<h4 class="mt-0 text-danger">$22,754</h4>
-							</div>
-							<div class="spark-chart">
-								<div id="lastyear"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
+		<!-- Content header-->
+		{{template "content-header" .}}	 
+		
 		<!-- Main content -->
 		<section class="content">
 
@@ -423,26 +264,26 @@
 						<div class="row">
 							<div class="col-md-4 col-sm-6">
 								<div class="box box-body b-1 text-center no-shadow">
-									<img src="../images/product/product-6.png" id="product-image" class="img-fluid" alt="" />
+									<img src="{{index .product_avatar}}" id="product-image" class="img-fluid" alt="" />
 								</div>
 								<div class="pro-photos">
 									<div class="photos-item item-active">
-										<img src="../images/product/product-6.png" alt="" >
+										<img src="/assets/images/product/product-6.png" alt="" >
 									</div>
 									<div class="photos-item">
-										<img src="../images/product/product-7.png" alt="" >
+										<img src="/assets/images/product/product-7.png" alt="" >
 									</div>
 									<div class="photos-item">
-										<img src="../images/product/product-8.png" alt="" >
+										<img src="/assets/images/product/product-8.png" alt="" >
 									</div>
 									<div class="photos-item">
-										<img src="../images/product/product-9.png" alt="" >
+										<img src="/assets/images/product/product-9.png" alt="" >
 									</div>
 								</div>
 								<div class="clear"></div>
 							</div>
 							<div class="col-md-8 col-sm-6">
-								<h2 class="box-title mt-0">Product Title</h2>
+								<h2 class="box-title mt-0">{{index .product_name}}</h2>
 								<div class="list-inline">
 									<a class="text-warning"><i class="mdi mdi-star"></i></a>
 									<a class="text-warning"><i class="mdi mdi-star"></i></a>
@@ -450,42 +291,16 @@
 									<a class="text-warning"><i class="mdi mdi-star"></i></a>
 									<a class="text-warning"><i class="mdi mdi-star"></i></a>
 								</div>
-								<h1 class="pro-price mb-0 mt-20">&#36;270
-										<span class="old-price">&#36;540</span>
-										<span class="text-danger">50% off</span>
-									</h1>
-								<hr>
-								<p>Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. but the majority have suffered alteration in some form, by injected humour</p>
-								<div class="row">
-									<div class="col-sm-12">
-										<h6>Color</h6>
-										<div class="input-group">
-											<ul class="icolors">
-												<li class="bg-danger rounded-circle"></li>
-												<li class="bg-info rounded-circle"></li>
-												<li class="bg-primary rounded-circle active"></li>
-											</ul>
-										</div>
-										<h6 class="mt-20">Available Size</h6>
-										<p class="mb-0">
-											<span class="badge badge-pill badge-lg badge-default">S</span>
-											<span class="badge badge-pill badge-lg badge-default">M</span>
-											<span class="badge badge-pill badge-lg badge-default">L</span>
-										</p>
-									</div>
-								</div>
+								<p>{{index .product_description}}</p>
 								<hr>
 								<div class="gap-items">
-									<button class="btn btn-success"><i class="mdi mdi-shopping"></i> Buy Now!</button>
-									<button class="btn btn-primary"><i class="mdi mdi-cart-plus"></i> Add To Cart</button>
-									<button class="btn btn-infomr"><i class="mdi mdi-compare"></i> Compare</button>
-									<button class="btn btn-danger"><i class="mdi mdi-heart"></i> Wishlist</button>
+									<a href="{{index .new_project}}" class="btn btn-success"><i class="mdi mdi-shopping"></i> Start a project</a>
 								</div>
 								<h4 class="box-title mt-20">Key Highlights</h4>
 								<ul class="list-icons">
-									<li><i class="fa fa-check text-danger float-none"></i> Party Wear</li>
-									<li><i class="fa fa-check text-danger float-none"></i> Nam libero tempore, cum soluta nobis est</li>
-									<li><i class="fa fa-check text-danger float-none"></i> Omnis voluptas as placeat facere possimus omnis voluptas.</li>
+									<li><i class="fa fa-check text-danger float-none"></i> Cute</li>
+									<li><i class="fa fa-check text-danger float-none"></i> Lotsa capybaras</li>
+									<li><i class="fa fa-check text-danger float-none"></i> Nature</li>
 								</ul>
 							</div>
 							<div class="col-lg-12 col-md-12 col-sm-12">
@@ -494,26 +309,13 @@
 									<table class="table">
 										<tbody>
 											<tr>
-												<td width="390">Brand</td>
-												<td> Brand Name </td>
+												<td width="390">Public</td>
+												<td> {{index .is_public}} </td>
 											</tr>
 											<tr>
-												<td>Delivery Condition</td>
-												<td> Lorem Ipsum </td>
+												<td>Free</td>
+												<td> Yes </td>
 											</tr>
-											<tr>
-												<td>Type</td>
-												<td> Party Wear </td>
-											</tr>
-											<tr>
-												<td>Style</td>
-												<td> Modern </td>
-											</tr>
-											<tr>
-												<td>Product Number</td>
-												<td> FG1548952 </td>
-											</tr>
-
 										</tbody>
 									</table>
 								</div>
