@@ -3,7 +3,9 @@ package restcontrollers
 import (
 	"fmt"
 	"net/http"
-
+	"path"
+	"path/filepath"
+	"polygnosics/app/businesslogic"
 	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
@@ -109,7 +111,18 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := docker.CreateImage("/srv/survival-game", "artofimagination/survival-game:latest"); err != nil {
+		pathString := product.Assets.GetField(contents.ProductMainApp, "")
+		if err := businesslogic.Untar(pathString); err != nil {
+			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
+				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
+				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			}
+			http.Error(w, fmt.Sprintf("Failed to decompress main app. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		}
+
+		imageName := fmt.Sprintf("%s/%s", c.ContentController.UserData.ID.String(), product.ID.String())
+		sourcePath := path.Join(filepath.Dir(pathString), "build")
+		if err := docker.CreateImage(sourcePath, imageName); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)

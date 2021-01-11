@@ -119,8 +119,8 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		containerID, err := docker.CreateNewContainer("artofimagination/survival-game:latest", "0.0.0.0", "10000")
-		log.Println(containerID)
+		containerName := fmt.Sprintf("%s/%s", c.ContentController.UserData.ID.String(), projectData.ID.String())
+		containerID, err := docker.CreateNewContainer(containerName, "0.0.0.0", "10000")
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())

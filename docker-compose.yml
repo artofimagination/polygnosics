@@ -115,7 +115,6 @@ services:
       - traefik.http.services.platform.loadbalancer.server.port=8081
     volumes:
       - ${USER_STORE}:${USER_STORE_DOCKER}
-      - ~/Git/survival-game:/srv/survival-game
       - /var/run/docker.sock:/var/run/docker.sock
     networks: 
       - poly_backend

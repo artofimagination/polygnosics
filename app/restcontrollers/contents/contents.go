@@ -36,6 +36,7 @@ const (
 	ProductDescription = "product_description"
 	ProductName        = "product_name"
 	ProductPath        = "product_path"
+	ProductFolder      = "product_folder"
 	ProductRequires3D  = "requires_3d"
 	ProductURL         = "product_url"
 	ProductPublic      = "is_public"
@@ -196,6 +197,10 @@ func (c *ContentController) GetUserProjectContent(userID *uuid.UUID) (map[string
 
 func (c *ContentController) UploadFile(asset AssetInterface, fileType string, defaultPath string, formName string, r *http.Request) error {
 	file, handler, err := r.FormFile(formName)
+	if err == http.ErrMissingFile {
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
