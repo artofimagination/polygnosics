@@ -45,8 +45,8 @@ func main() {
 	srv := &http.Server{
 		Handler:      restcontrollers.CreateRouter(context.RESTController),
 		Addr:         ":8081",
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
 	}
 
 	// Start Server

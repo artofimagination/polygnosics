@@ -7,6 +7,7 @@ import (
 	"polygnosics/app/businesslogic/project"
 	"polygnosics/app/restcontrollers/contents"
 
+	"github.com/artofimagination/golang-docker/docker"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
@@ -34,7 +35,6 @@ func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) 
 	}
 	projectID, err := uuid.Parse(r.FormValue("project"))
 	if err != nil {
-		p["message"] = "Failed to parse project id"
 		c.RenderTemplate(w, name, p)
 		return
 	}
@@ -49,7 +49,6 @@ func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) 
 	for k, v := range pProject {
 		p[k] = v
 	}
-	log.Println(p)
 	c.RenderTemplate(w, "project-details", p)
 }
 
@@ -82,20 +81,20 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
 			p["message"] = contents.ErrFailedToParseForm
-			c.RenderTemplate(w, name, p)
+			http.Error(w, fmt.Sprintf("Failed to parse avatar. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
 		if err := contents.ValidateVisibility(r.FormValue("visibility")); err != nil {
 			p["message"] = err
-			c.RenderTemplate(w, name, p)
+			http.Error(w, fmt.Sprintf("Failed to parse visibility. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
 		productID, err := uuid.Parse(r.FormValue("product"))
 		if err != nil {
 			p["message"] = "Failed to parse project id"
-			c.RenderTemplate(w, name, p)
+			http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
@@ -106,7 +105,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			&productID,
 			c.ContentController.GeneratePath)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to create product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Failed to create project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
@@ -120,10 +119,23 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		containerName := fmt.Sprintf("%s/%s", c.ContentController.UserData.ID.String(), projectData.ID.String())
+		containerID, err := docker.CreateNewContainer(containerName, "0.0.0.0", "10000")
+		if err != nil {
+			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
+				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
+				http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			}
+			http.Error(w, fmt.Sprintf("Failed to create project container. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		projectData.Details.SetField(contents.ProjectContainerID, containerID)
 		projectData.Details.SetField(contents.ProjectState, project.NotRunning)
 		projectData.Details.SetField(contents.ProjectVisibility, r.FormValue("visibility"))
 		projectData.Details.SetField(contents.ProjectServerLogging, contents.GetBooleanString(r.FormValue("serverLogging")))
 		projectData.Details.SetField(contents.ProjectClientLogging, contents.GetBooleanString(r.FormValue("clientLogging")))
+
 		if err := c.UserDBController.UpdateProjectDetails(projectData); err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -146,10 +158,39 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func StartWebRTC(w http.ResponseWriter, r *http.Request) {
-
-}
-
 func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
 	log.Println("Running")
+	name := UserMain
+	p := c.ContentController.GetUserContent()
+	if err := r.ParseForm(); err != nil {
+		p["message"] = contents.ErrFailedToParseForm
+		c.RenderTemplate(w, name, p)
+		return
+	}
+
+	projectID, err := uuid.Parse(r.FormValue("project"))
+	if err != nil {
+		p["message"] = "Failed to parse project id"
+		c.RenderTemplate(w, name, p)
+		return
+	}
+
+	pProject, err := c.ContentController.GetProjectContent(&projectID)
+	if err != nil {
+		p["message"] = "Failed to get project details"
+		c.RenderTemplate(w, name, p)
+		return
+	}
+
+	for k, v := range pProject {
+		p[k] = v
+	}
+
+	log.Println(p[contents.ProjectContainerID])
+	if err := docker.StartContainer(p[contents.ProjectContainerID].(string)); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to start project container. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	c.RenderTemplate(w, "run", p)
 }

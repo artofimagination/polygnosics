@@ -64,7 +64,7 @@ func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request)
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Content-Security-Policy", "default-src 'self' data: 'unsafe-inline' 'unsafe-eval'")
+		w.Header().Set("Content-Security-Policy", "default-src 'self' http://0.0.0.0:10000; script-src 'self';")
 
 		routeMatch := mux.RouteMatch{}
 		if matched := router.Match(r, &routeMatch); !matched {

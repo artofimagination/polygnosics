@@ -36,6 +36,7 @@ const (
 	ProductDescription = "product_description"
 	ProductName        = "product_name"
 	ProductPath        = "product_path"
+	ProductFolder      = "product_folder"
 	ProductRequires3D  = "requires_3d"
 	ProductURL         = "product_url"
 	ProductPublic      = "is_public"
@@ -50,6 +51,7 @@ const (
 	RunProject           = "run_project"
 	ProjectState         = "project_state"
 	ProjectStateColor    = "project_state_color"
+	ProjectContainerID   = "project_container_id"
 )
 
 const (
@@ -135,6 +137,7 @@ func generateProjectContent(projectData *models.ProjectData) map[string]interfac
 	content[ProjectAvatar] = projectData.Assets.GetFilePath(ProjectAvatar, DefaultProjectAvatarPath)
 	content[ProjectName] = projectData.Details.GetField(ProjectName, "")
 	content[ProjectVisibility] = projectData.Details.GetField(ProjectVisibility, "")
+	content[ProjectContainerID] = projectData.Details.GetField(ProjectContainerID, "")
 	content[ProjectPath] = fmt.Sprintf("/user-main/my-projects/details?project=%s", projectData.ID.String())
 	content[ProjectState] = projectData.Details.GetField(ProjectState, "")
 	content[ProjectStateColor] = GetProjectStateColorString(projectData.Details.GetField(ProjectState, ""))
@@ -194,6 +197,10 @@ func (c *ContentController) GetUserProjectContent(userID *uuid.UUID) (map[string
 
 func (c *ContentController) UploadFile(asset AssetInterface, fileType string, defaultPath string, formName string, r *http.Request) error {
 	file, handler, err := r.FormFile(formName)
+	if err == http.ErrMissingFile {
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
