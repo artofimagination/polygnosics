@@ -51,6 +51,10 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	p["assets"].(map[string]interface{})[contents.UserAvatar] = c.ContentController.UserData.Assets.GetFilePath(contents.UserAvatar, contents.DefaultUserAvatarPath)
+	p["assets"].(map[string]interface{})[contents.UserAvatar] =
+		c.UserDBController.ModelFunctions.GetFilePath(
+			c.ContentController.UserData.Assets,
+			contents.UserAvatar,
+			contents.DefaultUserAvatarPath)
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }

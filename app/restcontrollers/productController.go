@@ -67,14 +67,8 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		isPublic := false
-		if r.FormValue("publicProduct") == "Yes" {
-			isPublic = true
-		}
-
 		product, err := c.UserDBController.CreateProduct(
 			r.FormValue("productName"),
-			isPublic,
 			&c.ContentController.UserData.ID,
 			c.ContentController.GeneratePath)
 		if err != nil {
@@ -111,7 +105,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		pathString := product.Assets.GetField(contents.ProductMainApp, "")
+		pathString := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, contents.ProductMainApp, "")
 		if err := businesslogic.Untar(pathString); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -131,11 +125,8 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		product.Details.SetField(contents.ProductName, r.FormValue("productName"))
-		product.Details.SetField(contents.ProductDescription, r.FormValue("productDescription"))
-		product.Details.SetField(contents.ProductRequires3D, r.FormValue("requires3D"))
-		product.Details.SetField(contents.ProductPublic, contents.GetBooleanString(r.FormValue("publicProduct")))
-		product.Details.SetField(contents.ProductURL, r.FormValue("productUrl"))
+		c.ContentController.SetProductDetails(product.Details, r)
+
 		if err := c.UserDBController.UpdateProductDetails(product); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -156,5 +147,4 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		c.RenderTemplate(w, name, p)
 	}
-
 }

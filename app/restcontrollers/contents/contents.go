@@ -67,14 +67,6 @@ const (
 
 var ErrFailedToParseForm = "Failed to parse form"
 
-type AssetInterface interface {
-	SetFilePath(typeString string, extension string) error
-	GetFilePath(typeString string, defaultPath string) string
-	SetField(typeString string, value interface{})
-	GetField(typeString string, defaultURL string) string
-	ClearAsset(typeString string) error
-}
-
 type ContentController struct {
 	UserData         *models.UserData
 	ProductData      *models.ProductData
@@ -109,10 +101,26 @@ func ValidateVisibility(value string) error {
 	return nil
 }
 
+func (c *ContentController) SetProductDetails(details *models.Asset, r *http.Request) {
+	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue("productName"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue("productDescription"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, r.FormValue("requires3D"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, GetBooleanString(r.FormValue("publicProduct")))
+	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue("productUrl"))
+}
+
+func (c *ContentController) SetProjectDetails(details *models.Asset, r *http.Request, containerID string) {
+	c.UserDBController.ModelFunctions.SetField(details, ProjectContainerID, containerID)
+	c.UserDBController.ModelFunctions.SetField(details, ProjectState, project.NotRunning)
+	c.UserDBController.ModelFunctions.SetField(details, ProjectVisibility, r.FormValue("visibility"))
+	c.UserDBController.ModelFunctions.SetField(details, ProjectServerLogging, GetBooleanString(r.FormValue("serverLogging")))
+	c.UserDBController.ModelFunctions.SetField(details, ProjectClientLogging, GetBooleanString(r.FormValue("clientLogging")))
+}
+
 func (c *ContentController) GetUserContent() map[string]interface{} {
 	p := make(map[string]interface{})
 	p["assets"] = make(map[string]interface{})
-	path := c.UserData.Assets.GetFilePath(UserAvatar, DefaultUserAvatarPath)
+	path := c.UserDBController.ModelFunctions.GetFilePath(c.UserData.Assets, UserAvatar, DefaultUserAvatarPath)
 	p["assets"].(map[string]interface{})[UserAvatar] = path
 	p["texts"] = make(map[string]interface{})
 	p["texts"].(map[string]interface{})["avatar-upload"] = "Upload your avatar"
@@ -121,26 +129,26 @@ func (c *ContentController) GetUserContent() map[string]interface{} {
 	return p
 }
 
-func generateProductContent(productData *models.ProductData) map[string]interface{} {
+func (c *ContentController) generateProductContent(productData *models.ProductData) map[string]interface{} {
 	content := make(map[string]interface{})
-	content[ProductAvatar] = productData.Assets.GetFilePath(ProductAvatar, DefaultProductAvatarPath)
-	content[ProductName] = productData.Details.GetField(ProductName, "")
-	content[ProductPublic] = productData.Details.GetField(ProductPublic, "")
-	content[ProductDescription] = productData.Details.GetField(ProductDescription, "")
+	content[ProductAvatar] = c.UserDBController.ModelFunctions.GetFilePath(c.UserData.Assets, ProductAvatar, DefaultProductAvatarPath)
+	content[ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductName, "")
+	content[ProductPublic] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductPublic, "")
+	content[ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductDescription, "")
 	content[ProductPath] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
 	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
 	return content
 }
 
-func generateProjectContent(projectData *models.ProjectData) map[string]interface{} {
+func (c *ContentController) generateProjectContent(projectData *models.ProjectData) map[string]interface{} {
 	content := make(map[string]interface{})
-	content[ProjectAvatar] = projectData.Assets.GetFilePath(ProjectAvatar, DefaultProjectAvatarPath)
-	content[ProjectName] = projectData.Details.GetField(ProjectName, "")
-	content[ProjectVisibility] = projectData.Details.GetField(ProjectVisibility, "")
-	content[ProjectContainerID] = projectData.Details.GetField(ProjectContainerID, "")
+	content[ProjectAvatar] = c.UserDBController.ModelFunctions.GetFilePath(projectData.Assets, ProjectAvatar, DefaultProjectAvatarPath)
+	content[ProjectName] = c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectName, "")
+	content[ProjectVisibility] = c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectVisibility, "")
+	content[ProjectContainerID] = c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectContainerID, "")
 	content[ProjectPath] = fmt.Sprintf("/user-main/my-projects/details?project=%s", projectData.ID.String())
-	content[ProjectState] = projectData.Details.GetField(ProjectState, "")
-	content[ProjectStateColor] = GetProjectStateColorString(projectData.Details.GetField(ProjectState, ""))
+	content[ProjectState] = c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectState, "")
+	content[ProjectStateColor] = GetProjectStateColorString(c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectState, ""))
 	content[RunProject] = fmt.Sprintf("/user-main/my-projects/run?project=%s", projectData.ID.String())
 	return content
 }
@@ -150,7 +158,7 @@ func (c *ContentController) GetProductContent(productID *uuid.UUID) (map[string]
 	if err != nil {
 		return nil, err
 	}
-	return generateProductContent(product), nil
+	return c.generateProductContent(product), nil
 }
 
 func (c *ContentController) GetProjectContent(projectID *uuid.UUID) (map[string]interface{}, error) {
@@ -158,7 +166,7 @@ func (c *ContentController) GetProjectContent(projectID *uuid.UUID) (map[string]
 	if err != nil {
 		return nil, err
 	}
-	return generateProjectContent(project), nil
+	return c.generateProjectContent(project), nil
 }
 
 func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string]interface{}, error) {
@@ -171,7 +179,7 @@ func (c *ContentController) GetUserProductContent(userID *uuid.UUID) (map[string
 
 	productContent := make([]map[string]interface{}, len(products))
 	for i, product := range products {
-		productContent[i] = generateProductContent(&product.ProductData)
+		productContent[i] = c.generateProductContent(&product.ProductData)
 	}
 	p["product"] = productContent
 
@@ -188,14 +196,14 @@ func (c *ContentController) GetUserProjectContent(userID *uuid.UUID) (map[string
 
 	projectContent := make([]map[string]interface{}, len(projects))
 	for i, project := range projects {
-		projectContent[i] = generateProjectContent(project.ProjectData)
+		projectContent[i] = c.generateProjectContent(project.ProjectData)
 	}
 	p["project"] = projectContent
 
 	return p, nil
 }
 
-func (c *ContentController) UploadFile(asset AssetInterface, fileType string, defaultPath string, formName string, r *http.Request) error {
+func (c *ContentController) UploadFile(asset *models.Asset, fileType string, defaultPath string, formName string, r *http.Request) error {
 	file, handler, err := r.FormFile(formName)
 	if err == http.ErrMissingFile {
 		return nil
@@ -211,10 +219,10 @@ func (c *ContentController) UploadFile(asset AssetInterface, fileType string, de
 
 	defer file.Close()
 
-	if err := asset.SetFilePath(fileType, filepath.Ext(handler.Filename)); err != nil {
+	if err := c.UserDBController.ModelFunctions.SetFilePath(asset, fileType, filepath.Ext(handler.Filename)); err != nil {
 		return err
 	}
-	path := asset.GetFilePath(fileType, defaultPath)
+	path := c.UserDBController.ModelFunctions.GetFilePath(asset, fileType, defaultPath)
 
 	// Create file
 	dst, err := os.Create(path)
@@ -222,7 +230,7 @@ func (c *ContentController) UploadFile(asset AssetInterface, fileType string, de
 		if err2 := dst.Close(); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
-		if err2 := asset.ClearAsset(fileType); err2 != nil {
+		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
@@ -233,7 +241,7 @@ func (c *ContentController) UploadFile(asset AssetInterface, fileType string, de
 		if err2 := dst.Close(); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
-		if err2 := asset.ClearAsset(fileType); err2 != nil {
+		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, fileType); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
