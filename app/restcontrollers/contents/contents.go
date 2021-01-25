@@ -35,7 +35,6 @@ const (
 	ProductClientApp   = "client-app"
 	ProductDescription = "product_description"
 	ProductName        = "product_name"
-	ProductVisibility  = "product_visibility"
 	ProductPath        = "product_path"
 	ProductFolder      = "product_folder"
 	ProductRequires3D  = "requires_3d"
@@ -102,6 +101,22 @@ func ValidateVisibility(value string) error {
 	return nil
 }
 
+func (c *ContentController) SetProductDetails(details *models.Asset, r *http.Request) {
+	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue("productName"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue("productDescription"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, r.FormValue("requires3D"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, GetBooleanString(r.FormValue("publicProduct")))
+	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue("productUrl"))
+}
+
+func (c *ContentController) SetProjectDetails(details *models.Asset, r *http.Request, containerID string) {
+	c.UserDBController.ModelFunctions.SetField(details, ProjectContainerID, containerID)
+	c.UserDBController.ModelFunctions.SetField(details, ProjectState, project.NotRunning)
+	c.UserDBController.ModelFunctions.SetField(details, ProjectVisibility, r.FormValue("visibility"))
+	c.UserDBController.ModelFunctions.SetField(details, ProjectServerLogging, GetBooleanString(r.FormValue("serverLogging")))
+	c.UserDBController.ModelFunctions.SetField(details, ProjectClientLogging, GetBooleanString(r.FormValue("clientLogging")))
+}
+
 func (c *ContentController) GetUserContent() map[string]interface{} {
 	p := make(map[string]interface{})
 	p["assets"] = make(map[string]interface{})
@@ -117,7 +132,6 @@ func (c *ContentController) GetUserContent() map[string]interface{} {
 func (c *ContentController) generateProductContent(productData *models.ProductData) map[string]interface{} {
 	content := make(map[string]interface{})
 	content[ProductAvatar] = c.UserDBController.ModelFunctions.GetFilePath(c.UserData.Assets, ProductAvatar, DefaultProductAvatarPath)
-	content[ProductVisibility] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductVisibility, "")
 	content[ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductName, "")
 	content[ProductPublic] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductPublic, "")
 	content[ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductDescription, "")

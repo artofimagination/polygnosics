@@ -2,9 +2,7 @@ package restcontrollers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"polygnosics/app/businesslogic/project"
 	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
@@ -130,11 +128,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectContainerID, containerID)
-		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectState, project.NotRunning)
-		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectVisibility, r.FormValue("visibility"))
-		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectServerLogging, contents.GetBooleanString(r.FormValue("serverLogging")))
-		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectClientLogging, contents.GetBooleanString(r.FormValue("clientLogging")))
+		c.ContentController.SetProjectDetails(projectData.Details, r, containerID)
 
 		if err := c.UserDBController.UpdateProjectDetails(projectData); err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
@@ -159,7 +153,6 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
-	log.Println("Running")
 	name := UserMain
 	p := c.ContentController.GetUserContent()
 	if err := r.ParseForm(); err != nil {
@@ -186,7 +179,6 @@ func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
 		p[k] = v
 	}
 
-	log.Println(p[contents.ProjectContainerID])
 	if err := docker.StartContainer(p[contents.ProjectContainerID].(string)); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to start project container. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
