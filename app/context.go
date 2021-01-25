@@ -1,7 +1,7 @@
 package app
 
 import (
-	"polygnosics/app/restcontrollers"
+	"github.com/artofimagination/polygnosics/app/restcontrollers"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 )

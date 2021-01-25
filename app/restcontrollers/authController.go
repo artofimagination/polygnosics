@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/restcontrollers/contents"
-	"polygnosics/app/restcontrollers/session"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/contents"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/session"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"

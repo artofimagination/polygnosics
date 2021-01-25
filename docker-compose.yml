@@ -94,7 +94,7 @@ services:
       - poly_backend
     command: postgres -c shared_preload_libraries=timescaledb
   polygnosics:
-    build: ./
+    build: ./dev
     image: artofimagination/polygnosics
     labels:
       # Define the host the request shall target
@@ -114,9 +114,10 @@ services:
       # Port the server instances can be accessed through
       - traefik.http.services.platform.loadbalancer.server.port=8081
     volumes:
+      - ./:/go/src/github.com/artofimagination/polygnosics
       - ${USER_STORE}:${USER_STORE_DOCKER}
       - /var/run/docker.sock:/var/run/docker.sock
-    networks: 
+    networks:
       - poly_backend
     depends_on:
       - reverse-proxy

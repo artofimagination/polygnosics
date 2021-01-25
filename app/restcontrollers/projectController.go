@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"polygnosics/app/businesslogic/project"
-	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
+	"github.com/artofimagination/polygnosics/app/businesslogic/project"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/contents"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )

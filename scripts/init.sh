@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 set -o allexport
 source .env
 set +o allexport
 
-./main
+_cmd="./$1"
+$_cmd

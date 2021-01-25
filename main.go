@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"polygnosics/app"
-	"polygnosics/app/restcontrollers"
-	"polygnosics/app/services/db/timescaledb"
-	"polygnosics/app/utils/configloader"
+	"github.com/artofimagination/polygnosics/app"
+	"github.com/artofimagination/polygnosics/app/restcontrollers"
+	"github.com/artofimagination/polygnosics/app/services/db/timescaledb"
+	"github.com/artofimagination/polygnosics/app/utils/configloader"
 
 	"github.com/pkg/errors"
 )

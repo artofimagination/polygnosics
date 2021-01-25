@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"polygnosics/app/restcontrollers/contents"
-	"polygnosics/app/restcontrollers/session"
+	"path/filepath"
+	"regexp"
 	"text/template"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/contents"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/session"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -19,28 +22,20 @@ type RESTController struct {
 	ContentController *contents.ContentController
 }
 
-var htmls = []string{
-	"/web/templates/about.html",
-	"/web/templates/error.html",
-	"/web/templates/index.html",
-	"/web/templates/confirm.html",
-	"/web/templates/user/user-main.html",
-	"/web/templates/user/profile.html",
-	"/web/templates/user/user-settings.html",
-	"/web/templates/user/new-project.html",
-	"/web/templates/project/run.html",
-	"/web/templates/project/project-details.html",
-	"/web/templates/project/my-projects.html",
-	"/web/templates/project/new-project-wizard.html",
-	"/web/templates/auth_signup.html",
-	"/web/templates/auth_login.html",
-	"/web/templates/products/store.html",
-	"/web/templates/products/new-product-wizard.html",
-	"/web/templates/products/my-products.html",
-	"/web/templates/products/details.html",
-	"/web/templates/components/side-bar.html",
-	"/web/templates/components/content-header.html",
+var htmlFile = regexp.MustCompile(`^.*\.html$`)
+var htmls = getTemplates("./web/templates")
+
+func getTemplates(root string) (resp []string) {
+	_ = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if htmlFile.MatchString(path) {
+			resp = append(resp, path)
+		}
+
+		return nil
+	})
+	return
 }
+
 var paths = []string{}
 
 const (

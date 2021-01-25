@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
-	"polygnosics/app/businesslogic"
-	"polygnosics/app/restcontrollers/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
+	"github.com/artofimagination/polygnosics/app/businesslogic"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/contents"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )

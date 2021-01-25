@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/restcontrollers/contents"
+	"github.com/artofimagination/polygnosics/app/restcontrollers/contents"
 
 	"github.com/pkg/errors"
 )

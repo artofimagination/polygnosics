@@ -7,15 +7,15 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"polygnosics/app/businesslogic/project"
 	"regexp"
 	"strings"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
-	"github.com/pkg/errors"
+	"github.com/artofimagination/polygnosics/app/businesslogic/project"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 // TODO Issue#40: Replace with redis storage.
