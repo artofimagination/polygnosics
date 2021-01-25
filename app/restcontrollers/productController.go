@@ -74,7 +74,6 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		product, err := c.UserDBController.CreateProduct(
 			r.FormValue("productName"),
-			isPublic,
 			&c.ContentController.UserData.ID,
 			c.ContentController.GeneratePath)
 		if err != nil {
@@ -111,7 +110,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		pathString := product.Assets.GetField(contents.ProductMainApp, "")
+		pathString := c.UserDBController.ModelFunctions.GetField(product.Assets, contents.ProductMainApp, "")
 		if err := businesslogic.Untar(pathString); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -131,11 +130,12 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		product.Details.SetField(contents.ProductName, r.FormValue("productName"))
-		product.Details.SetField(contents.ProductDescription, r.FormValue("productDescription"))
-		product.Details.SetField(contents.ProductRequires3D, r.FormValue("requires3D"))
-		product.Details.SetField(contents.ProductPublic, contents.GetBooleanString(r.FormValue("publicProduct")))
-		product.Details.SetField(contents.ProductURL, r.FormValue("productUrl"))
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductVisibility, isPublic)
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductName, r.FormValue("productName"))
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductDescription, r.FormValue("productDescription"))
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductRequires3D, r.FormValue("requires3D"))
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductPublic, contents.GetBooleanString(r.FormValue("publicProduct")))
+		c.UserDBController.ModelFunctions.SetField(product.Details, contents.ProductURL, r.FormValue("productUrl"))
 		if err := c.UserDBController.UpdateProductDetails(product); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())

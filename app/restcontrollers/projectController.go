@@ -130,11 +130,11 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		projectData.Details.SetField(contents.ProjectContainerID, containerID)
-		projectData.Details.SetField(contents.ProjectState, project.NotRunning)
-		projectData.Details.SetField(contents.ProjectVisibility, r.FormValue("visibility"))
-		projectData.Details.SetField(contents.ProjectServerLogging, contents.GetBooleanString(r.FormValue("serverLogging")))
-		projectData.Details.SetField(contents.ProjectClientLogging, contents.GetBooleanString(r.FormValue("clientLogging")))
+		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectContainerID, containerID)
+		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectState, project.NotRunning)
+		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectVisibility, r.FormValue("visibility"))
+		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectServerLogging, contents.GetBooleanString(r.FormValue("serverLogging")))
+		c.UserDBController.ModelFunctions.SetField(projectData.Details, contents.ProjectClientLogging, contents.GetBooleanString(r.FormValue("clientLogging")))
 
 		if err := c.UserDBController.UpdateProjectDetails(projectData); err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
