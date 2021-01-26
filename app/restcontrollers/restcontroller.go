@@ -28,6 +28,7 @@ var htmls = []string{
 	"/web/templates/user/profile.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
+	"/web/templates/admin/dashboard.html",
 	"/web/templates/project/run.html",
 	"/web/templates/project/project-details.html",
 	"/web/templates/project/my-projects.html",
@@ -40,6 +41,9 @@ var htmls = []string{
 	"/web/templates/products/details.html",
 	"/web/templates/components/side-bar.html",
 	"/web/templates/components/content-header.html",
+	"/web/templates/components/header-info.html",
+	"/web/templates/components/main-header.html",
+	"/web/templates/components/footer.html",
 }
 var paths = []string{}
 

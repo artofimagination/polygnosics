@@ -1,0 +1,58 @@
+{{define "main-header"}}
+<header class="main-header">
+  <div class="d-flex align-items-center logo-box justify-content-between">	
+    <!-- Logo -->
+    <a href="index.html" class="logo">
+      <!-- logo-->
+      <div class="logo-lg">
+        <span class="light-logo"><img src="/assets/images/logo-dark-text.png" alt="logo"></span>
+        <span class="dark-logo"><img src="/assets/images/logo-light-text.png" alt="logo"></span>
+      </div>
+    </a>	
+    <a href="#" class="waves-effect waves-light nav-link rounded d-none d-md-inline-block mx-10" data-toggle="push-menu" role="button">
+      <i class="nav-link-icon mdi mdi-menu text-dark"></i>
+    </a>
+  </div>  
+  <!-- Header Navbar -->
+  <nav class="navbar navbar-static-top pl-10">
+    <!-- Sidebar toggle button-->
+    <div class="app-menu">
+      <ul class="header-megamenu nav">
+        <li class="btn-group nav-item d-md-none">
+          <a href="#" class="waves-effect waves-light nav-link rounded" data-toggle="push-menu" role="button">
+            <i class="nav-link-icon mdi mdi-menu text-dark"></i>
+          </a>
+        </li>
+        <li class="btn-group nav-item d-xl-inline-flex d-none">
+					<a href="#" data-toggle="control-sidebar" title="Setting" class="waves-effect waves-light nav-link rounded">
+						<i class="nav-link-icon mdi mdi-monitor text-dark mx-5 mx-lg-0"> </i>
+						<i class="mdi mdi-dots-vertical ml-2"></i></span>
+					</a>
+				</li>
+        <li class="btn-group nav-item">
+          <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link rounded" title="Full Screen">
+            <i class="nav-link-icon mdi mdi-crop-free text-dark"></i>
+          </a>
+        </li>
+        <li class="search-bar nav-item">	  
+          <div class="nav-link lookup lookup-circle lookup-right">
+            <input type="text" name="s">
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar">
+    <div class="rpanel-title"><span class="pull-right btn btn-circle btn-danger"><i class="ion ion-close text-white" data-toggle="control-sidebar"></i></span>
+    </div>  <!-- Create the tabs -->
+    <div class="tab-content">
+      <div class="tab-pane" id="control-sidebar-home-tab"></div>
+    </div>
+  </aside>
+    
+  <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+  <div class="control-sidebar-bg"></div>
+{{end}}
