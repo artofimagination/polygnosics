@@ -19498,6 +19498,7 @@ ul.flexbox {
     position: absolute;
     top: 52%;
     left: 0;
+    padding-right: 28px;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
     color: rgba(0, 0, 0, 0.4);
@@ -19507,12 +19508,12 @@ ul.flexbox {
   .lookup input {
     color: #475f7b;
     border: 1px solid #d5dfea;
-    border-radius: 18px;
+    border-radius: 4px;
     height: 25px;
     width: 200px;
     max-width: 100%;
-    padding-left: 36px !important;
-    padding-right: 18px;
+    padding-left: 10px !important;
+    padding-right: 28px;
     font-size: 1rem;
     font-weight: 300;
     letter-spacing: .5px;
@@ -19595,12 +19596,12 @@ ul.flexbox {
   .lookup-circle::before {
     z-index: -1; }
   .lookup-circle input {
-    background-color: rgba(71, 95, 123, 0.04);
+    background-color: rgba(239, 242, 245, 0.04);
     border: none;
     width: 36px;
     padding-right: 0; }
     .lookup-circle input:focus {
-      background-color: rgba(71, 95, 123, 0.05);
+      background-color: rgba(239, 242, 245, 0.04);
       width: 170px;
       padding-right: 18px; }
   .lookup-circle.lookup-sm::before {
