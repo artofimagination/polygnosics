@@ -6,7 +6,7 @@ import (
 	"path"
 	"path/filepath"
 	"polygnosics/app/businesslogic"
-	"polygnosics/app/restcontrollers/contents"
+	"polygnosics/web/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
 	"github.com/google/uuid"
@@ -30,7 +30,7 @@ func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) 
 	pUser := c.ContentController.GetUserContent()
 	name := UserMain
 	if err := r.ParseForm(); err != nil {
-		pUser["message"] = contents.ErrFailedToParseForm
+		pUser["message"] = ErrFailedToParseForm
 		c.RenderTemplate(w, name, pUser)
 		return
 	}
@@ -62,7 +62,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		name := UserMain
 
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
-			p["message"] = contents.ErrFailedToParseForm
+			p["message"] = ErrFailedToParseForm
 			c.RenderTemplate(w, name, p)
 			return
 		}
@@ -70,13 +70,13 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		product, err := c.UserDBController.CreateProduct(
 			r.FormValue("productName"),
 			&c.ContentController.UserData.ID,
-			c.ContentController.GeneratePath)
+			businesslogic.GeneratePath)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Failed to create product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		err = c.ContentController.UploadFile(product.Assets, contents.ProductAvatar, contents.DefaultProductAvatarPath, "product-avatar", r)
+		err = c.BackendContext.UploadFile(product.Assets, contents.ProductAvatar, businesslogic.DefaultProductAvatarPath, "product-avatar", r)
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -86,7 +86,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = c.ContentController.UploadFile(product.Assets, contents.ProductMainApp, "", "main-app", r)
+		err = c.BackendContext.UploadFile(product.Assets, contents.ProductMainApp, "", "main-app", r)
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -96,7 +96,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := c.ContentController.UploadFile(product.Assets, contents.ProductClientApp, "", "client-app", r); err != nil {
+		if err := c.BackendContext.UploadFile(product.Assets, contents.ProductClientApp, "", "client-app", r); err != nil {
 			if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)

@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/restcontrollers/contents"
+	"polygnosics/app/businesslogic"
+	"polygnosics/web/contents"
 
 	"github.com/pkg/errors"
 )
@@ -42,7 +43,7 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "User is not configured", http.StatusInternalServerError)
 	}
 
-	err := c.ContentController.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatar, contents.DefaultUserAvatarPath, "asset", r)
+	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatar, businesslogic.DefaultUserAvatarPath, "asset", r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
@@ -55,6 +56,6 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		c.UserDBController.ModelFunctions.GetFilePath(
 			c.ContentController.UserData.Assets,
 			contents.UserAvatar,
-			contents.DefaultUserAvatarPath)
+			businesslogic.DefaultUserAvatarPath)
 	http.Redirect(w, r, "/user-main/profile", http.StatusSeeOther)
 }

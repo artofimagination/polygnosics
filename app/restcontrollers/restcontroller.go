@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"polygnosics/app/restcontrollers/contents"
+	"polygnosics/app/businesslogic"
 	"polygnosics/app/restcontrollers/session"
+	"polygnosics/web/contents"
 	"text/template"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -17,7 +18,10 @@ import (
 type RESTController struct {
 	UserDBController  *dbcontrollers.MYSQLController
 	ContentController *contents.ContentController
+	BackendContext    *businesslogic.Context
 }
+
+var ErrFailedToParseForm = "Failed to parse form"
 
 var htmls = []string{
 	"/web/templates/about.html",
