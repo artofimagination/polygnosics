@@ -3,13 +3,125 @@
 {{template "header-info" .}}
 
 <body class="hold-transition dark-skin sidebar-mini theme-primary">
-	<div class="wrapper">
-		
-	{{template "main-header" .}} 
+<div class="wrapper">
+
+	{{template "main-header" .}}
 	{{template "side-bar" .}}
   
-  <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	  <div class="container-full">
+
+		<!-- Content header-->
+		{{template "content-header" .}}	  
+
+		<!-- Main content -->
+		<section class="content">
+		 <!-- Step wizard -->
+		  <div class="box box-default">
+			<div class="box-header with-border">
+			  <h4 class="box-title">New product creation</h4>	
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body wizard-content">
+				<form action="/user-main/new-product-wizard" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
+					<!-- Step 1 -->
+					<h6>Basic configuration</h6>
+					<section>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="productName">Product Name :<span class="danger">*</span></label>
+									<input type="text" class="form-control required" id="productName" name="productName"> </div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="productUrl">External URL :</label>
+									<input type="url" class="form-control" id="productUrl"> </div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="productDescription">Description :<span class="danger">*</span></label>
+									<textarea name="productDescription" id="productDescription" rows="4" class="form-control required"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<div class="c-inputs-stacked">
+										<input type="checkbox" id="publicProduct" name="publicProduct" value="Yes">
+										<label for="publicProduct" class="d-block">Make the product public</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="product-avatar">Upload product avatar :</label>
+								<input type="file" class="btn btn-primary form-control" id="product-avatar" name="product-avatar" accept="image/*">
+							</div>
+						</div>
+					</section>
+					<!-- Step 2 -->
+					<h6>Upload files</h6>
+					<section>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>App config :</label>
+									<div class="c-inputs-stacked">
+										<input type="checkbox" id="requires3D" name="requires3D" value="set">
+										<label for="requires3D" class="d-block">3D Acceleration required (NVIDIA support)</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="main-app">Upload main app file :<span class="danger">*</span></label>
+									<input type="file" class="btn btn-primary form-control required" id="main-app" name="main-app" accept=".tar.gz,.zip">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="client-app">Upload client file if supported :</label>
+									<input type="file" class="btn btn-primary form-control" id="client-app" name="client-app" accept=".tar.gz,.zip">
+								</div>
+							</div>
+						</div>
+					</section>
+					<!-- Step 3 -->
+					<h6>Confirmation</h6>
+					<section>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<label for="decisions1">Comments</label>
+									<textarea name="decisions" id="decisions1" rows="4" class="form-control"></textarea>
+								</div>
+								<div class="form-group">
+									<div class="c-inputs-stacked">
+										<input type="checkbox" class="form-control required" id="checkbox_1">
+										<label for="checkbox_1" class="d-block">Click here to indicate that you have read and agree to the terms presented in the Terms and Conditions agreement<span class="danger">*</span></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		  </div>
+		  <!-- /.box -->
+		</section>
+		<!-- /.content -->
+	  </div>
+  </div>
+  <!-- /.content-wrapper -->
+  
+	{{template "footer" .}}
 </div>
 <!-- ./wrapper -->
 

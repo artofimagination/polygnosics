@@ -188,7 +188,49 @@ $(function () {
     .before($tabButton)
 
   // Create the menu
-  var $demoSettings = $('<div />')	
+  var $demoSettings = $('<div />')
+  
+  var $skinsList = $('<ul />', { 'class': 'list-inline clearfix theme-switch' })
+
+  // Dark sidebar skins
+  var $themePrimary =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-primary" style="background: #5A8DEE; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme primary">'
+            + '</a>')
+  $skinsList.append($themePrimary)
+
+  var $themeSecondary =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-secondary" style="background: #475F7B; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme secondary">'
+            + '</a>')
+  $skinsList.append($themeSecondary)
+
+  var $themeInfo =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-info" style="background: #00CFDD; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme info">'
+            + '</a>')
+  $skinsList.append($themeInfo)
+
+  var $themeSuccess =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-success" style="background: #39DA8A; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme success">'
+            + '</a>')
+  $skinsList.append($themeSuccess)
+
+  var $themeDanger =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-danger" style="background: #FF5B5C; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme danger">'
+            + '</a>')
+  $skinsList.append($themeDanger)
+
+  var $themeWarning =
+        $('<li />', { style: 'padding: 5px;line-height: 25px;' })
+          .append('<a href="javascript:void(0)" data-theme="theme-warning" style="background: #FDAC41; display: inline-block;vertical-align: middle;" class="clearfix rounded-circle w-30 h-30" title="Theme warning">'
+            + '</a>')
+  $skinsList.append($themeWarning)
+	
+  $demoSettings.append('<h4 class="control-sidebar-heading">Theme Colors</h4>')
+  $demoSettings.append($skinsList)
   
   // Layout options
   $demoSettings.append(
