@@ -3,7 +3,8 @@ package restcontrollers
 import (
 	"fmt"
 	"net/http"
-	"polygnosics/app/restcontrollers/contents"
+	"polygnosics/app/businesslogic"
+	"polygnosics/web/contents"
 
 	"github.com/artofimagination/golang-docker/docker"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) 
 	p := c.ContentController.GetUserContent()
 	name := UserMain
 	if err := r.ParseForm(); err != nil {
-		p["message"] = contents.ErrFailedToParseForm
+		p["message"] = ErrFailedToParseForm
 		c.RenderTemplate(w, name, p)
 		return
 	}
@@ -54,7 +55,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	p := c.ContentController.GetUserContent()
 	name := UserMain
 	if err := r.ParseForm(); err != nil {
-		p["message"] = contents.ErrFailedToParseForm
+		p["message"] = ErrFailedToParseForm
 		c.RenderTemplate(w, name, p)
 		return
 	}
@@ -78,7 +79,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 		c.RenderTemplate(w, "new-project-wizard", p)
 	} else {
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
-			p["message"] = contents.ErrFailedToParseForm
+			p["message"] = ErrFailedToParseForm
 			http.Error(w, fmt.Sprintf("Failed to parse avatar. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
@@ -101,13 +102,13 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			r.FormValue("visibility"),
 			&c.ContentController.UserData.ID,
 			&productID,
-			c.ContentController.GeneratePath)
+			businesslogic.GeneratePath)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Failed to create project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		err = c.ContentController.UploadFile(projectData.Assets, contents.ProjectAvatar, contents.DefaultProjectAvatarPath, "project-avatar", r)
+		err = c.BackendContext.UploadFile(projectData.Assets, contents.ProjectAvatar, businesslogic.DefaultProjectAvatarPath, "project-avatar", r)
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -156,7 +157,7 @@ func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
 	name := UserMain
 	p := c.ContentController.GetUserContent()
 	if err := r.ParseForm(); err != nil {
-		p["message"] = contents.ErrFailedToParseForm
+		p["message"] = ErrFailedToParseForm
 		c.RenderTemplate(w, name, p)
 		return
 	}
