@@ -9,11 +9,6 @@ const (
 	QuickStats2DataKey = "quick_stats_2_data"
 )
 
-type QuickStat struct {
-	statType string
-	data     []int
-}
-
 func (c *ContentController) prepareContentHeader(content map[string]interface{}, parentPageName string, contentName string) map[string]interface{} {
 	content[ParentPageKey] = parentPageName
 	content[ContentNameKey] = contentName

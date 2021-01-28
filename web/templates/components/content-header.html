@@ -26,7 +26,8 @@
           var quickstats2 = []
           {{range (index . "quick_stats_2_data")}}
             quickstats2.push('{{.}}')
-          {{end}}</script>
+          {{end}}
+        </script>
         
         {{if eq (index . "quick_stats_1") "users" }}
         <div class="d-lg-flex mr-20 ml-10 d-none">
