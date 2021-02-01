@@ -21,7 +21,7 @@ func (c *RESTController) MyProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent()
+	p := c.ContentController.GetUserContent(c.ContentController.UserData)
 	name := UserMain
 	if err := r.ParseForm(); err != nil {
 		p["message"] = ErrFailedToParseForm
@@ -48,7 +48,7 @@ func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent()
+	p := c.ContentController.GetUserContent(c.ContentController.UserData)
 	name := UserMain
 	if err := r.ParseForm(); err != nil {
 		p["message"] = ErrFailedToParseForm
@@ -151,7 +151,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 
 func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
 	name := UserMain
-	p := c.ContentController.GetUserContent()
+	p := c.ContentController.GetUserContent(c.ContentController.UserData)
 	if err := r.ParseForm(); err != nil {
 		p["message"] = ErrFailedToParseForm
 		c.RenderTemplate(w, name, p)

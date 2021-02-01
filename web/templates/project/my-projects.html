@@ -33,16 +33,13 @@
 							</div>
 							<div class="fx-card-content text-left mb-0">							
 								<div class="product-text">
-									<h2 class="pro-price" id="project_state">{{index $a "project_state"}}</h2>
+									<h2 class="pro-price badge badge-sm {{index $a "state_badge"}}">{{index $a "project_state"}}</h2>
 									<h4 class="box-title mb-0">{{index $a "name"}}</h4>
 									<small class="text-muted db">Lorem Ipsum Dummy Text</small>
 								</div>
 							</div>
 						</div>
 						</div>
-						<script>
-							document.getElementById("project_state").style.color = "{{index $a "project_state_color"}}";
-						</script>
 						<!-- /.box -->				  
 					</div>
 				{{end}} 

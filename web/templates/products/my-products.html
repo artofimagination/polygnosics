@@ -16,7 +16,6 @@
 
 		<!-- Main content -->
 		<section class="content">
-
 		  <div class="row fx-element-overlay">
 				{{range $i, $a := .product}}
 					<div class="col-12 col-lg-6 col-xl-4">
@@ -34,7 +33,7 @@
 							<div class="fx-card-content text-left mb-0">							
 								<div class="product-text">
 									<h4 class="box-title mb-0">{{index $a "product_name"}}</h4>
-									<small class="text-muted db">Lorem Ipsum Dummy Text</small>
+									<small class="text-muted db">{{index $a "product_description"}}</small>
 								</div>
 							</div>
 						</div>
@@ -43,7 +42,6 @@
 					</div>
 				{{end}} 
 		  </div>
-
 		</section>
 		<!-- /.content -->
 	  </div>

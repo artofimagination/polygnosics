@@ -48,6 +48,8 @@ var htmls = []string{
 	"/web/templates/components/header-info.html",
 	"/web/templates/components/main-header.html",
 	"/web/templates/components/footer.html",
+	"/web/templates/components/news-feed.html",
+	"/web/templates/resources/news.html",
 }
 var paths = []string{}
 
