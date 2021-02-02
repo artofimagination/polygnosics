@@ -965,7 +965,6 @@ throw new Error('template requires jQuery')
   })
   
   // Slim scrolling
-  
   $('.inner-content-div').slimScroll({
     height: '200'
   });
@@ -978,136 +977,109 @@ throw new Error('template requires jQuery')
     height: '420'
   });
 
-  
   $(".search-box a, .search-box .app-search .srh-btn").on('click', function() {
         $(".app-search").toggle(200);
     });
 	
-	
-	
   // Close
-    //
-    $(document).on('click', '.box-btn-close', function() {
-      $(this).parents('.box').fadeOut(600, function() {
-        if ($(this).parent().children().length == 1) {
-          $(this).parent().remove();
-        }
-        else {
-          $(this).remove();
-        }
-      });
-    });
-
-
-
-    // Slide up/down
-    //
-    $(document).on('click', '.box-btn-slide', function(){
-      $(this).toggleClass('rotate-180').parents('.box').find('.box-content, .box-body').slideToggle();
-    });
-
-
-
-    // Maximize
-    //
-    $(document).on('click', '.box-btn-maximize', function(){
-      $(this).parents('.box').toggleClass('box-maximize').removeClass('box-fullscreen');
-    });
-
-
-
-    // Fullscreen
-    //
-    $(document).on('click', '.box-btn-fullscreen', function(){
-      $(this).parents('.box').toggleClass('box-fullscreen').removeClass('box-maximize');
-    });
-	
-		
-		// Disable demonstrative links!
-    //
-    $(document).on('click', 'a[href="#"]', function(e){
-      e.preventDefault();
-    });
-	
-	
-    // This is for the innerleft sidebar
-    $(".open-left-block").on('click', function() {
-        $('.left-block').toggleClass('open-panel');
-        $('.open-left-block').toggleClass('mdi-menu');
-    });
-	
-	
-    // Upload
-    //
-    $(document).on('click', '.file-browser', function() {
-      var $browser = $(this);
-      if ( $browser.hasClass('form-control') ) {
-        setTimeout(function(){
-          $browser.closest('.file-group').find('[type="file"]').trigger('click');
-        },300);
+  //
+  $(document).on('click', '.box-btn-close', function() {
+    $(this).parents('.box').fadeOut(600, function() {
+      if ($(this).parent().children().length == 1) {
+        $(this).parent().remove();
       }
       else {
-        var file = $browser.closest('.file-group').find('[type="file"]');
-        file.on( 'click', function(e) {
-          e.stopPropagation();
-        });
-        file.trigger('click');
+        $(this).remove();
       }
     });
+  });
 
-    // Event to change file name after file selection
-    $(document).on('change', '.file-group [type="file"]', function(){
-      var input = $(this)[0];
-      var len = input.files.length;
-      var filename = '';
+  // Slide up/down
+  //
+  $(document).on('click', '.box-btn-slide', function(){
+    $(this).toggleClass('rotate-180').parents('.box').find('.box-content, .box-body').slideToggle();
+  });
 
-      for (var i = 0; i < len; ++i) {
-        filename += input.files.item(i).name + ', ';
-      }
-      filename = filename.substr(0, filename.length-2);
-      $(this).closest('.file-group').find('.file-value').val(filename).text(filename).focus();
-    });
+  // Maximize
+  //
+  $(document).on('click', '.box-btn-maximize', function(){
+    $(this).parents('.box').toggleClass('box-maximize').removeClass('box-fullscreen');
+  });
 
-    // Update file name for bootstrap custom file upload
-    $(document).on('change', '.custom-file-input', function(){
-      var filename = $(this).val().split('\\').pop();
-      $(this).next('.custom-file-control').attr('data-input-value', filename);
-    });
-    $('.custom-file-control:not([data-input-value])').attr('data-input-value', 'Choose file...');
-	
+  // Fullscreen
+  //
+  $(document).on('click', '.box-btn-fullscreen', function(){
+    $(this).parents('.box').toggleClass('box-fullscreen').removeClass('box-maximize');
+  });
 		
+  // Disable demonstrative links!
+  //
+  $(document).on('click', 'a[href="#"]', function(e){
+    e.preventDefault();
+  });
+	
+  // This is for the innerleft sidebar
+  $(".open-left-block").on('click', function() {
+      $('.left-block').toggleClass('open-panel');
+      $('.open-left-block').toggleClass('mdi-menu');
+  });
+	
+  // Upload
+  //
+  $(document).on('click', '.file-browser', function() {
+    var $browser = $(this);
+    if ( $browser.hasClass('form-control') ) {
+      setTimeout(function(){
+        $browser.closest('.file-group').find('[type="file"]').trigger('click');
+      },300);
+    }
+    else {
+      var file = $browser.closest('.file-group').find('[type="file"]');
+      file.on( 'click', function(e) {
+        e.stopPropagation();
+      });
+      file.trigger('click');
+    }
+  });
 
-	/* The todo list plugin */
-	  $('.todo-list').todoList({
-		onCheck  : function () {
-		  window.console.log($(this), 'The element has been checked');
-		},
-		onUnCheck: function () {
-		  window.console.log($(this), 'The element has been unchecked');
-		}
-	  });
+  // Event to change file name after file selection
+  $(document).on('change', '.file-group [type="file"]', function(){
+    var input = $(this)[0];
+    var len = input.files.length;
+    var filename = '';
+
+    for (var i = 0; i < len; ++i) {
+      filename += input.files.item(i).name + ', ';
+    }
+    filename = filename.substr(0, filename.length-2);
+    $(this).closest('.file-group').find('.file-value').val(filename).text(filename).focus();
+  });
+
+  // Update file name for bootstrap custom file upload
+  $(document).on('change', '.custom-file-input', function(){
+    var filename = $(this).val().split('\\').pop();
+    $(this).next('.custom-file-control').attr('data-input-value', filename);
+  });
+  $('.custom-file-control:not([data-input-value])').attr('data-input-value', 'Choose file...');
 	
-	// bradcrumb section
-	
-		$('#thismonth').sparkline([8, 5, 4, 7, 9, 7, 10, 9], {
-				type: 'bar',
-				height: '35',
-				barWidth: '4',
-				resize: true,
-				barSpacing: '4',
-				barColor: '#843cf7'
-			});
-		$('#lastyear').sparkline([8, 5, 4, 7, 9, 7, 10, 9], {
-				type: 'bar',
-				height: '35',
-				barWidth: '4',
-				resize: true,
-				barSpacing: '4',
-				barColor: '#ec4b71'
-			});
-		var sparkResize;
-	
-	
+	// quick stats		
+  $('#quickstats1').sparkline(quickstats1, {
+      type: 'bar',
+      height: '35',
+      barWidth: '4',
+      resize: true,
+      barSpacing: '4',
+      barColor: '#843cf7'
+    });
+  $('#quickstats2').sparkline(quickstats2, {
+      type: 'bar',
+      height: '35',
+      barWidth: '4',
+      resize: true,
+      barSpacing: '4',
+      barColor: '#ec4b71'
+    });
+  var sparkResize;
 }(jQuery) // End of use strict
 
 // Fullscreen

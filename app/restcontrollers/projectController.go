@@ -12,16 +12,12 @@ import (
 )
 
 func (c *RESTController) MyProjects(w http.ResponseWriter, r *http.Request) {
-	pUser := c.ContentController.GetUserContent()
-	pProduct, err := c.ContentController.GetUserProjectContent(&c.ContentController.UserData.ID)
+	content, err := c.ContentController.BuildMyProjectsContent()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get project content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	for k, v := range pProduct {
-		pUser[k] = v
-	}
-	c.RenderTemplate(w, "my-projects", pUser)
+	c.RenderTemplate(w, "my-projects", content)
 }
 
 func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) {

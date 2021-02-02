@@ -63,6 +63,9 @@ func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {
 		ContentController: &contents.ContentController{
 			UserDBController: userDB,
 		},
+		BackendContext: &businesslogic.Context{
+			UserDBController: userDB,
+		},
 	}
 	return controller
 }
@@ -72,7 +75,8 @@ func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request)
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
-		w.Header().Set("Content-Security-Policy", "default-src 'self' http://0.0.0.0:10000; script-src 'self';")
+		// TODO Issue#71: Figure out the proper settings and fix UI code that breaks because of CSP
+		//w.Header().Set("Content-Security-Policy", "default-src 'self' http://0.0.0.0:10000; script-src 'self';")
 
 		routeMatch := mux.RouteMatch{}
 		if matched := router.Match(r, &routeMatch); !matched {

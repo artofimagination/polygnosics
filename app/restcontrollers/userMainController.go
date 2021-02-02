@@ -19,14 +19,14 @@ func UserSettings(w http.ResponseWriter, r *http.Request) {
 
 // UserMainHandler renders the main page after login.
 func (c *RESTController) UserMainHandler(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent()
-	c.RenderTemplate(w, UserMain, p)
+	content := c.ContentController.BuildUserMainContent()
+	c.RenderTemplate(w, UserMain, content)
 }
 
 // ProfileHandler renders the profile page template.
 func (c *RESTController) ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent()
-	c.RenderTemplate(w, "profile", p)
+	content := c.ContentController.BuildProfileContent()
+	c.RenderTemplate(w, "profile", content)
 }
 
 // UploadAvatarHandler processes avatar upload request.

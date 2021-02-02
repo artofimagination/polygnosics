@@ -3,37 +3,74 @@
 <div class="content-header">
   <div class="d-flex align-items-center">
     <div class="mr-auto">
-      <h3 class="page-title">Product Wizard</h3>
+      <h3 class="page-title">{{index . "content_name"}}</h3>
       <div class="d-inline-block align-items-center">
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/user-main"><i class="mdi mdi-home-outline"></i></a></li>
-            <li class="breadcrumb-item" aria-current="page">Products</li>
-            <li class="breadcrumb-item active" aria-current="page">Product Wizard</li>
+            <li class="breadcrumb-item" aria-current="page">{{index . "parent_page"}}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{index . "content_name"}}</li>
           </ol>
         </nav>
       </div>
     </div>
     <div class="right-title">
       <div class="d-flex mt-10 justify-content-end">
+        <h6 class="mb-0">QUICKSTAT (LAST 10 DAYS)</h6>
+      </div>
+      <div class="d-flex mt-10 justify-content-end">
+        <script>  var quickstats1 = []
+          {{range (index . "quick_stats_1_data")}}
+            quickstats1.push('{{.}}')
+          {{end}}
+          var quickstats2 = []
+          {{range (index . "quick_stats_2_data")}}
+            quickstats2.push('{{.}}')
+          {{end}}
+        </script>
+        
+        {{if eq (index . "quick_stats_1") "users" }}
         <div class="d-lg-flex mr-20 ml-10 d-none">
           <div class="chart-text mr-10">
-            <h6 class="mb-0"><small>THIS MONTH</small></h6>
-            <h4 class="mt-0 text-primary">$12,125</h4>
+            <h6 class="mb-0"><small>USERS</small></h6>
+            <h4 class="mt-0 text-primary">{{index (index . "quick_stats_1_data") 0 }}</h4>
           </div>
           <div class="spark-chart">
-            <div id="thismonth"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+            <div id="quickstats1"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
           </div>
         </div>
+        {{else if eq (index . "quick_stats_1") "revenue" }}
         <div class="d-lg-flex mr-20 ml-10 d-none">
           <div class="chart-text mr-10">
-            <h6 class="mb-0"><small>LAST YEAR</small></h6>
-            <h4 class="mt-0 text-danger">$22,754</h4>
+            <h6 class="mb-0"><small>REVENUE</small></h6>
+            <h4 class="mt-0 text-danger">${{index (index . "quick_stats_1_data") 0 }}</h4>
           </div>
           <div class="spark-chart">
-            <div id="lastyear"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+            <div id="quickstats1"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
           </div>
         </div>
+        {{end}}
+        {{if eq (index . "quick_stats_2") "users" }}
+        <div class="d-lg-flex mr-20 ml-10 d-none">
+          <div class="chart-text mr-10">
+            <h6 class="mb-0"><small>USERS</small></h6>
+            <h4 class="mt-0 text-primary">{{index (index . "quick_stats_2_data") 0 }}</h4>
+          </div>
+          <div class="spark-chart">
+            <div id="quickstats2"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+          </div>
+        </div>
+        {{else if eq (index . "quick_stats_2") "revenue" }}
+        <div class="d-lg-flex mr-20 ml-10 d-none">
+          <div class="chart-text mr-10">
+            <h6 class="mb-0"><small>REVENUE</small></h6>
+            <h4 class="mt-0 text-danger">${{index (index . "quick_stats_2_data") 0 }}</h4>
+          </div>
+          <div class="spark-chart">
+            <div id="quickstats2"><canvas width="60" height="35" style="display: inline-block; width: 60px; height: 35px; vertical-align: top;"></canvas></div>
+          </div>
+        </div>
+        {{end}}
       </div>
     </div>
   </div>

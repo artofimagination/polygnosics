@@ -14,56 +14,43 @@ import (
 )
 
 func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
-	pUser := c.ContentController.GetUserContent()
-	pProduct, err := c.ContentController.GetUserProductContent(&c.ContentController.UserData.ID)
+	content, err := c.ContentController.BuildMyProductsContent()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		errString := fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err))
+		c.RenderTemplate(w, "my-products", c.ContentController.BuildErrorContent(errString))
 		return
 	}
-	for k, v := range pProduct {
-		pUser[k] = v
-	}
-	c.RenderTemplate(w, "my-products", pUser)
+	c.RenderTemplate(w, "my-products", content)
 }
 
 func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) {
-	pUser := c.ContentController.GetUserContent()
-	name := UserMain
 	if err := r.ParseForm(); err != nil {
-		pUser["message"] = ErrFailedToParseForm
-		c.RenderTemplate(w, name, pUser)
+		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent(ErrFailedToParseForm))
 		return
 	}
 	productID, err := uuid.Parse(r.FormValue("product"))
 	if err != nil {
-		pUser["message"] = "Failed to parse product id"
-		c.RenderTemplate(w, name, pUser)
+		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to parse product id"))
 		return
 	}
 
-	pProduct, err := c.ContentController.GetProductContent(&productID)
+	content, err := c.ContentController.BuildProductDetailsContent(&productID)
 	if err != nil {
-		pUser["message"] = "Failed to get product content"
-		c.RenderTemplate(w, name, pUser)
+		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to get product content"))
 		return
 	}
 
-	for k, v := range pProduct {
-		pUser[k] = v
-	}
-	c.RenderTemplate(w, "details", pUser)
+	c.RenderTemplate(w, "details", content)
 }
 
 func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent()
+	content := c.ContentController.BuildProductWizardContent()
 	if r.Method == GET {
-		c.RenderTemplate(w, "new-product-wizard", p)
+		c.RenderTemplate(w, "new-product-wizard", content)
 	} else {
-		name := UserMain
-
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
-			p["message"] = ErrFailedToParseForm
-			c.RenderTemplate(w, name, p)
+			content["message"] = ErrFailedToParseForm
+			c.RenderTemplate(w, UserMain, content)
 			return
 		}
 
@@ -145,6 +132,6 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.RenderTemplate(w, name, p)
+		c.RenderTemplate(w, UserMain, content)
 	}
 }
