@@ -6,12 +6,12 @@
     <div class="user-profile px-20 py-5">
       <div class="d-flex align-items-center">			
         <div class="image">
-          <img src="{{index .assets "user_avatar"}}" class="avatar avatar-lg" alt="User Image">
+          <img src="{{index .user "avatar"}}" class="avatar avatar-lg" alt="User Image">
         </div>
         <div class="info">
-          <a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">{{index .texts "username"}}</a>
+          <a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">{{index .user "username"}}</a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="/user-main/profile"><i class="ti-user"></i> Profile</a>
+            <a class="dropdown-item" href="{{index .user "profile"}}"><i class="ti-user"></i> Profile</a>
             <a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
             <a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
           </div>
