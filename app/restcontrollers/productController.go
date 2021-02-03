@@ -24,7 +24,6 @@ func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) {
-	content := make(map[string]interface{})
 	if err := r.ParseForm(); err != nil {
 		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent(ErrFailedToParseForm))
 		return
@@ -35,7 +34,7 @@ func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	content, err = c.ContentController.BuildProductDetailsContent(&productID)
+	content, err := c.ContentController.BuildProductDetailsContent(&productID)
 	if err != nil {
 		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to get product content"))
 		return
