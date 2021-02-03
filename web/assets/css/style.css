@@ -17209,7 +17209,8 @@ input[type="color"] {
   vertical-align: middle; }
 
 textarea.form-control {
-  border-radius: 5px; }
+  border-radius: 5px; 
+  white-space: pre-wrap;}
 
 .iCheck-helper {
   border-radius: 0; }
