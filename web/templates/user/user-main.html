@@ -23,7 +23,9 @@
 					<div class="box">
 						<div class="box-header with-border">
 							<h4 class="box-title"><span>Recent products</span></h4>
+							{{if eq (index . "future_feature") 0}}
 							<span><button type="button" class="waves-effect waves-light btn btn-primary btn-flat mb-5">Settings</button></span>
+							{{end}}
 						</div>
 						<div class="box-body p-0">
 							<div class="media-list media-list-hover media-list-divided">

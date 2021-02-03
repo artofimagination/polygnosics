@@ -10,6 +10,8 @@ import (
 
 // Details and assets field keys
 const (
+	FutureFeature = "future_feature"
+
 	UserMapKey                 = "user"
 	UserAvatarKey              = "avatar"
 	UserProfilePathKey         = "profile"
@@ -45,6 +47,7 @@ func setLocationString(country string, city string) string {
 // GetUserContent fills a string nested map with all user details and assets info
 func (c *ContentController) GetUserContent(user *models.UserData) map[string]interface{} {
 	content := make(map[string]interface{})
+	content[FutureFeature] = 1
 	content[UserMapKey] = make(map[string]interface{})
 	userContent := content[UserMapKey].(map[string]interface{})
 	path := c.UserDBController.ModelFunctions.GetFilePath(user.Assets, UserAvatarKey, businesslogic.DefaultUserAvatarPath)
