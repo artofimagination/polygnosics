@@ -43,11 +43,14 @@ func CreateRouter(c *RESTController) *mux.Router {
 	r.HandleFunc("/about", c.MakeHandler(c.AboutUsHandler, r, true))
 	r.HandleFunc("/index", c.MakeHandler(c.IndexHandler, r, true))
 	r.HandleFunc("/", c.MakeHandler(c.IndexHandler, r, true))
+	r.HandleFunc("/news", c.MakeHandler(c.News, r, true))
 
 	// Authenticated pages
 	r.HandleFunc("/auth_logout", c.MakeHandler(c.LogoutHandler, r, false))
 	r.HandleFunc("/user-main", c.MakeHandler(c.UserMainHandler, r, false))
 	r.HandleFunc("/user-settings", c.MakeHandler(UserSettings, r, false))
+	resources := r.PathPrefix("/resources").Subrouter()
+	resources.HandleFunc("/news", c.MakeHandler(c.News, r, false))
 	userMain := r.PathPrefix("/user-main").Subrouter()
 	userMain.HandleFunc("/upload-avatar", c.MakeHandler(c.UploadAvatarHandler, r, false))
 	userMain.HandleFunc("/store", c.MakeHandler(c.StoreHandler, r, false))
@@ -55,8 +58,6 @@ func CreateRouter(c *RESTController) *mux.Router {
 	userMain.HandleFunc("/my-projects", c.MakeHandler(c.MyProjects, r, false))
 	userMain.HandleFunc("/new-product-wizard", c.MakeHandler(c.CreateProduct, r, false))
 	userMain.HandleFunc("/profile", c.MakeHandler(c.ProfileHandler, r, false))
-	userMain.HandleFunc("/new", c.MakeHandler(NewProject, r, false))
-	userMain.HandleFunc("/resume", c.MakeHandler(NewProject, r, false))
 	myProducts := userMain.PathPrefix("/my-products").Subrouter()
 	myProducts.HandleFunc("/details", c.MakeHandler(c.ProductDetails, r, false))
 	myProducts.HandleFunc("/new-project-wizard", c.MakeHandler(c.CreateProject, r, false))

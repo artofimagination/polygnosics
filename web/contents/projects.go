@@ -22,7 +22,7 @@ const (
 	NewProject           = "new_project"
 	RunProject           = "run_project"
 	ProjectState         = "project_state"
-	ProjectStateColor    = "project_state_color"
+	ProjectStateBadge    = "state_badge"
 	ProjectContainerID   = "project_container_id"
 )
 
@@ -33,18 +33,29 @@ const (
 	Private   = "Private"
 )
 
-// GetProjectStateColorString returns UI color of the project state based on the state value.
-func GetProjectStateColorString(state string) string {
-	switch state {
-	case project.NotRunning:
-		return "#f5cf0a" // orange
-	case project.Running:
-		return "#00ff00" // green
-	case project.Stopped:
-		return "#ff0000" // red
-	default:
-		return "#e0dfd6" // lightgray
+type StateContent struct {
+	text  string
+	badge string
+}
+
+// GetProjectStateContent returns UI color of the project state based on the state value.
+func GetProjectStateContent(stateString string) *StateContent {
+	state := &StateContent{
+		text: stateString,
 	}
+	switch stateString {
+	case project.NotRunning:
+		state.badge = "badge-warning" // orange
+	case project.Paused:
+		state.badge = "badge-primary" // lightblue
+	case project.Running:
+		state.badge = "badge-success" // green
+	case project.Stopped:
+		state.badge = "badge-danger" // red
+	default:
+		state.badge = "badge-secondary" // lightgray
+	}
+	return state
 }
 
 // ValidateVisibility validates the visibility string
@@ -65,7 +76,7 @@ func (c *ContentController) generateProjectContent(projectData *models.ProjectDa
 	content[ProjectState] = c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectState, "")
 
 	content[ProjectPath] = fmt.Sprintf("/user-main/my-projects/details?project=%s", projectData.ID.String())
-	content[ProjectStateColor] = GetProjectStateColorString(c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectState, ""))
+	content[ProjectStateBadge] = GetProjectStateContent(c.UserDBController.ModelFunctions.GetField(projectData.Details, ProjectState, "")).badge
 	content[RunProject] = fmt.Sprintf("/user-main/my-projects/run?project=%s", projectData.ID.String())
 	return content
 }
@@ -88,19 +99,28 @@ func (c *ContentController) GetProjectContent(projectID *uuid.UUID) (map[string]
 }
 
 // GetUserProjectContent gathers the contents of all projects belonging to the specified user.
-func (c *ContentController) GetUserProjectContent(userID *uuid.UUID) (map[string]interface{}, error) {
+func (c *ContentController) GetUserProjectContent(userID *uuid.UUID, limit int) ([]map[string]interface{}, error) {
 	projects, err := c.UserDBController.GetProjectsByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	p := make(map[string]interface{})
+	if limit > len(projects) {
+		limit = len(projects)
+	}
 
 	projectContent := make([]map[string]interface{}, len(projects))
+	if limit != -1 {
+		projectContent = make([]map[string]interface{}, limit)
+	}
+
 	for i, project := range projects {
+		if limit == 0 {
+			break
+		}
+		limit--
 		projectContent[i] = c.generateProjectContent(project.ProjectData)
 	}
-	p["project"] = projectContent
 
-	return p, nil
+	return projectContent, nil
 }

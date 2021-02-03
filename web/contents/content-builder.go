@@ -11,6 +11,7 @@ const (
 	ProductsPageCreateName     = "Product Wizard"
 	ProductsPageMyProductsName = "My Products"
 	ProductsPageDetailsName    = "Details"
+	ProductsPageStoreName      = "Marketplace"
 )
 
 const (
@@ -24,6 +25,11 @@ const (
 	UserPageName         = "User"
 	UserPageProfileName  = "Profile"
 	UserPageMainPageName = "Info board"
+)
+
+const (
+	ResourcesPageName     = "Resources"
+	ResourcesPageNewsName = "News"
 )
 
 // TODO Issue#40: Replace  user/product/project data with redis storage.
@@ -43,26 +49,24 @@ func getBooleanString(input string) string {
 }
 
 func (c *ContentController) BuildProductWizardContent() map[string]interface{} {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageCreateName)
 	return content
 }
 
 func (c *ContentController) BuildMyProductsContent() (map[string]interface{}, error) {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageMyProductsName)
 	productsContent, err := c.GetUserProductContent(&c.UserData.ID)
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range productsContent {
-		content[k] = v
-	}
+	content["product"] = productsContent
 	return content, nil
 }
 
 func (c *ContentController) BuildProductDetailsContent(productID *uuid.UUID) (map[string]interface{}, error) {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageDetailsName)
 	productContent, err := c.GetProductContent(productID)
 	if err != nil {
@@ -75,20 +79,18 @@ func (c *ContentController) BuildProductDetailsContent(productID *uuid.UUID) (ma
 }
 
 func (c *ContentController) BuildMyProjectsContent() (map[string]interface{}, error) {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageMyProjectsName)
-	productsContent, err := c.GetUserProjectContent(&c.UserData.ID)
+	projectsContent, err := c.GetUserProjectContent(&c.UserData.ID, -1)
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range productsContent {
-		content[k] = v
-	}
+	content["project"] = projectsContent
 	return content, nil
 }
 
 func (c *ContentController) BuildProjectDetailsContent(projectID *uuid.UUID) (map[string]interface{}, error) {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageDetailsName)
 	productContent, err := c.GetProjectContent(projectID)
 	if err != nil {
@@ -100,20 +102,52 @@ func (c *ContentController) BuildProjectDetailsContent(projectID *uuid.UUID) (ma
 	return content, nil
 }
 
-func (c *ContentController) BuildProfileContent() map[string]interface{} {
-	content := c.GetUserContent()
+func (c *ContentController) BuildProfileContent(id *uuid.UUID) (map[string]interface{}, error) {
+	user, err := c.UserDBController.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
+	content := c.GetUserContent(user)
 	content = c.prepareContentHeader(content, UserPageName, UserPageProfileName)
-	return content
+	return content, err
 }
 
-func (c *ContentController) BuildUserMainContent() map[string]interface{} {
-	content := c.GetUserContent()
+func (c *ContentController) BuildUserMainContent() (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, UserPageName, UserPageMainPageName)
-	return content
+	content = c.prepareNewsFeed(content)
+	productsContent, err := c.GetRecentProductsContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+	content["product"] = productsContent
+	projectsContent, err := c.GetUserProjectContent(&c.UserData.ID, 4)
+	if err != nil {
+		return nil, err
+	}
+	content["project"] = projectsContent
+	return content, nil
 }
 
 func (c *ContentController) BuildErrorContent(errString string) map[string]interface{} {
-	content := c.GetUserContent()
+	content := c.GetUserContent(c.UserData)
 	content["message"] = errString
 	return content
+}
+
+func (c *ContentController) BuildNewsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageNewsName)
+	return content
+}
+
+func (c *ContentController) BuildStoreContent() (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageStoreName)
+	productsContent, err := c.GetUserProductContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+	content["product"] = productsContent
+	return content, nil
 }
