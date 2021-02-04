@@ -17,26 +17,32 @@
 		<!-- Main content -->
 		<section class="content">
 		  <div class="row fx-element-overlay">
+				<script>
+					var deleteLinks = []
+					{{range $i, $a := .product}}
+						deleteLinks.push('{{index $a "product_to_delete"}}')
+					{{end}}
+				</script>
 				{{range $i, $a := .product}}
-					<div class="col-12 col-lg-6 col-xl-4">
+					<div class="col-10 col-lg-2">
 						<div class="box box-default">
-						<div class="fx-card-item">
-							<div class="fx-card-avatar fx-overlay-1"> <img src="{{index $a "product_avatar"}}" alt="product">
-								<div class="fx-overlay scrl-up">						
-									<ul class="fx-info">
-										<li><a class="btn btn-outline" href="{{index $a "product_path"}}"><i class="mdi mdi-magnify"></i></a></li>
-										<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-delete"></i></a></li>
-										<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-settings"></i></a></li>
-									</ul>
+							<div class="fx-card-item">
+								<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "product_avatar"}}" alt="product">
+									<div class="fx-overlay scrl-up">						
+										<ul class="fx-info">
+											<li><a class="btn btn-outline" href="{{index $a "product_path"}}"><i class="mdi mdi-magnify"></i></a></li>
+											<li><a class="btn btn-outline" id="delete-product-{{$i}}"><i class="mdi mdi-delete"></i></a></li>
+											<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-settings"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="fx-card-content text-left mb-0">							
+									<div class="product-text">
+										<h4 class="box-title mb-0">{{index $a "product_name"}}</h4>
+										<small class="text-muted db">{{index $a "product_description"}}</small>
+									</div>
 								</div>
 							</div>
-							<div class="fx-card-content text-left mb-0">							
-								<div class="product-text">
-									<h4 class="box-title mb-0">{{index $a "product_name"}}</h4>
-									<small class="text-muted db">{{index $a "product_description"}}</small>
-								</div>
-							</div>
-						</div>
 						</div>
 						<!-- /.box -->				  
 					</div>
@@ -73,15 +79,15 @@
 
 	<!-- Vendor JS -->
 	<script src="/assets/js/vendors.min.js"></script>
-    <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
-    
-    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
-    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
+	<script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+	<script src="/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+	<script src="/assets/vendor_components/sweetalert/jquery.sweet-alert.custom.js"></script>
+	<script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+	<script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
 	
 	<!-- Venusx Admin App -->
 	<script src="/assets/js/template.js"></script>
 	<script src="/assets/js/demo.js"></script>
-	
 
 </body>
 </html>

@@ -2,7 +2,6 @@ package contents
 
 import (
 	"fmt"
-	"net/http"
 
 	"polygnosics/app/businesslogic"
 
@@ -18,6 +17,7 @@ const (
 	ProductDescription      = "product_description"
 	ProductName             = "product_name"
 	ProductPath             = "product_path"
+	ProductDeleteIDKey      = "product_to_delete"
 	ProductFolder           = "product_folder"
 	ProductRequires3D       = "requires_3d"
 	ProductURL              = "product_url"
@@ -31,21 +31,15 @@ const (
 func (c *ContentController) generateProductContent(productData *models.ProductData) map[string]interface{} {
 	content := make(map[string]interface{})
 	content[ProductAvatar] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductAvatar, businesslogic.DefaultProductAvatarPath)
+	content[ProductMainApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductMainApp, "")
+	content[ProductClientApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductClientApp, "")
 	content[ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductName, "")
 	content[ProductPublic] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductPublic, "")
 	content[ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductDescription, "")
 	content[ProductPath] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
 	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
+	content[ProductDeleteIDKey] = productData.ID.String()
 	return content
-}
-
-// SetProductDetails sets the key-value content of product details based on form values.
-func (c *ContentController) SetProductDetails(details *models.Asset, r *http.Request) {
-	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue("productName"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue("productDescription"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, r.FormValue("requires3D"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, getBooleanString(r.FormValue("publicProduct")))
-	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue("productUrl"))
 }
 
 // GetProductContent returns the selected product details and assets info.

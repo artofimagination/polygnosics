@@ -13,7 +13,7 @@ import (
 
 var MaxWrittenBytes = int64(3 * 1024 * 1024 * 1024)
 
-func Untar(fileName string) error {
+func untar(fileName string) error {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return errors.New("ExtractTarGz: Opening tar file failed")

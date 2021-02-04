@@ -36,8 +36,8 @@ func GeneratePath(assetID *uuid.UUID) (string, error) {
 	return assetPath, nil
 }
 
-func (c *Context) UploadFile(asset *models.Asset, fileType string, defaultPath string, formName string, r *http.Request) error {
-	file, handler, err := r.FormFile(formName)
+func (c *Context) UploadFile(asset *models.Asset, key string, defaultPath string, r *http.Request) error {
+	file, handler, err := r.FormFile(key)
 	if err == http.ErrMissingFile {
 		return nil
 	}
@@ -52,10 +52,10 @@ func (c *Context) UploadFile(asset *models.Asset, fileType string, defaultPath s
 
 	defer file.Close()
 
-	if err := c.UserDBController.ModelFunctions.SetFilePath(asset, fileType, filepath.Ext(handler.Filename)); err != nil {
+	if err := c.UserDBController.ModelFunctions.SetFilePath(asset, key, filepath.Ext(handler.Filename)); err != nil {
 		return err
 	}
-	path := c.UserDBController.ModelFunctions.GetFilePath(asset, fileType, defaultPath)
+	path := c.UserDBController.ModelFunctions.GetFilePath(asset, key, defaultPath)
 
 	// Create file
 	dst, err := os.Create(path)
@@ -63,7 +63,7 @@ func (c *Context) UploadFile(asset *models.Asset, fileType string, defaultPath s
 		if err2 := dst.Close(); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
-		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, fileType); err2 != nil {
+		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, key); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
@@ -74,11 +74,30 @@ func (c *Context) UploadFile(asset *models.Asset, fileType string, defaultPath s
 		if err2 := dst.Close(); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
-		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, fileType); err2 != nil {
+		if err2 := c.UserDBController.ModelFunctions.ClearAsset(asset, key); err2 != nil {
 			err = errors.Wrap(errors.WithStack(err), err2.Error())
 		}
 		return err
 	}
 
+	return nil
+}
+
+func removeContents(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

@@ -31,6 +31,8 @@ github.com/artofimagination/golang-docker v0.0.0 h1:UfPuohZFI/cU1yH+Gyn/wjzyBQ7T
 github.com/artofimagination/golang-docker v0.0.0/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11 h1:uQ7hdDAT4fR9ZMy9Jb+KIwTGLS5sug8R/YdREWmnNj8=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.12 h1:hyNmXLyJdQeFFlIQMPQPG7qmyeKZjR7aZJ9HJTGAw4k=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.12/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/aryann/difflib v0.0.0-20170710044230-e206f873d14a/go.mod h1:DAHtR1m6lCRdSC2Tm3DSWRPvIPr6xNKyeHdqDQSQT+A=
 github.com/aws/aws-lambda-go v1.13.3/go.mod h1:4UKl9IzQMoD+QF79YdCuzCwp8VbmG4VAQwij/eHl5CU=
 github.com/aws/aws-sdk-go v1.27.0/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=

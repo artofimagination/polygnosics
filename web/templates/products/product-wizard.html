@@ -24,7 +24,7 @@
 			</div>
 			<!-- /.box-header -->
 			<div class="box-body wizard-content">
-				<form action="/user-main/new-product-wizard" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
+				<form action="/user-main/product-wizard" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
 					<!-- Step 1 -->
 					<h6>Basic configuration</h6>
 					<section>
@@ -58,8 +58,8 @@
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="product-avatar">Upload product avatar :</label>
-								<input type="file" class="btn btn-primary form-control" id="product-avatar" name="product-avatar" accept="image/*">
+								<label for="product_avatar">Upload product avatar :</label>
+								<input type="file" class="btn btn-primary form-control" id="product_avatar" name="product_avatar" accept="image/*">
 							</div>
 						</div>
 					</section>
@@ -80,14 +80,14 @@
 						<div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label for="main-app">Upload main app file :<span class="danger">*</span></label>
-									<input type="file" class="btn btn-primary form-control required" id="main-app" name="main-app" accept=".tar.gz,.zip">
+									<label for="main_app">Upload main app file :<span class="danger">*</span></label>
+									<input type="file" class="btn btn-primary form-control required" id="main_app" name="main_app" accept=".tar.gz,.zip">
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label for="client-app">Upload client file if supported :</label>
-									<input type="file" class="btn btn-primary form-control" id="client-app" name="client-app" accept=".tar.gz,.zip">
+									<label for="client_app">Upload client file if supported :</label>
+									<input type="file" class="btn btn-primary form-control" id="client_app" name="client_app" accept=".tar.gz,.zip">
 								</div>
 							</div>
 						</div>

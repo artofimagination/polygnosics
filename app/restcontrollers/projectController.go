@@ -104,7 +104,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = c.BackendContext.UploadFile(projectData.Assets, contents.ProjectAvatar, businesslogic.DefaultProjectAvatarPath, "project-avatar", r)
+		err = c.BackendContext.UploadFile(projectData.Assets, contents.ProjectAvatar, businesslogic.DefaultProjectAvatarPath, r)
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
