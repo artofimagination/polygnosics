@@ -39,6 +39,10 @@ func GeneratePath(assetID *uuid.UUID) (string, error) {
 func (c *Context) UploadFile(asset *models.Asset, key string, defaultPath string, r *http.Request) error {
 	file, handler, err := r.FormFile(key)
 	if err == http.ErrMissingFile {
+		path := c.UserDBController.ModelFunctions.GetFilePath(asset, key, defaultPath)
+		if err := c.UserDBController.ModelFunctions.SetFilePath(asset, key, path); err != nil {
+			return err
+		}
 		return nil
 	}
 

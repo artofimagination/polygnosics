@@ -6,6 +6,8 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+
 	"github.com/artofimagination/golang-docker/docker"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
 	"github.com/google/uuid"
@@ -13,14 +15,19 @@ import (
 )
 
 const (
-	ProductAvatar      = "product_avatar"
-	ProductMainApp     = "main_app"
+	ProductAvatarKey   = "avatar"
+	ProductMainAppKey  = "main_app"
 	ProductClientApp   = "client-app"
-	ProductDescription = "product_description"
-	ProductName        = "product_name"
+	ProductDescription = "description"
+	ProductName        = "name"
 	ProductRequires3D  = "requires_3d"
-	ProductURL         = "product_url"
+	ProductURL         = "url"
 	ProductPublic      = "is_public"
+)
+
+const (
+	CheckBoxUnChecked = "unchecked"
+	CheckBoxChecked   = "checked"
 )
 
 func (c *Context) DeleteProduct(product *models.ProductData) error {
@@ -39,7 +46,7 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 		return err
 	}
 
-	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainApp, "")
+	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
 	dir, _ := filepath.Split(folder)
 	if err := removeContents(dir); err != nil {
 		return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
@@ -56,37 +63,35 @@ func (c *Context) AddProduct(userID *uuid.UUID, productName string, r *http.Requ
 		return nil, err
 	}
 
-	err = c.UploadFile(product.Assets, ProductAvatar, DefaultProductAvatarPath, r)
-	if err != nil {
+	if err := c.UploadFiles(product.Assets, r); err != nil {
 		if errDelete := c.DeleteProduct(product); errDelete != nil {
 			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 			return nil, fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
 		}
-		return nil, fmt.Errorf("Failed to upload avatar. %s", errors.WithStack(err))
-	}
-
-	err = c.UploadFile(product.Assets, ProductMainApp, "", r)
-	if err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return nil, fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return nil, fmt.Errorf("Failed to upload main app. %s", errors.WithStack(err))
-	}
-
-	if err := c.UploadFile(product.Assets, ProductClientApp, "", r); err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return nil, fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return nil, fmt.Errorf("Failed to upload client app. %s", errors.WithStack(err))
+		return nil, fmt.Errorf("Failed to upload asset. %s", errors.WithStack(err))
 	}
 
 	return product, nil
 }
 
+func (c *Context) UploadFiles(assets *models.Asset, r *http.Request) error {
+	if err := c.UploadFile(assets, ProductAvatarKey, DefaultProductAvatarPath, r); err != nil {
+		return err
+	}
+
+	if err := c.UploadFile(assets, ProductMainAppKey, "", r); err != nil {
+		return err
+	}
+
+	if err := c.UploadFile(assets, ProductClientApp, "", r); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UUID) error {
-	pathString := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainApp, "")
+	pathString := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
 	if err := untar(pathString); err != nil {
 		if errDelete := c.DeleteProduct(product); errDelete != nil {
 			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
@@ -109,38 +114,30 @@ func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UU
 
 // getBooleanString returns a check box stat Yes/No string
 func getBooleanString(input string) string {
-	if input == "" {
-		return "No"
+	if input == "" || input == CheckBoxUnChecked {
+		return CheckBoxUnChecked
 	}
-	return input
+	return CheckBoxChecked
 }
 
 // SetProductDetails sets the key-value content of product details based on form values.
 func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
-	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue("productName"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue("productDescription"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, r.FormValue("requires3D"))
-	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, getBooleanString(r.FormValue("publicProduct")))
-	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue("productUrl"))
+	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue(ProductName))
+	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue(ProductDescription))
+	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, getBooleanString(r.FormValue(ProductRequires3D)))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, getBooleanString(r.FormValue(ProductPublic)))
+	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue(ProductURL))
 }
 
 func (c *Context) UpdateProductData(product *models.ProductData, r *http.Request) error {
 	c.SetProductDetails(product.Details, r)
 
-	if err := c.UserDBController.UpdateProductDetails(product); err != nil {
-		if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to update product details. %s", errors.WithStack(err))
+	if err := c.UserDBController.UpdateProductDetails(product); err != nil && err != dbcontrollers.ErrMissingProductDetail {
+		return err
 	}
 
-	if err := c.UserDBController.UpdateProductAssets(product); err != nil {
-		if errDelete := c.UserDBController.DeleteProduct(&product.ID); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to update product assets. %s", errors.WithStack(err))
+	if err := c.UserDBController.UpdateProductAssets(product); err != nil && err != dbcontrollers.ErrMissingProductAsset {
+		return err
 	}
 	return nil
 }

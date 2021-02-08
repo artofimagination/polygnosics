@@ -24,7 +24,7 @@
                 closeOnConfirm: false
             }, function(){   
                   var http = new XMLHttpRequest();
-                  var url = '/product/delete';
+                  var url = '/user-main/my-products/delete';
                   var params = 'product=' + product;
                   http.open('POST', url, true);
 

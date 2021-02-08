@@ -11,32 +11,29 @@ import (
 
 // Details and assets field keys
 const (
-	ProductAvatar           = "product_avatar"
-	ProductMainApp          = "main_app"
-	ProductClientApp        = "client-app"
-	ProductDescription      = "product_description"
-	ProductName             = "product_name"
-	ProductPath             = "product_path"
-	ProductDeleteIDKey      = "product_to_delete"
-	ProductFolder           = "product_folder"
-	ProductRequires3D       = "requires_3d"
-	ProductURL              = "product_url"
-	ProductPublic           = "is_public"
-	ProductOwnerNameKey     = "owner_name"
-	ProductOwnerPageNameKey = "owner_page"
-	ProductDetailPageKey    = "product_detail"
+	ProductMapKey                = "product"
+	ProductDeleteIDKey           = "product_to_delete"
+	ProductOwnerNameKey          = "owner_name"
+	ProductOwnerPageNameKey      = "owner_page"
+	ProductDetailPageKey         = "detail_path"
+	ProductEditPageKey           = "edit_path"
+	Product3rdPartyDetailPageKey = "3rdparty_detail_path"
 )
 
 /// GenerateProductContent fills a string nested map with all product details and assets info
 func (c *ContentController) generateProductContent(productData *models.ProductData) map[string]interface{} {
 	content := make(map[string]interface{})
-	content[ProductAvatar] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductAvatar, businesslogic.DefaultProductAvatarPath)
-	content[ProductMainApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductMainApp, "")
-	content[ProductClientApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, ProductClientApp, "")
-	content[ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductName, "")
-	content[ProductPublic] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductPublic, "")
-	content[ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, ProductDescription, "")
-	content[ProductPath] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
+	content[UserMapKey] = make(map[string]interface{})
+	content[businesslogic.ProductAvatarKey] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductAvatarKey, businesslogic.DefaultProductAvatarPath)
+	content[businesslogic.ProductMainAppKey] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductMainAppKey, "")
+	content[businesslogic.ProductClientApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductClientApp, "")
+	content[businesslogic.ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductName, "")
+	content[businesslogic.ProductURL] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductURL, "")
+	content[businesslogic.ProductPublic] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublic, ""))
+	content[businesslogic.ProductRequires3D] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3D, ""))
+	content[businesslogic.ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductDescription, "")
+	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
+	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?product=%s", productData.ID.String())
 	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
 	content[ProductDeleteIDKey] = productData.ID.String()
 	return content
@@ -44,11 +41,13 @@ func (c *ContentController) generateProductContent(productData *models.ProductDa
 
 // GetProductContent returns the selected product details and assets info.
 func (c *ContentController) GetProductContent(productID *uuid.UUID) (map[string]interface{}, error) {
+	content := make(map[string]interface{})
 	product, err := c.UserDBController.GetProduct(productID)
 	if err != nil {
 		return nil, err
 	}
-	return c.generateProductContent(product), nil
+	content[ProductMapKey] = c.generateProductContent(product)
+	return content, nil
 }
 
 // GetUserProductContent gathers the content of each product belonging to the specified user.
@@ -75,6 +74,9 @@ func (c *ContentController) GetRecentProductsContent(userID *uuid.UUID) ([]map[s
 	}
 
 	limit := 4
+	if len(products) < limit {
+		limit = len(products)
+	}
 	productContent := make([]map[string]interface{}, limit)
 	for i, product := range products {
 		if limit == 0 {

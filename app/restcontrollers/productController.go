@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"polygnosics/app/businesslogic"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
@@ -24,10 +26,10 @@ func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 	content, err := c.ContentController.BuildMyProductsContent()
 	if err != nil {
 		errString := fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err))
-		c.RenderTemplate(w, "my-products", c.ContentController.BuildErrorContent(errString))
+		c.RenderTemplate(w, MyProducts, c.ContentController.BuildErrorContent(errString))
 		return
 	}
-	c.RenderTemplate(w, "my-products", content)
+	c.RenderTemplate(w, MyProducts, content)
 }
 
 func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +66,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		product, err := c.BackendContext.AddProduct(&c.ContentController.UserData.ID, r.FormValue("productName"), r)
+		product, err := c.BackendContext.AddProduct(&c.ContentController.UserData.ID, r.FormValue(businesslogic.ProductName), r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -76,7 +78,12 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := c.BackendContext.UpdateProductData(product, r); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			if errDelete := c.BackendContext.DeleteProduct(product); errDelete != nil {
+				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
+				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				return
+			}
+			http.Error(w, fmt.Sprintf("Failed to update product details. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
@@ -108,4 +115,42 @@ func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
+	productID, err := parseProductID(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	if r.Method == GET {
+		content, err := c.ContentController.BuildProductEditContent(productID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get build product edit content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		c.RenderTemplate(w, "product-edit", content)
+	} else {
+		product, err := c.UserDBController.GetProduct(productID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.BackendContext.UploadFiles(product.Assets, r); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to upload assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.BackendContext.UpdateProductData(product, r); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		content, err := c.ContentController.BuildMyProductsContent()
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get my products content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+		c.RenderTemplate(w, MyProducts, content)
+	}
 }
