@@ -58,6 +58,13 @@ func convertToCheckboxValue(input string) string {
 	return input
 }
 
+func convertCheckedToYesNo(input string) string {
+	if input == businesslogic.CheckBoxUnChecked {
+		return "No"
+	}
+	return "Yes"
+}
+
 func (c *ContentController) BuildProductWizardContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageCreateName)

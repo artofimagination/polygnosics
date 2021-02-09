@@ -31,8 +31,8 @@
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label for="name">Product Name :</label>
-									<input type="text" class="form-control" id="name" name="name" value="{{index .product "name"}}"></div>
+									<label for="name">Product Name :<span class="danger">*</span></label>
+									<input type="text" class="form-control required" id="name" name="name" value="{{index .product "name"}}"></div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
@@ -41,6 +41,8 @@
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
+									<label for="short_description">Short Description :<span class="danger">*</span></label>
+										<textarea name="short_description" id="short_description" rows="1" class="form-control required">{{index .product "short_description"}}</textarea>
 									<label for="description">Description :</label>
 									<textarea name="description" id="description" rows="4" class="form-control">{{index .product "description"}}</textarea>
 								</div>
@@ -93,6 +95,109 @@
 						</div>
 					</section>
 					<!-- Step 3 -->
+					<h6>Pricing</h6>
+					<section>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="font-weight-700 font-size-16">Payment type</label>
+									<div class="radio-list">
+										<label class="radio-inline p-0 mr-10">
+											<div class="radio radio-info">
+												<input type="radio" name="pricing" id="subscription" value="Subscription">
+												<label for="subscription">Subscription</label>
+											</div>
+										</label>
+										<label class="radio-inline">
+											<div class="radio radio-info">
+												<input type="radio" name="pricing" id="single_price" value="Single Price">
+												<label for="single_price">Single price</label>
+											</div>
+										</label>
+										<label class="radio-inline">
+											<div class="radio radio-info">
+												<input type="radio" name="pricing" id="free_price" value="Free">
+												<label for="free_price">Free</label>
+											</div>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="amount">Amount :<span class="danger">*</span></label>
+									<input type="number" class="form-control required" id="amount" name="amount" value="{{index .product "price"}}"">
+								</div>
+							</div>
+						</div>
+					</section>
+					<!-- Step 4 -->
+					<h6>Account Details</h6>
+					<section>
+						<div class="row">
+							<div class="col-12">
+								<div class="form-group">
+									<h4 class="box-title mb-15">Choose payment Option</h4>
+									<!-- Nav tabs -->
+									<ul class="nav nav-tabs" role="tablist">
+										<li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#credit-card" role="tab"><span class="hidden-sm-up"><i class="fa fa-cc"></i></span> <span class="hidden-xs-down">Credit Card</span></a> </li>
+										<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paypal" role="tab"><span class="hidden-sm-up"><i class="fa fa-paypal"></i></span> <span class="hidden-xs-down">Paypal</span></a> </li>
+									</ul>
+
+									<div class="tab-content tabcontent-border">
+										<div class="tab-pane active" id="credit-card" role="tabpanel">
+											<div class="p-30">
+												<div class="row">
+													<div class="col-lg-7 col-md-6 col-12">
+														<div class="form-group">
+															<label for="exampleInputEmail1">CARD NUMBER</label>
+															<div class="input-group">
+																<div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+																<input type="text" class="form-control" id="card_number" placeholder="Card Number"> </div>
+														</div>
+														<div class="row">
+															<div class="col-7">
+																<div class="form-group">
+																	<label>EXPIRATION DATE</label>
+																	<input type="text" class="form-control" name="expiry" placeholder="MM / YY" required=""> </div>
+															</div>
+															<div class="col-5 pull-right">
+																<div class="form-group">
+																	<label>CV CODE</label>
+																	<input type="text" class="form-control" name="cvc" placeholder="CVC" required=""> </div>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-12">
+																<div class="form-group">
+																	<label>NAME OF CARD</label>
+																	<input type="text" class="form-control" name="name_on_card" placeholder="NAME AND SURNAME"> </div>
+															</div>
+														</div>
+													</div>
+													<div class="col-lg-5 col-md-6 col-12">
+														<h3 class="box-title mt-10">General Info</h3>
+														<h2><i class="fa fa-cc-visa text-info"></i></h2>
+														<p>You will receive any payment to this credit card. It is not used to deduce any payment. You will need to define </p>
+														<p>You will need to define your payment methods in Settings->Payment</p>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane" id="paypal" role="tabpanel">						
+											<div class="p-30">
+												You can pay your money through paypal, for more info <a href="">click here</a><br><br>
+												<button class="btn btn-info btn-outline"><i class="fa fa-cc-paypal"></i> Pay with Paypal</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+					<!-- Step 5 -->
 					<h6>Confirmation</h6>
 					<section>
 						<div class="row">

@@ -15,14 +15,31 @@ import (
 )
 
 const (
-	ProductAvatarKey   = "avatar"
-	ProductMainAppKey  = "main_app"
-	ProductClientApp   = "client-app"
-	ProductDescription = "description"
-	ProductName        = "name"
-	ProductRequires3D  = "requires_3d"
-	ProductURL         = "url"
-	ProductPublic      = "is_public"
+	ProductAvatarKey           = "avatar"
+	ProductMainAppKey          = "main_app"
+	ProductClientApp           = "client-app"
+	ProductDescriptionKey      = "description"
+	ProductShortDescriptionKey = "short_description"
+	ProductNameKey             = "name"
+	ProductRequires3DKey       = "requires_3d"
+	ProductURLKey              = "url"
+	ProductPublicKey           = "is_public"
+	ProductPricingKey          = "pricing"
+	ProductPriceKey            = "amount"
+	ProductTagsKey             = "tags"
+)
+
+const (
+	CreditCardNumberKey = "card_number"
+	CreditCardExpiryKey = "expiry"
+	CreditCardNameKey   = "name_on_card"
+	CreditCardCVCKey    = "cvc"
+)
+
+const (
+	PaymentTypeSingle = "Single Price"
+	PaymentTypeSub    = "Subscription"
+	PaymentTypeFree   = "Free"
 )
 
 const (
@@ -54,9 +71,9 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 	return nil
 }
 
-func (c *Context) AddProduct(userID *uuid.UUID, productName string, r *http.Request) (*models.ProductData, error) {
+func (c *Context) AddProduct(userID *uuid.UUID, ProductNameKey string, r *http.Request) (*models.ProductData, error) {
 	product, err := c.UserDBController.CreateProduct(
-		productName,
+		ProductNameKey,
 		userID,
 		GeneratePath)
 	if err != nil {
@@ -122,11 +139,20 @@ func getBooleanString(input string) string {
 
 // SetProductDetails sets the key-value content of product details based on form values.
 func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
-	c.UserDBController.ModelFunctions.SetField(details, ProductName, r.FormValue(ProductName))
-	c.UserDBController.ModelFunctions.SetField(details, ProductDescription, r.FormValue(ProductDescription))
-	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3D, getBooleanString(r.FormValue(ProductRequires3D)))
-	c.UserDBController.ModelFunctions.SetField(details, ProductPublic, getBooleanString(r.FormValue(ProductPublic)))
-	c.UserDBController.ModelFunctions.SetField(details, ProductURL, r.FormValue(ProductURL))
+	c.UserDBController.ModelFunctions.SetField(details, ProductNameKey, r.FormValue(ProductNameKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductDescriptionKey, r.FormValue(ProductDescriptionKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductShortDescriptionKey, r.FormValue(ProductShortDescriptionKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductRequires3DKey, getBooleanString(r.FormValue(ProductRequires3DKey)))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPublicKey, getBooleanString(r.FormValue(ProductPublicKey)))
+	c.UserDBController.ModelFunctions.SetField(details, ProductURLKey, r.FormValue(ProductURLKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPricingKey, r.FormValue(ProductPricingKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductPriceKey, r.FormValue(ProductPriceKey))
+	c.UserDBController.ModelFunctions.SetField(details, ProductTagsKey, r.FormValue(ProductTagsKey))
+
+	c.UserDBController.ModelFunctions.SetField(details, CreditCardNameKey, r.FormValue(CreditCardNameKey))
+	c.UserDBController.ModelFunctions.SetField(details, CreditCardNumberKey, r.FormValue(CreditCardNumberKey))
+	c.UserDBController.ModelFunctions.SetField(details, CreditCardExpiryKey, r.FormValue(CreditCardExpiryKey))
+	c.UserDBController.ModelFunctions.SetField(details, CreditCardCVCKey, r.FormValue(CreditCardCVCKey))
 }
 
 func (c *Context) UpdateProductData(product *models.ProductData, r *http.Request) error {

@@ -66,7 +66,7 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		product, err := c.BackendContext.AddProduct(&c.ContentController.UserData.ID, r.FormValue(businesslogic.ProductName), r)
+		product, err := c.BackendContext.AddProduct(&c.ContentController.UserData.ID, r.FormValue(businesslogic.ProductNameKey), r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

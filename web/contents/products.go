@@ -18,7 +18,21 @@ const (
 	ProductDetailPageKey         = "detail_path"
 	ProductEditPageKey           = "edit_path"
 	Product3rdPartyDetailPageKey = "3rdparty_detail_path"
+	ProductPriceStringKey        = "price"
+	ProductPublicTextKey         = "is_public_text"
+	ProductRequires3DTextKey     = "requires_3d_text"
+	ProductSupportsClientTextKey = "supports_client_text"
 )
+
+func generatePriceString(paymentType string, amount string) string {
+	if paymentType == businesslogic.PaymentTypeFree {
+		return paymentType
+	} else if paymentType == businesslogic.PaymentTypeSub {
+		return fmt.Sprintf("%s NZD/month", amount)
+	} else {
+		return fmt.Sprintf("%s NZD", amount)
+	}
+}
 
 /// GenerateProductContent fills a string nested map with all product details and assets info
 func (c *ContentController) generateProductContent(productData *models.ProductData) map[string]interface{} {
@@ -27,11 +41,24 @@ func (c *ContentController) generateProductContent(productData *models.ProductDa
 	content[businesslogic.ProductAvatarKey] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductAvatarKey, businesslogic.DefaultProductAvatarPath)
 	content[businesslogic.ProductMainAppKey] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductMainAppKey, "")
 	content[businesslogic.ProductClientApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductClientApp, "")
-	content[businesslogic.ProductName] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductName, "")
-	content[businesslogic.ProductURL] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductURL, "")
-	content[businesslogic.ProductPublic] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublic, ""))
-	content[businesslogic.ProductRequires3D] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3D, ""))
-	content[businesslogic.ProductDescription] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductDescription, "")
+	content[businesslogic.ProductNameKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductNameKey, "")
+	content[businesslogic.ProductURLKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductURLKey, "")
+	content[businesslogic.ProductPublicKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, ""))
+	content[businesslogic.ProductRequires3DKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, ""))
+	content[businesslogic.ProductDescriptionKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductDescriptionKey, "")
+	content[businesslogic.ProductShortDescriptionKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductShortDescriptionKey, "")
+	content[businesslogic.ProductTagsKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductTagsKey, "")
+	pricingType := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPricingKey, "")
+	content[businesslogic.ProductPricingKey] = pricingType
+	price := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPriceKey, "")
+
+	content[ProductSupportsClientTextKey] = "No"
+	if c.UserDBController.ModelFunctions.GetField(productData.Details, ProductSupportsClientTextKey, "") == "" {
+		content[ProductSupportsClientTextKey] = "Yes"
+	}
+	content[ProductPriceStringKey] = generatePriceString(pricingType, price)
+	content[ProductPublicTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, ""))
+	content[ProductRequires3DTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, ""))
 	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
 	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?product=%s", productData.ID.String())
 	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())

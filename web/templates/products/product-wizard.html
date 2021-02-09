@@ -19,95 +19,216 @@
 		<section class="content">
 		 <!-- Step wizard -->
 		  <div class="box box-default">
-			<div class="box-header with-border">
-			  <h4 class="box-title">New product creation</h4>	
-			</div>
-			<!-- /.box-header -->
-			<div class="box-body wizard-content">
-				<form action="/user-main/product-wizard" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
-					<!-- Step 1 -->
-					<h6>Basic configuration</h6>
-					<section>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="name">Product Name :<span class="danger">*</span></label>
-									<input type="text" class="form-control required" id="name" name="name">
-									<label for="url">External URL :</label>
-									<input type="url" class="form-control" id="url" name="url" value="http://google.com">
-									</div>
-							</div>
+				<div class="box-header with-border">
+					<h4 class="box-title">New product creation</h4>	
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body wizard-content">
+					<form action="/user-main/product-wizard" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
+						<!-- Step 1 -->
+						<h6>Basic configuration</h6>
+						<section>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="name">Product Name :<span class="danger">*</span></label>
+										<input type="text" class="form-control required" id="name" name="name">
+										<label for="url">External URL :</label>
+										<input type="url" class="form-control" id="url" name="url" value="http://google.com">
+										</div>
+								</div>
 
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="description">Description :<span class="danger">*</span></label>
-									<textarea name="description" id="description" rows="4" class="form-control required"></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<div class="c-inputs-stacked">
-										<input type="checkbox" id="is_public" name="is_public" value="checked">
-										<label for="is_public" class="d-block">Make the product public</label>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="short_description">Short Description :<span class="danger">*</span></label>
+										<textarea name="short_description" id="short_description" rows="1" class="form-control required"></textarea>
+										<label for="description">Description :</label>
+										<textarea name="description" id="description" rows="4" class="form-control"></textarea>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="avatar">Upload product avatar :</label>
-								<input type="file" class="btn btn-primary form-control" id="avatar" name="avatar" accept="image/*">
-							</div>
-						</div>
-					</section>
-					<!-- Step 2 -->
-					<h6>Upload files</h6>
-					<section>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>App config :</label>
-									<div class="c-inputs-stacked">
-										<input type="checkbox" id="requires_3d" name="requires_3d" value="checked">
-										<label for="requires_3d" class="d-block">3D Acceleration required (NVIDIA support)</label>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<div class="c-inputs-stacked">
+											<input type="checkbox" id="is_public" name="is_public" value="checked">
+											<label for="is_public" class="d-block">Make the product public</label>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label for="main_app">Upload main app file :<span class="danger">*</span></label>
-									<input type="file" class="btn btn-primary form-control required" id="main_app" name="main_app" accept=".tar.gz,.zip">
+									<label for="avatar">Upload product avatar :</label>
+									<input type="file" class="btn btn-primary form-control" id="avatar" name="avatar" accept="image/*">
 								</div>
 							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="client_app">Upload client file if supported :</label>
-									<input type="file" class="btn btn-primary form-control" id="client_app" name="client_app" accept=".tar.gz,.zip">
-								</div>
-							</div>
-						</div>
-					</section>
-					<!-- Step 3 -->
-					<h6>Confirmation</h6>
-					<section>
-						<div class="row">
-							<div class="col-12">
-								<div class="form-group">
-									<div class="c-inputs-stacked">
-										<input type="checkbox" class="required" id="tc" name="tc" value="">
-										<label for="tc" class="d-block">Click here to indicate that you have read and agree to the terms presented in the Terms and Conditions agreement<span class="danger">*</span></label>
+						</section>
+						<!-- Step 2 -->
+						<h6>Upload files</h6>
+						<section>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label>App config :</label>
+										<div class="c-inputs-stacked">
+											<input type="checkbox" id="requires_3d" name="requires_3d" value="checked">
+											<label for="requires_3d" class="d-block">3D Acceleration required (NVIDIA support)</label>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</section>
-				</form>
-			</div>
-			<!-- /.box-body -->
+							<div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="main_app">Upload main app file :<span class="danger">*</span></label>
+										<input type="file" class="btn btn-primary form-control required" id="main_app" name="main_app" accept=".tar.gz,.zip">
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="client_app">Upload client file if supported :</label>
+										<input type="file" class="btn btn-primary form-control" id="client_app" name="client_app" accept=".tar.gz,.zip">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="tags">Tags :</label>
+										<textarea name="tags" id="tags" rows="1" class="form-control" placeholder="ai;food growing;test"></textarea>
+									</div>
+								</div>
+							</div>
+						</section>
+						<!-- Step 3 -->
+						<h6>Pricing</h6>
+						<section>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="font-weight-700 font-size-16">Payment type</label>
+										<div class="radio-list">
+											<label class="radio-inline p-0 mr-10">
+												<div class="radio radio-info">
+													<input type="radio" name="pricing" id="subscription" value="Subscription">
+													<label for="subscription">Subscription</label>
+												</div>
+											</label>
+											<label class="radio-inline">
+												<div class="radio radio-info">
+													<input type="radio" name="pricing" id="single_price" value="Single Price">
+													<label for="single_price">Single price</label>
+												</div>
+											</label>
+											<label class="radio-inline">
+												<div class="radio radio-info">
+													<input type="radio" name="pricing" id="free_price" value="Free" checked>
+													<label for="free_price">Free</label>
+												</div>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="amount">Amount :<span class="danger">*</span></label>
+										<input type="number" class="form-control required" id="amount" name="amount">
+									</div>
+								</div>
+							</div>
+						</section>
+						<!-- Step 4 -->
+						<h6>Account Details</h6>
+						<section>
+							<div class="row">
+								<div class="col-12">
+									<div class="form-group">
+										<h4 class="box-title mb-15">Choose payment Option</h4>
+										<!-- Nav tabs -->
+										<ul class="nav nav-tabs" role="tablist">
+											<li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#credit-card" role="tab"><span class="hidden-sm-up"><i class="fa fa-cc"></i></span> <span class="hidden-xs-down">Credit Card</span></a> </li>
+											<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#paypal" role="tab"><span class="hidden-sm-up"><i class="fa fa-paypal"></i></span> <span class="hidden-xs-down">Paypal</span></a> </li>
+										</ul>
+
+										<div class="tab-content tabcontent-border">
+											<div class="tab-pane active" id="credit-card" role="tabpanel">
+												<div class="p-30">
+													<div class="row">
+														<div class="col-lg-7 col-md-6 col-12">
+															<div class="form-group">
+																<label for="exampleInputEmail1">CARD NUMBER</label>
+																<div class="input-group">
+																	<div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
+																	<input type="text" class="form-control" id="card_number" placeholder="Card Number"> </div>
+															</div>
+															<div class="row">
+																<div class="col-7">
+																	<div class="form-group">
+																		<label>EXPIRATION DATE</label>
+																		<input type="text" class="form-control" name="expiry" placeholder="MM / YY" required=""> </div>
+																</div>
+																<div class="col-5 pull-right">
+																	<div class="form-group">
+																		<label>CV CODE</label>
+																		<input type="text" class="form-control" name="cvc" placeholder="CVC" required=""> </div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-12">
+																	<div class="form-group">
+																		<label>NAME OF CARD</label>
+																		<input type="text" class="form-control" name="name_on_card" placeholder="NAME AND SURNAME"> </div>
+																</div>
+															</div>
+														</div>
+														<div class="col-lg-5 col-md-6 col-12">
+															<h3 class="box-title mt-10">General Info</h3>
+															<h2><i class="fa fa-cc-visa text-info"></i></h2>
+															<p>You will receive any payment to this credit card. It is not used to deduce any payment. You will need to define </p>
+															<p>You will need to define your payment methods in Settings->Payment</p>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane" id="paypal" role="tabpanel">						
+												<div class="p-30">
+													You can pay your money through paypal, for more info <a href="">click here</a><br><br>
+													<button class="btn btn-info btn-outline"><i class="fa fa-cc-paypal"></i> Pay with Paypal</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</section>
+						<!-- Step 5 -->
+						<h6>Confirmation</h6>
+						<section>
+							<div class="row">
+								<div class="col-12">
+									<h4 class="box-title mb-15">Product details</h4>
+									<div class="row">
+										<label for="subscription">Subscription</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<div class="form-group">
+										<div class="c-inputs-stacked">
+											<input type="checkbox" class="required" id="tc" name="tc" value="">
+											<label for="tc" class="d-block">Click here to indicate that you have read and agree to the terms presented in the Terms and Conditions agreement<span class="danger">*</span></label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</section>
+					</form>
+				</div>
+				<!-- /.box-body -->
 		  </div>
 		  <!-- /.box -->
 		</section>
