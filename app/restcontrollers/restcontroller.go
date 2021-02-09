@@ -43,7 +43,8 @@ var htmls = []string{
 	"/web/templates/auth_signup.html",
 	"/web/templates/auth_login.html",
 	"/web/templates/products/store.html",
-	"/web/templates/products/new-product-wizard.html",
+	"/web/templates/products/product-wizard.html",
+	"/web/templates/products/product-edit.html",
 	"/web/templates/products/my-products.html",
 	"/web/templates/products/details.html",
 	"/web/templates/components/side-bar.html",
@@ -57,9 +58,14 @@ var htmls = []string{
 var paths = []string{}
 
 const (
-	GET      = "GET"
-	Confirm  = "confirm"
-	UserMain = "user-main"
+	GET     = "GET"
+	POST    = "POST"
+	Confirm = "confirm"
+)
+
+const (
+	UserMain   = "user-main"
+	MyProducts = "my-products"
 )
 
 func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {

@@ -38,7 +38,7 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "User is not configured", http.StatusInternalServerError)
 	}
 
-	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatarKey, businesslogic.DefaultUserAvatarPath, "asset", r)
+	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatarKey, businesslogic.DefaultUserAvatarPath, r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}

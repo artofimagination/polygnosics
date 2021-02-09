@@ -1,6 +1,8 @@
 package contents
 
 import (
+	"polygnosics/app/businesslogic"
+
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
 	"github.com/google/uuid"
@@ -12,6 +14,7 @@ const (
 	ProductsPageMyProductsName = "My Products"
 	ProductsPageDetailsName    = "Details"
 	ProductsPageStoreName      = "Marketplace"
+	ProductsPageEditName       = "Edit"
 )
 
 const (
@@ -42,16 +45,41 @@ type ContentController struct {
 
 // getBooleanString returns a check box stat Yes/No string
 func getBooleanString(input string) string {
-	if input == "" {
-		return "No"
+	if input == "" || input == businesslogic.CheckBoxUnChecked {
+		return businesslogic.CheckBoxUnChecked
+	}
+	return businesslogic.CheckBoxChecked
+}
+
+func convertToCheckboxValue(input string) string {
+	if input == businesslogic.CheckBoxUnChecked {
+		return ""
 	}
 	return input
+}
+
+func convertCheckedToYesNo(input string) string {
+	if input == businesslogic.CheckBoxUnChecked {
+		return "No"
+	}
+	return "Yes"
 }
 
 func (c *ContentController) BuildProductWizardContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageCreateName)
 	return content
+}
+
+func (c *ContentController) BuildProductEditContent(productID *uuid.UUID) (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageEditName)
+	productContent, err := c.GetProductContent(productID)
+	if err != nil {
+		return nil, err
+	}
+	content[ProductMapKey] = productContent[ProductMapKey]
+	return content, err
 }
 
 func (c *ContentController) BuildMyProductsContent() (map[string]interface{}, error) {
@@ -61,7 +89,7 @@ func (c *ContentController) BuildMyProductsContent() (map[string]interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	content["product"] = productsContent
+	content[ProductMapKey] = productsContent
 	return content, nil
 }
 
@@ -72,9 +100,7 @@ func (c *ContentController) BuildProductDetailsContent(productID *uuid.UUID) (ma
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range productContent {
-		content[k] = v
-	}
+	content[ProductMapKey] = productContent[ProductMapKey]
 	return content, nil
 }
 

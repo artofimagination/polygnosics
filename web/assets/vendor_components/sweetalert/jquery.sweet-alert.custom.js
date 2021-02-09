@@ -6,78 +6,43 @@
 
     //examples 
     SweetAlert.prototype.init = function() {
-        
-    //Basic
-    $('#sa-basic').click(function(){
-        swal("Here's a message!");
-    });
+      //Parameter
+      var i;
+      for (i = 0; i < deleteLinks.length; i++)
+      {
+        var stringVal = '#delete-product-' + i;
+        var product = deleteLinks[i]
+        $(stringVal).click(function(){
+            swal({   
+                title: "Are you sure?",   
+                text: "It will delete all projects started from this product as well",   
+                type: "warning",   
+                showCancelButton: true,   
+                confirmButtonColor: "#DD6B55",   
+                confirmButtonText: "Yes, delete it!",   
+                cancelButtonText: "No, cancel!",   
+                closeOnConfirm: false
+            }, function(){   
+                  var http = new XMLHttpRequest();
+                  var url = '/user-main/my-products/delete';
+                  var params = 'product=' + product;
+                  http.open('POST', url, true);
 
-    //A title with a text under
-    $('#sa-title').click(function(){
-        swal("Here's a message!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.")
-    });
+                  //Send the proper header information along with the request
+                  http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    //Success Message
-    $('#sa-success').click(function(){
-        swal("Good job!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.", "success")
-    });
-
-    //Warning Message
-    $('#sa-warning').click(function(){
-        swal({   
-            title: "Are you sure?",   
-            text: "You will not be able to recover this imaginary file!",   
-            type: "warning",   
-            showCancelButton: true,   
-            confirmButtonColor: "#DD6B55",   
-            confirmButtonText: "Yes, delete it!",   
-            closeOnConfirm: false 
-        }, function(){   
-            swal("Deleted!", "Your imaginary file has been deleted.", "success"); 
+                  http.onreadystatechange = function() { //Call a function when the state changes.
+                      if(http.readyState == 4 && http.status == 200) {
+                        swal("Deleted!", "Your product has been deleted", "success"); 
+                        location.reload()
+                      }else if(http.readyState == 4 && http.status != 200){
+                        swal("Failed to delete!", http.response, "error");
+                      }
+                  }
+                  http.send(params);         
+            });
         });
-    });
-
-    //Parameter
-    $('#sa-params').click(function(){
-        swal({   
-            title: "Are you sure?",   
-            text: "You will not be able to recover this imaginary file!",   
-            type: "warning",   
-            showCancelButton: true,   
-            confirmButtonColor: "#DD6B55",   
-            confirmButtonText: "Yes, delete it!",   
-            cancelButtonText: "No, cancel plx!",   
-            closeOnConfirm: false,   
-            closeOnCancel: false 
-        }, function(isConfirm){   
-            if (isConfirm) {     
-                swal("Deleted!", "Your imaginary file has been deleted.", "success");   
-            } else {     
-                swal("Cancelled", "Your imaginary file is safe :)", "error");   
-            } 
-        });
-    });
-
-    //Custom Image
-    $('#sa-image').click(function(){
-        swal({   
-            title: "Govinda!",   
-            text: "Recently joined twitter",   
-            imageUrl: "../../images/avatar.png" 
-        });
-    });
-
-    //Auto Close Timer
-    $('#sa-close').click(function(){
-         swal({   
-            title: "Auto close alert!",   
-            text: "I will close in 2 seconds.",   
-            timer: 2000,   
-            showConfirmButton: false 
-        });
-    });
-
-
+      }
     },
     //init
     $.SweetAlert = new SweetAlert, $.SweetAlert.Constructor = SweetAlert
