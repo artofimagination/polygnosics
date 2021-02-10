@@ -32,6 +32,22 @@ func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 	c.RenderTemplate(w, MyProducts, content)
 }
 
+func (c *RESTController) MyProductDetails(w http.ResponseWriter, r *http.Request) {
+	productID, err := parseProductID(r)
+	if err != nil {
+		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to parse product id"))
+		return
+	}
+
+	content, err := c.ContentController.BuildProductDetailsContent(productID)
+	if err != nil {
+		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to get product content"))
+		return
+	}
+
+	c.RenderTemplate(w, "details", content)
+}
+
 func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) {
 	productID, err := parseProductID(r)
 	if err != nil {

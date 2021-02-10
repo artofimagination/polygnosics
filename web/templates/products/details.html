@@ -65,6 +65,12 @@
 													<ul class="list-icons">
 														<li><i class="fa text-danger float-none"></i>{{index .product "tags"}}</li>
 													</ul>
+													<h4 class="box-title mt-20">Categories</h4>
+													<div class="clearfix">
+														{{range $k, $c := .categories}}
+															<a href="/user-main/store#{{$k}}" class="waves-effect waves-light btn btn-primary btn-sm mb-5">{{$c}}</button>
+														{{end}}
+													</div>
 												</div>
 												<div class="col-lg-12 col-md-12 col-sm-12">
 													<h4 class="box-title mt-40">General Info</h4>

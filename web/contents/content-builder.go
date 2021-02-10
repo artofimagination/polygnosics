@@ -1,6 +1,8 @@
 package contents
 
 import (
+	"encoding/json"
+	"fmt"
 	"polygnosics/app/businesslogic"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -68,6 +70,7 @@ func convertCheckedToYesNo(input string) string {
 func (c *ContentController) BuildProductWizardContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageCreateName)
+	content["categories"] = businesslogic.CreateCategoriesMap()
 	return content
 }
 
@@ -79,6 +82,7 @@ func (c *ContentController) BuildProductEditContent(productID *uuid.UUID) (map[s
 		return nil, err
 	}
 	content[ProductMapKey] = productContent[ProductMapKey]
+	content["categories"] = businesslogic.CreateCategoriesMap()
 	return content, err
 }
 
@@ -170,10 +174,25 @@ func (c *ContentController) BuildNewsContent() map[string]interface{} {
 func (c *ContentController) BuildStoreContent() (map[string]interface{}, error) {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageStoreName)
-	productsContent, err := c.GetUserProductContent(&c.UserData.ID)
+	categorizedProducts, err := c.GetProductsByCategory(&c.UserData.ID)
 	if err != nil {
 		return nil, err
 	}
-	content["product"] = productsContent
+	recent, err := c.GetRecentProductsContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+	recommended, err := c.GetRecommendedProductsContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+	content[businesslogic.ProductCategoriesKey] = categorizedProducts
+	content["recent"] = recent
+	content["recommended"] = recommended
+	b, err := json.MarshalIndent(content, "", "  ")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Println(string(b))
 	return content, nil
 }

@@ -27,6 +27,7 @@ const (
 	ProductPricingKey          = "pricing"
 	ProductPriceKey            = "amount"
 	ProductTagsKey             = "tags"
+	ProductCategoriesKey       = "categories"
 )
 
 const (
@@ -46,6 +47,25 @@ const (
 	CheckBoxUnChecked = "unchecked"
 	CheckBoxChecked   = "checked"
 )
+
+const (
+	CategoryMLKey           = "machine_learning"
+	CategoryMLText          = "Machine Learning"
+	CategoryCivilEngNameKey = "civil_eng"
+	CategoryCivilEngText    = "Civil Engineering"
+	CategoryMedicineKey     = "medicine"
+	CategoryMedicineText    = "Medicine"
+	CategoryChemistryKey    = "chemistry"
+	CategoryChemistryText   = "Chemistry"
+)
+
+func CreateCategoriesMap() map[string]string {
+	categoriesMap := make(map[string]string)
+	categoriesMap[CategoryMLKey] = CategoryMLText
+	categoriesMap[CategoryCivilEngNameKey] = CategoryCivilEngText
+	categoriesMap[CategoryMedicineKey] = CategoryMedicineText
+	return categoriesMap
+}
 
 func (c *Context) DeleteProduct(product *models.ProductData) error {
 	projects, err := c.UserDBController.GetProjectsByProductID(&product.ID)
@@ -137,6 +157,17 @@ func getBooleanString(input string) string {
 	return CheckBoxChecked
 }
 
+func (c *Context) storeProductCategories(details *models.Asset, r *http.Request) {
+	categories := CreateCategoriesMap()
+	categoryList := make([]string, 0)
+	for k, _ := range categories {
+		if r.FormValue(k) == "checked" {
+			categoryList = append(categoryList, k)
+		}
+	}
+	c.UserDBController.ModelFunctions.SetField(details, ProductCategoriesKey, categoryList)
+}
+
 // SetProductDetails sets the key-value content of product details based on form values.
 func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
 	c.UserDBController.ModelFunctions.SetField(details, ProductNameKey, r.FormValue(ProductNameKey))
@@ -153,16 +184,17 @@ func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardNumberKey, r.FormValue(CreditCardNumberKey))
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardExpiryKey, r.FormValue(CreditCardExpiryKey))
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardCVCKey, r.FormValue(CreditCardCVCKey))
+	c.storeProductCategories(details, r)
 }
 
 func (c *Context) UpdateProductData(product *models.ProductData, r *http.Request) error {
 	c.SetProductDetails(product.Details, r)
 
-	if err := c.UserDBController.UpdateProductDetails(product); err != nil && err != dbcontrollers.ErrMissingProductDetail {
+	if err := c.UserDBController.UpdateProductDetails(product); err != nil && err != dbcontrollers.ErrNoProductDetailUpdate {
 		return err
 	}
 
-	if err := c.UserDBController.UpdateProductAssets(product); err != nil && err != dbcontrollers.ErrMissingProductAsset {
+	if err := c.UserDBController.UpdateProductAssets(product); err != nil && err != dbcontrollers.ErrNoProductAssetUpdate {
 		return err
 	}
 	return nil

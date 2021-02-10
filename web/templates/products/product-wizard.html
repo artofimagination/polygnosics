@@ -33,9 +33,14 @@
 									<div class="form-group">
 										<label for="name">Product Name :<span class="danger">*</span></label>
 										<input type="text" class="form-control required" id="name" name="name">
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
 										<label for="url">External URL :</label>
 										<input type="url" class="form-control" id="url" name="url" value="http://google.com">
-										</div>
+									</div>
 								</div>
 
 								<div class="col-md-6">
@@ -100,6 +105,19 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="tags">Categories :</label>
+										{{range $k, $v := (index .categories)}}
+											<div class="c-inputs-stacked">
+												<input type="checkbox" id="{{$k}}" name="{{$k}}" value="checked">
+												<label for="{{$k}}" class="d-block">{{$v}}</label>
+											</div>
+										{{end}}
+									</div>
+								</div>
+							</div>
 						</section>
 						<!-- Step 3 -->
 						<h6>Pricing</h6>
@@ -135,7 +153,10 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<label for="amount">Amount :<span class="danger">*</span></label>
-										<input type="number" class="form-control required" id="amount" name="amount">
+										<div class="input-group">
+											<div class="input-group-addon"><i class="ti-money"></i></div>
+											<input type="number" class="form-control" id="amount" name="amount"> 
+										</div>
 									</div>
 								</div>
 							</div>
@@ -162,7 +183,7 @@
 																<label for="exampleInputEmail1">CARD NUMBER</label>
 																<div class="input-group">
 																	<div class="input-group-addon"><i class="fa fa-credit-card"></i></div>
-																	<input type="text" class="form-control" id="card_number" placeholder="Card Number"> </div>
+																	<input type="text" class="form-control" id="card_number" name="card_number" placeholder="Card Number"> </div>
 															</div>
 															<div class="row">
 																<div class="col-7">

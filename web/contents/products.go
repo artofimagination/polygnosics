@@ -17,7 +17,6 @@ const (
 	ProductOwnerPageNameKey      = "owner_page"
 	ProductDetailPageKey         = "detail_path"
 	ProductEditPageKey           = "edit_path"
-	Product3rdPartyDetailPageKey = "3rdparty_detail_path"
 	ProductPriceStringKey        = "price"
 	ProductPublicTextKey         = "is_public_text"
 	ProductRequires3DTextKey     = "requires_3d_text"
@@ -43,22 +42,23 @@ func (c *ContentController) generateProductContent(productData *models.ProductDa
 	content[businesslogic.ProductClientApp] = c.UserDBController.ModelFunctions.GetFilePath(productData.Assets, businesslogic.ProductClientApp, "")
 	content[businesslogic.ProductNameKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductNameKey, "")
 	content[businesslogic.ProductURLKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductURLKey, "")
-	content[businesslogic.ProductPublicKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, ""))
-	content[businesslogic.ProductRequires3DKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, ""))
+	content[businesslogic.ProductPublicKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, "").(string))
+	content[businesslogic.ProductRequires3DKey] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, "").(string))
 	content[businesslogic.ProductDescriptionKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductDescriptionKey, "")
 	content[businesslogic.ProductShortDescriptionKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductShortDescriptionKey, "")
 	content[businesslogic.ProductTagsKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductTagsKey, "")
-	pricingType := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPricingKey, "")
+	content[businesslogic.ProductCategoriesKey] = c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductCategoriesKey, "")
+	pricingType := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPricingKey, "").(string)
 	content[businesslogic.ProductPricingKey] = pricingType
-	price := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPriceKey, "")
+	price := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPriceKey, "").(string)
 
 	content[ProductSupportsClientTextKey] = "No"
 	if c.UserDBController.ModelFunctions.GetField(productData.Details, ProductSupportsClientTextKey, "") == "" {
 		content[ProductSupportsClientTextKey] = "Yes"
 	}
 	content[ProductPriceStringKey] = generatePriceString(pricingType, price)
-	content[ProductPublicTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, ""))
-	content[ProductRequires3DTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, ""))
+	content[ProductPublicTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, "").(string))
+	content[ProductRequires3DTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, "").(string))
 	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
 	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?product=%s", productData.ID.String())
 	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
@@ -93,8 +93,63 @@ func (c *ContentController) GetUserProductContent(userID *uuid.UUID) ([]map[stri
 	return productContent, nil
 }
 
+// GetProductsByCategory organizes product contents by categories. This is just a placeholder solution until proper search is introduced.
+func (c *ContentController) GetProductsByCategory(userID *uuid.UUID) (map[string]interface{}, error) {
+	products, err := c.UserDBController.GetProductsByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	categorizedProducts := make(map[string]interface{})
+	categories := businesslogic.CreateCategoriesMap()
+	for _, product := range products {
+		for k, v := range categories {
+			for _, categoryKey := range c.UserDBController.ModelFunctions.GetField(product.ProductData.Details, businesslogic.ProductCategoriesKey, "").([]interface{}) {
+				if categorizedProducts[k] == nil {
+					categorizedProducts[k] = make(map[string]interface{})
+				}
+				categorizedProducts[k].(map[string]interface{})["name"] = v
+				if categoryKey.(string) == k {
+					_, ok := categorizedProducts[k].(map[string]interface{})["products"]
+					if !ok {
+						categorizedProducts[k].(map[string]interface{})["products"] = make([]map[string]interface{}, 0)
+					}
+					categorizedProducts[k].(map[string]interface{})["products"] = append(categorizedProducts[k].(map[string]interface{})["products"].([]map[string]interface{}), c.generateProductContent(&product.ProductData))
+					break
+				}
+			}
+		}
+	}
+	return categorizedProducts, nil
+}
+
 // GetRecentProductsContent gathers the content of the latest 4 products
 func (c *ContentController) GetRecentProductsContent(userID *uuid.UUID) ([]map[string]interface{}, error) {
+	products, err := c.UserDBController.GetProductsByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	limit := 4
+	if len(products) < limit {
+		limit = len(products)
+	}
+	productContent := make([]map[string]interface{}, limit)
+	for i, product := range products {
+		if limit == 0 {
+			break
+		}
+		limit--
+		productContent[i] = c.generateProductContent(&product.ProductData)
+		productContent[i][ProductOwnerNameKey] = c.UserData.Name
+		productContent[i][ProductOwnerPageNameKey] = fmt.Sprintf("/user-main/profile?user=%s", c.UserData.ID)
+		productContent[i][ProductDetailPageKey] = fmt.Sprintf("/user-main/product?product=%s", product.ProductData.ID)
+	}
+
+	return productContent, nil
+}
+
+func (c *ContentController) GetRecommendedProductsContent(userID *uuid.UUID) ([]map[string]interface{}, error) {
 	products, err := c.UserDBController.GetProductsByUserID(userID)
 	if err != nil {
 		return nil, err
