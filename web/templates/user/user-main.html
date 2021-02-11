@@ -51,8 +51,8 @@
 						<div class="box-body">
 							{{range $i, $a := .project}}
 								<div class="font-size-18 flexbox align-items-center">
-									<h6><a href="{{index $a "project_path"}}"><span>{{index $a "name"}}</span></a></h6>
-									<span class="badge badge-sm {{index $a "state_badge"}}">{{index $a "project_state"}}</span>
+									<h6><a href="{{index $a "detail_path"}}"><span>{{index $a "name"}}</span></a></h6>
+									<span class="badge badge-sm {{index $a "state_badge"}}">{{index $a "state"}}</span>
 								</div>
 
 								<div class="progress progress-xxs mt-10 mb-10">

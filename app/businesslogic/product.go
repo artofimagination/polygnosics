@@ -74,7 +74,7 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 	}
 
 	for _, project := range projects {
-		if err := c.UserDBController.DeleteProject(&project.ID); err != nil {
+		if err := c.DeleteProject(&project); err != nil {
 			return err
 		}
 	}
@@ -83,9 +83,8 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 		return err
 	}
 
-	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
-	dir, _ := filepath.Split(folder)
-	if err := removeContents(dir); err != nil {
+	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, "")
+	if err := removeContents(folder); err != nil {
 		return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
 	}
 	return nil

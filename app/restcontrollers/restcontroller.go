@@ -37,6 +37,7 @@ var htmls = []string{
 	"/web/templates/user/new-project.html",
 	"/web/templates/admin/dashboard.html",
 	"/web/templates/project/run.html",
+	"/web/templates/project/browser.html",
 	"/web/templates/project/project-details.html",
 	"/web/templates/project/my-projects.html",
 	"/web/templates/project/new-project-wizard.html",
@@ -64,9 +65,21 @@ const (
 )
 
 const (
-	UserMain   = "user-main"
-	MyProducts = "my-products"
+	UserMain      = "user-main"
+	MyProducts    = "my-products"
+	ProjectWizard = "new-project-wizard"
 )
+
+func parseItemID(r *http.Request) (*uuid.UUID, error) {
+	if err := r.ParseForm(); err != nil {
+		return nil, err
+	}
+	itemID, err := uuid.Parse(r.FormValue("item-id"))
+	if err != nil {
+		return nil, err
+	}
+	return &itemID, nil
+}
 
 func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {
 	controller := &RESTController{

@@ -6,21 +6,8 @@ import (
 
 	"polygnosics/app/businesslogic"
 
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
-
-func parseProductID(r *http.Request) (*uuid.UUID, error) {
-
-	if err := r.ParseForm(); err != nil {
-		return nil, err
-	}
-	productID, err := uuid.Parse(r.FormValue("product"))
-	if err != nil {
-		return nil, err
-	}
-	return &productID, nil
-}
 
 func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 	content, err := c.ContentController.BuildMyProductsContent()
@@ -33,7 +20,7 @@ func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) MyProductDetails(w http.ResponseWriter, r *http.Request) {
-	productID, err := parseProductID(r)
+	productID, err := parseItemID(r)
 	if err != nil {
 		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to parse product id"))
 		return
@@ -49,7 +36,7 @@ func (c *RESTController) MyProductDetails(w http.ResponseWriter, r *http.Request
 }
 
 func (c *RESTController) ProductDetails(w http.ResponseWriter, r *http.Request) {
-	productID, err := parseProductID(r)
+	productID, err := parseItemID(r)
 	if err != nil {
 		c.RenderTemplate(w, UserMain, c.ContentController.BuildErrorContent("Failed to parse product id"))
 		return
@@ -109,9 +96,9 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	if r.Method == POST {
-		productID, err := parseProductID(r)
+		productID, err := parseItemID(r)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
@@ -131,7 +118,7 @@ func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
-	productID, err := parseProductID(r)
+	productID, err := parseItemID(r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return

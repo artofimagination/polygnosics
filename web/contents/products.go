@@ -12,7 +12,6 @@ import (
 // Details and assets field keys
 const (
 	ProductMapKey                = "product"
-	ProductDeleteIDKey           = "product_to_delete"
 	ProductOwnerNameKey          = "owner_name"
 	ProductOwnerPageNameKey      = "owner_page"
 	ProductDetailPageKey         = "detail_path"
@@ -21,6 +20,10 @@ const (
 	ProductPublicTextKey         = "is_public_text"
 	ProductRequires3DTextKey     = "requires_3d_text"
 	ProductSupportsClientTextKey = "supports_client_text"
+	ProductDeleteIDKey           = "product_to_delete"
+	ProductDeleteTextKey         = "delete_text"
+	ProductDeleteSuccessTextKey  = "delete_success_text"
+	ProductDeleteURLKey          = "delete_url"
 )
 
 func generatePriceString(paymentType string, amount string) string {
@@ -53,27 +56,29 @@ func (c *ContentController) generateProductContent(productData *models.ProductDa
 	price := c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPriceKey, "").(string)
 
 	content[ProductSupportsClientTextKey] = "No"
-	if c.UserDBController.ModelFunctions.GetField(productData.Details, ProductSupportsClientTextKey, "") == "" {
+	if c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductClientApp, "") == "" {
 		content[ProductSupportsClientTextKey] = "Yes"
 	}
 	content[ProductPriceStringKey] = generatePriceString(pricingType, price)
 	content[ProductPublicTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductPublicKey, "").(string))
 	content[ProductRequires3DTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, "").(string))
-	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?product=%s", productData.ID.String())
-	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?product=%s", productData.ID.String())
-	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?product=%s", productData.ID.String())
+	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?item-id=%s", productData.ID.String())
+	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?item-id=%s", productData.ID.String())
+	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?item-id=%s", productData.ID.String())
 	content[ProductDeleteIDKey] = productData.ID.String()
+	content[ProductDeleteTextKey] = "It will delete all projects started from this product as well"
+	content[ProductDeleteSuccessTextKey] = "Your product has been deleted"
+	content[ProductDeleteURLKey] = "/user-main/my-products/delete"
 	return content
 }
 
 // GetProductContent returns the selected product details and assets info.
 func (c *ContentController) GetProductContent(productID *uuid.UUID) (map[string]interface{}, error) {
-	content := make(map[string]interface{})
 	product, err := c.UserDBController.GetProduct(productID)
 	if err != nil {
 		return nil, err
 	}
-	content[ProductMapKey] = c.generateProductContent(product)
+	content := c.generateProductContent(product)
 	return content, nil
 }
 
@@ -102,13 +107,13 @@ func (c *ContentController) GetProductsByCategory(userID *uuid.UUID) (map[string
 
 	categorizedProducts := make(map[string]interface{})
 	categories := businesslogic.CreateCategoriesMap()
-	for _, product := range products {
-		for k, v := range categories {
+	for k, v := range categories {
+		if categorizedProducts[k] == nil {
+			categorizedProducts[k] = make(map[string]interface{})
+		}
+		categorizedProducts[k].(map[string]interface{})["name"] = v
+		for _, product := range products {
 			for _, categoryKey := range c.UserDBController.ModelFunctions.GetField(product.ProductData.Details, businesslogic.ProductCategoriesKey, "").([]interface{}) {
-				if categorizedProducts[k] == nil {
-					categorizedProducts[k] = make(map[string]interface{})
-				}
-				categorizedProducts[k].(map[string]interface{})["name"] = v
 				if categoryKey.(string) == k {
 					_, ok := categorizedProducts[k].(map[string]interface{})["products"]
 					if !ok {
@@ -142,8 +147,8 @@ func (c *ContentController) GetRecentProductsContent(userID *uuid.UUID) ([]map[s
 		limit--
 		productContent[i] = c.generateProductContent(&product.ProductData)
 		productContent[i][ProductOwnerNameKey] = c.UserData.Name
-		productContent[i][ProductOwnerPageNameKey] = fmt.Sprintf("/user-main/profile?user=%s", c.UserData.ID)
-		productContent[i][ProductDetailPageKey] = fmt.Sprintf("/user-main/product?product=%s", product.ProductData.ID)
+		productContent[i][ProductOwnerPageNameKey] = fmt.Sprintf("/user-main/profile?item-id=%s", c.UserData.ID)
+		productContent[i][ProductDetailPageKey] = fmt.Sprintf("/user-main/product?item-id=%s", product.ProductData.ID)
 	}
 
 	return productContent, nil
@@ -168,7 +173,7 @@ func (c *ContentController) GetRecommendedProductsContent(userID *uuid.UUID) ([]
 		productContent[i] = c.generateProductContent(&product.ProductData)
 		productContent[i][ProductOwnerNameKey] = c.UserData.Name
 		productContent[i][ProductOwnerPageNameKey] = fmt.Sprintf("/user-main/profile?user=%s", c.UserData.ID)
-		productContent[i][ProductDetailPageKey] = fmt.Sprintf("/user-main/product?product=%s", product.ProductData.ID)
+		productContent[i][ProductDetailPageKey] = fmt.Sprintf("/user-main/product?item-id=%s", product.ProductData.ID)
 	}
 
 	return productContent, nil

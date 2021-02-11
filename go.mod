@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/artofimagination/golang-docker v0.0.0
-	github.com/artofimagination/mysql-user-db-go-interface v0.0.13
+	github.com/artofimagination/mysql-user-db-go-interface v0.0.14
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0
 	github.com/go-sql-driver/mysql v1.5.0

@@ -1,8 +1,6 @@
 package contents
 
 import (
-	"encoding/json"
-	"fmt"
 	"polygnosics/app/businesslogic"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -24,6 +22,7 @@ const (
 	ProjectsPageCreateName     = "Project Wizard"
 	ProjectsPageMyProjectsName = "My Projects"
 	ProjectsPageDetailsName    = "Details"
+	ProjectsPageBrowserName    = "Browser"
 )
 
 const (
@@ -43,14 +42,6 @@ type ContentController struct {
 	ProductData      *models.ProductData
 	ProjectData      *models.ProjectData
 	UserDBController *dbcontrollers.MYSQLController
-}
-
-// getBooleanString returns a check box stat Yes/No string
-func getBooleanString(input string) string {
-	if input == "" || input == businesslogic.CheckBoxUnChecked {
-		return businesslogic.CheckBoxUnChecked
-	}
-	return businesslogic.CheckBoxChecked
 }
 
 func convertToCheckboxValue(input string) string {
@@ -74,6 +65,17 @@ func (c *ContentController) BuildProductWizardContent() map[string]interface{} {
 	return content
 }
 
+func (c *ContentController) BuildProjectWizardContent(productID *uuid.UUID) (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageCreateName)
+	product, err := c.GetProductContent(productID)
+	if err != nil {
+		return nil, err
+	}
+	content[ProductMapKey] = product
+	return content, nil
+}
+
 func (c *ContentController) BuildProductEditContent(productID *uuid.UUID) (map[string]interface{}, error) {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageEditName)
@@ -81,7 +83,7 @@ func (c *ContentController) BuildProductEditContent(productID *uuid.UUID) (map[s
 	if err != nil {
 		return nil, err
 	}
-	content[ProductMapKey] = productContent[ProductMapKey]
+	content[ProductMapKey] = productContent
 	content["categories"] = businesslogic.CreateCategoriesMap()
 	return content, err
 }
@@ -104,7 +106,7 @@ func (c *ContentController) BuildProductDetailsContent(productID *uuid.UUID) (ma
 	if err != nil {
 		return nil, err
 	}
-	content[ProductMapKey] = productContent[ProductMapKey]
+	content[ProductMapKey] = productContent
 	return content, nil
 }
 
@@ -122,13 +124,11 @@ func (c *ContentController) BuildMyProjectsContent() (map[string]interface{}, er
 func (c *ContentController) BuildProjectDetailsContent(projectID *uuid.UUID) (map[string]interface{}, error) {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageDetailsName)
-	productContent, err := c.GetProjectContent(projectID)
+	projectContent, err := c.GetProjectContent(projectID)
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range productContent {
-		content[k] = v
-	}
+	content[ProjectMapKey] = projectContent
 	return content, nil
 }
 
@@ -189,10 +189,27 @@ func (c *ContentController) BuildStoreContent() (map[string]interface{}, error) 
 	content[businesslogic.ProductCategoriesKey] = categorizedProducts
 	content["recent"] = recent
 	content["recommended"] = recommended
-	b, err := json.MarshalIndent(content, "", "  ")
+	return content, nil
+}
+
+func (c *ContentController) BuildProjectBrowserContent() (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProductsPageName, ProjectsPageBrowserName)
+	categorizedProducts, err := c.GetProjectsByCategory(&c.UserData.ID)
 	if err != nil {
-		fmt.Println("error:", err)
+		return nil, err
 	}
-	fmt.Println(string(b))
+	recent, err := c.GetRecentProjectsContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+	recommended, err := c.GetRecommendedProjectsContent(&c.UserData.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	content[businesslogic.ProductCategoriesKey] = categorizedProducts
+	content["recent"] = recent
+	content["recommended"] = recommended
 	return content, nil
 }
