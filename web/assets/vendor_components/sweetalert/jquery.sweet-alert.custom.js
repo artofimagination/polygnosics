@@ -23,9 +23,8 @@
                 closeOnConfirm: false
             }, function(){   
                   var http = new XMLHttpRequest();
-                  var url = deleteUrl;
                   var params = 'item-id=' + item;
-                  http.open('POST', url, true);
+                  http.open('POST', deleteUrl, true);
 
                   //Send the proper header information along with the request
                   http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

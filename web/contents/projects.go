@@ -14,12 +14,14 @@ const (
 	ProjectMapKey               = "project"
 	NewProject                  = "new_project"
 	RunProject                  = "run_project"
+	ShowProject                 = "show_project"
 	ProjectDetailsPageKey       = "detail_path"
 	ProjectStateBadge           = "state_badge"
 	ProjectDeleteIDKey          = "project_to_delete"
 	ProjectDeleteTextKey        = "delete_text"
 	ProjectDeleteSuccessTextKey = "delete_success_text"
 	ProjectDeleteURLKey         = "delete_url"
+	ProjectEditPageKey          = "edit_path"
 )
 
 // Visibility values of a project
@@ -66,15 +68,19 @@ func ValidateVisibility(value string) error {
 func (c *ContentController) generateProjectContent(projectData *models.ProjectData) map[string]interface{} {
 	content := make(map[string]interface{})
 	content[businesslogic.ProjectAvatar] = c.UserDBController.ModelFunctions.GetFilePath(projectData.Assets, businesslogic.ProjectAvatar, businesslogic.DefaultProjectAvatarPath)
-	content[businesslogic.ProjectName] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectName, "")
-	content[businesslogic.ProjectVisibility] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectVisibility, "")
+	content[businesslogic.ProjectNameKey] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectNameKey, "")
+	content[businesslogic.ProjectVisibilityKey] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectVisibilityKey, "")
 	content[businesslogic.ProjectContainerID] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectContainerID, "")
 	content[businesslogic.ProjectState] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectState, "")
 	content[businesslogic.ProductCategoriesKey] = c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProductCategoriesKey, "")
+	content[businesslogic.ProjectServerLogging] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectServerLogging, "").(string))
+	content[businesslogic.ProjectClientLogging] = convertToCheckboxValue(c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectClientLogging, "").(string))
 
 	content[ProjectDetailsPageKey] = fmt.Sprintf("/user-main/my-projects/details?item-id=%s", projectData.ID.String())
 	content[ProjectStateBadge] = GetProjectStateContent(c.UserDBController.ModelFunctions.GetField(projectData.Details, businesslogic.ProjectState, "").(string)).badge
+	content[ProjectEditPageKey] = fmt.Sprintf("/user-main/my-projects/edit?item-id=%s", projectData.ID.String())
 	content[RunProject] = fmt.Sprintf("/user-main/my-projects/run?item-id=%s", projectData.ID.String())
+	content[ShowProject] = fmt.Sprintf("/user-main/my-projects/show?item-id=%s", projectData.ID.String())
 	content[ProjectDeleteIDKey] = projectData.ID.String()
 	content[ProjectDeleteTextKey] = "The project will not be accessible anymore"
 	content[ProjectDeleteSuccessTextKey] = "Your project has been deleted"

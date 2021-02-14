@@ -87,6 +87,17 @@ func (c *Context) UploadFile(asset *models.Asset, key string, defaultPath string
 	return nil
 }
 
+func removeFolder(dir string) error {
+	if err := removeContents(dir); err != nil {
+		return err
+	}
+	err := os.Remove(dir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func removeContents(dir string) error {
 	d, err := os.Open(dir)
 	if err != nil {

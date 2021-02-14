@@ -33,6 +33,9 @@
 									<script>
 										var deleteLinks = []
 										{{range $i, $a := .project}}
+											var deleteText = '{{index $a "delete_text"}}'
+											var deleteSuccessText = '{{index $a "delete_success_text"}}'
+											var deleteUrl = '{{index $a "delete_url"}}'
 											deleteLinks.push('{{index $a "project_to_delete"}}')
 										{{end}}
 									</script>
@@ -43,7 +46,7 @@
 													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
 														<div class="fx-overlay scrl-up">						
 															<ul class="fx-info">
-																<li><a class="btn btn-outline" href="#"><i class="mdi mdi-application"></i></a></li>
+																<li><a class="btn btn-outline" href="{{index $a "show_project"}}"><i class="mdi mdi-application"></i></a></li>
 																<li><a class="btn btn-outline" href="{{index $a "detail_path"}}"><i class="mdi mdi-magnify"></i></a></li>
 																<li><a class="btn btn-outline" id="delete-item-{{$i}}"><i class="mdi mdi-delete"></i></a></li>
 																<li><a class="btn btn-outline" href="{{index $a "edit_path"}}"><i class="mdi mdi-settings"></i></a></li>
@@ -51,9 +54,9 @@
 														</div>
 													</div>
 													<div class="fx-card-content text-left mb-0">							
-														<div class="product-text">
-															<h2 class="pro-price badge badge-sm {{index $a "state_badge"}}">{{index $a "project_state"}}</h2>
+														<div class="product-text flexbox align-items-center">
 															<h4 class="box-title mb-0">{{index $a "name"}}</h4>
+															<span class="badge {{index $a "state_badge"}}">{{index $a "state"}}</span>
 														</div>
 													</div>
 												</div>

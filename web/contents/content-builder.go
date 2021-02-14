@@ -23,6 +23,8 @@ const (
 	ProjectsPageMyProjectsName = "My Projects"
 	ProjectsPageDetailsName    = "Details"
 	ProjectsPageBrowserName    = "Browser"
+	ProjectsPageEditName       = "Edit"
+	ProjectsPageRunName        = "Run"
 )
 
 const (
@@ -85,6 +87,30 @@ func (c *ContentController) BuildProductEditContent(productID *uuid.UUID) (map[s
 	}
 	content[ProductMapKey] = productContent
 	content["categories"] = businesslogic.CreateCategoriesMap()
+	return content, err
+}
+
+func (c *ContentController) BuildProjectEditContent(projectID *uuid.UUID) (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageEditName)
+	projectContent, err := c.GetProjectContent(projectID)
+	if err != nil {
+		return nil, err
+	}
+	content[ProjectMapKey] = projectContent
+	content["categories"] = businesslogic.CreateCategoriesMap()
+
+	return content, err
+}
+
+func (c *ContentController) BuildProjectRunContent(projectID *uuid.UUID) (map[string]interface{}, error) {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ProjectsPageName, ProjectsPageRunName)
+	projectContent, err := c.GetProjectContent(projectID)
+	if err != nil {
+		return nil, err
+	}
+	content[ProjectMapKey] = projectContent
 	return content, err
 }
 

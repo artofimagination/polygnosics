@@ -52,7 +52,7 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<div class="c-inputs-stacked">
-										<input type="checkbox" id="is_public" name="is_public" value="{{index .product "is_public"}}" {{index .product "is_public"}}>
+										<input type="checkbox" id="is_public" name="is_public" value="checked" {{index .product "is_public"}}>
 										<label for="is_public" class="d-block">Make the product public</label>
 									</div>
 								</div>
@@ -73,7 +73,7 @@
 								<div class="form-group">
 									<label>App config :</label>
 									<div class="c-inputs-stacked">
-										<input type="checkbox" id="requires_3d" name="requires_3d" value="{{index .product "requires_3d"}}" {{index .product "requires_3d"}}>
+										<input type="checkbox" id="requires_3d" name="requires_3d" value="checked" {{index .product "requires_3d"}}>
 										<label for="requires_3d" class="d-block">3D Acceleration required (NVIDIA support)</label>
 									</div>
 								</div>
@@ -104,19 +104,19 @@
 									<div class="radio-list">
 										<label class="radio-inline p-0 mr-10">
 											<div class="radio radio-info">
-												<input type="radio" name="pricing" id="subscription" value="Subscription">
+												<input type="radio" name="pricing" id="subscription" value="Subscription" "{{if eq (index .product "pricing") "Subscription"}} checked {{end}}">
 												<label for="subscription">Subscription</label>
 											</div>
 										</label>
 										<label class="radio-inline">
 											<div class="radio radio-info">
-												<input type="radio" name="pricing" id="single_price" value="Single Price">
+												<input type="radio" name="pricing" id="single_price" value="Single Price" "{{if eq (index .product "pricing") "Single Price"}} checked {{end}}">
 												<label for="single_price">Single price</label>
 											</div>
 										</label>
 										<label class="radio-inline">
 											<div class="radio radio-info">
-												<input type="radio" name="pricing" id="free_price" value="Free">
+												<input type="radio" name="pricing" id="free_price" value="Free" "{{if eq (index .product "pricing") "Free"}} checked {{end}}">
 												<label for="free_price">Free</label>
 											</div>
 										</label>

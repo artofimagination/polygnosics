@@ -69,7 +69,7 @@ func CreateCategoriesMap() map[string]string {
 
 func (c *Context) DeleteProduct(product *models.ProductData) error {
 	projects, err := c.UserDBController.GetProjectsByProductID(&product.ID)
-	if err != nil {
+	if err != nil && err != dbcontrollers.ErrNoProjectForProduct {
 		return err
 	}
 
@@ -84,8 +84,8 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 	}
 
 	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, "")
-	if err := removeContents(folder); err != nil {
-		return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
+	if err := removeFolder(folder); err != nil {
+		return fmt.Errorf("Failed to delete product main app folder. %s", errors.WithStack(err))
 	}
 	return nil
 }
@@ -129,22 +129,19 @@ func (c *Context) UploadFiles(assets *models.Asset, r *http.Request) error {
 func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UUID) error {
 	pathString := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
 	if err := untar(pathString); err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to decompress main app. %s", errors.WithStack(err))
+		return err
 	}
 
 	imageName := fmt.Sprintf("%s/%s", userID.String(), product.ID.String())
 	sourcePath := path.Join(filepath.Dir(pathString), "build")
 	if err := docker.CreateImage(sourcePath, imageName); err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to create product image. %s", errors.WithStack(err))
+		return err
 	}
+	pathString = path.Join(c.UserDBController.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, ""), "build")
+	if err := removeFolder(pathString); err != nil {
+		return err
+	}
+
 	return nil
 }
 

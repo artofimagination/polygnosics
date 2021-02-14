@@ -120,7 +120,7 @@ func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
 	productID, err := parseItemID(r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
@@ -142,6 +142,17 @@ func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
 		if err := c.BackendContext.UploadFiles(product.Assets, r); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to upload assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
+		}
+		_, _, err = r.FormFile(businesslogic.ProductMainAppKey)
+		if err == nil {
+			if err := c.BackendContext.CreateDockerImage(product, &c.ContentController.UserData.ID); err != nil {
+				if errDelete := c.BackendContext.DeleteProduct(product); errDelete != nil {
+					http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+					return
+				}
+				http.Error(w, fmt.Sprintf("Failed to create main app docker image. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				return
+			}
 		}
 
 		if err := c.BackendContext.UpdateProductData(product, r); err != nil {

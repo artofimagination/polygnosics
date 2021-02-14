@@ -64,7 +64,7 @@ func (c *ContentController) generateProductContent(productData *models.ProductDa
 	content[ProductRequires3DTextKey] = convertCheckedToYesNo(c.UserDBController.ModelFunctions.GetField(productData.Details, businesslogic.ProductRequires3DKey, "").(string))
 	content[ProductDetailPageKey] = fmt.Sprintf("/user-main/my-products/details?item-id=%s", productData.ID.String())
 	content[ProductEditPageKey] = fmt.Sprintf("/user-main/my-products/edit?item-id=%s", productData.ID.String())
-	content[NewProject] = fmt.Sprintf("/user-main/my-products/new-project-wizard?item-id=%s", productData.ID.String())
+	content[NewProject] = fmt.Sprintf("/user-main/my-products/project-wizard?item-id=%s", productData.ID.String())
 	content[ProductDeleteIDKey] = productData.ID.String()
 	content[ProductDeleteTextKey] = "It will delete all projects started from this product as well"
 	content[ProductDeleteSuccessTextKey] = "Your product has been deleted"

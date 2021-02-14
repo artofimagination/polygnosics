@@ -31,11 +31,11 @@
 							<div class="tab-pane active" id="myproducts" role="tabpanel">
 								<div class="row fx-element-overlay">
 									<script>
+										var deleteLinks = []
 										{{range $i, $a := .product}}
 											var deleteText = '{{index $a "delete_text"}}'
 											var deleteSuccessText = '{{index $a "delete_success_text"}}'
 											var deleteUrl = '{{index $a "delete_url"}}'
-											var deleteLinks = []
 											deleteLinks.push('{{index $a "product_to_delete"}}')
 										{{end}}
 									</script>

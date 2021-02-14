@@ -65,11 +65,13 @@ func CreateRouter(c *RESTController) *mux.Router {
 	myProducts.HandleFunc("/details", c.MakeHandler(c.MyProductDetails, r, false))
 	myProducts.HandleFunc("/delete", c.MakeHandler(c.DeleteProduct, r, false))
 	myProducts.HandleFunc("/edit", c.MakeHandler(c.EditProduct, r, false))
-	myProducts.HandleFunc("/new-project-wizard", c.MakeHandler(c.CreateProject, r, false))
+	myProducts.HandleFunc("/project-wizard", c.MakeHandler(c.CreateProject, r, false))
 	myProjects := userMain.PathPrefix("/my-projects").Subrouter()
 	myProjects.HandleFunc("/details", c.MakeHandler(c.ProjectDetails, r, false))
-	myProducts.HandleFunc("/delete", c.MakeHandler(c.DeleteProject, r, false))
+	myProjects.HandleFunc("/delete", c.MakeHandler(c.DeleteProject, r, false))
+	myProjects.HandleFunc("/edit", c.MakeHandler(c.EditProject, r, false))
 	myProjects.HandleFunc("/run", c.MakeHandler(c.RunProject, r, false))
+	myProjects.HandleFunc("/show", c.MakeHandler(c.ShowProject, r, false))
 
 	// Static file servers
 	// Default web assets
