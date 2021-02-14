@@ -90,8 +90,7 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.BackendContext.UpdateProjectData(projectData, containerID, r)
-		if err != nil {
+		if err := c.BackendContext.UpdateProjectData(projectData, containerID, r); err != nil {
 			if errDelete := c.BackendContext.DeleteProject(projectData); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
