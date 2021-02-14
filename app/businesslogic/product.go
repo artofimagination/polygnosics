@@ -74,6 +74,7 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 	}
 
 	for _, project := range projects {
+		project := project
 		if err := c.DeleteProject(&project); err != nil {
 			return err
 		}
