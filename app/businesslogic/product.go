@@ -156,7 +156,7 @@ func getBooleanString(input string) string {
 func (c *Context) storeProductCategories(details *models.Asset, r *http.Request) {
 	categories := CreateCategoriesMap()
 	categoryList := make([]string, 0)
-	for k, _ := range categories {
+	for k := range categories {
 		if r.FormValue(k) == "checked" {
 			categoryList = append(categoryList, k)
 		}
