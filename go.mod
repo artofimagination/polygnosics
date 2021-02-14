@@ -3,10 +3,8 @@ module polygnosics
 go 1.15
 
 require (
-	github.com/artofimagination/golang-docker v0.0.0
-	github.com/artofimagination/mysql-user-db-go-interface v0.0.12
-	github.com/docker/docker v1.13.1
-	github.com/docker/go-connections v0.4.0
+	github.com/artofimagination/golang-docker v0.0.2
+	github.com/artofimagination/mysql-user-db-go-interface v0.0.15
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0

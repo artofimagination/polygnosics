@@ -33,18 +33,21 @@
 									<script>
 										var deleteLinks = []
 										{{range $i, $a := .product}}
+											var deleteText = '{{index $a "delete_text"}}'
+											var deleteSuccessText = '{{index $a "delete_success_text"}}'
+											var deleteUrl = '{{index $a "delete_url"}}'
 											deleteLinks.push('{{index $a "product_to_delete"}}')
 										{{end}}
 									</script>
 									{{range $i, $a := .product}}
-										<div class="col-10 col-lg-2">
+										<div class="col-12 col-lg-3">
 											<div class="box box-default">
 												<div class="fx-card-item">
 													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
 														<div class="fx-overlay scrl-up">						
 															<ul class="fx-info">
 																<li><a class="btn btn-outline" href="{{index $a "detail_path"}}"><i class="mdi mdi-magnify"></i></a></li>
-																<li><a class="btn btn-outline" id="delete-product-{{$i}}"><i class="mdi mdi-delete"></i></a></li>
+																<li><a class="btn btn-outline" id="delete-item-{{$i}}"><i class="mdi mdi-delete"></i></a></li>
 																<li><a class="btn btn-outline" href="{{index $a "edit_path"}}"><i class="mdi mdi-settings"></i></a></li>
 															</ul>
 														</div>
@@ -78,22 +81,7 @@
   </div>
   <!-- /.content-wrapper -->
  
-   <footer class="main-footer">
-    <div class="pull-right d-none d-sm-inline-block">
-        <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
-		  <li class="nav-item">
-			<a class="nav-link" href="javascript:void(0)">FAQ</a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" href="#">Purchase Now</a>
-		  </li>
-		</ul>
-    </div>
-	  &copy; 2020 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
-	</footer>
-	
-	<!-- Side bar-->
-	{{template "side-bar" .}}
+	{{template "footer" .}}
   
   <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>

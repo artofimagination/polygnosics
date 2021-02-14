@@ -27,6 +27,7 @@ const (
 	ProductPricingKey          = "pricing"
 	ProductPriceKey            = "amount"
 	ProductTagsKey             = "tags"
+	ProductCategoriesKey       = "categories"
 )
 
 const (
@@ -47,14 +48,34 @@ const (
 	CheckBoxChecked   = "checked"
 )
 
+const (
+	CategoryMLKey           = "machine_learning"
+	CategoryMLText          = "Machine Learning"
+	CategoryCivilEngNameKey = "civil_eng"
+	CategoryCivilEngText    = "Civil Engineering"
+	CategoryMedicineKey     = "medicine"
+	CategoryMedicineText    = "Medicine"
+	CategoryChemistryKey    = "chemistry"
+	CategoryChemistryText   = "Chemistry"
+)
+
+func CreateCategoriesMap() map[string]string {
+	categoriesMap := make(map[string]string)
+	categoriesMap[CategoryMLKey] = CategoryMLText
+	categoriesMap[CategoryCivilEngNameKey] = CategoryCivilEngText
+	categoriesMap[CategoryMedicineKey] = CategoryMedicineText
+	return categoriesMap
+}
+
 func (c *Context) DeleteProduct(product *models.ProductData) error {
 	projects, err := c.UserDBController.GetProjectsByProductID(&product.ID)
-	if err != nil {
+	if err != nil && err != dbcontrollers.ErrNoProjectForProduct {
 		return err
 	}
 
 	for _, project := range projects {
-		if err := c.UserDBController.DeleteProject(&project.ID); err != nil {
+		project := project
+		if err := c.DeleteProject(&project); err != nil {
 			return err
 		}
 	}
@@ -63,10 +84,9 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 		return err
 	}
 
-	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
-	dir, _ := filepath.Split(folder)
-	if err := removeContents(dir); err != nil {
-		return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
+	folder := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, "")
+	if err := removeFolder(folder); err != nil {
+		return fmt.Errorf("Failed to delete product main app folder. %s", errors.WithStack(err))
 	}
 	return nil
 }
@@ -110,22 +130,19 @@ func (c *Context) UploadFiles(assets *models.Asset, r *http.Request) error {
 func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UUID) error {
 	pathString := c.UserDBController.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
 	if err := untar(pathString); err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to decompress main app. %s", errors.WithStack(err))
+		return err
 	}
 
 	imageName := fmt.Sprintf("%s/%s", userID.String(), product.ID.String())
 	sourcePath := path.Join(filepath.Dir(pathString), "build")
 	if err := docker.CreateImage(sourcePath, imageName); err != nil {
-		if errDelete := c.DeleteProduct(product); errDelete != nil {
-			err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-			return fmt.Errorf("Failed to delete product. %s", errors.WithStack(err))
-		}
-		return fmt.Errorf("Failed to create product image. %s", errors.WithStack(err))
+		return err
 	}
+	pathString = path.Join(c.UserDBController.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, ""), "build")
+	if err := removeFolder(pathString); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -135,6 +152,17 @@ func getBooleanString(input string) string {
 		return CheckBoxUnChecked
 	}
 	return CheckBoxChecked
+}
+
+func (c *Context) storeProductCategories(details *models.Asset, r *http.Request) {
+	categories := CreateCategoriesMap()
+	categoryList := make([]string, 0)
+	for k := range categories {
+		if r.FormValue(k) == "checked" {
+			categoryList = append(categoryList, k)
+		}
+	}
+	c.UserDBController.ModelFunctions.SetField(details, ProductCategoriesKey, categoryList)
 }
 
 // SetProductDetails sets the key-value content of product details based on form values.
@@ -153,16 +181,17 @@ func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardNumberKey, r.FormValue(CreditCardNumberKey))
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardExpiryKey, r.FormValue(CreditCardExpiryKey))
 	c.UserDBController.ModelFunctions.SetField(details, CreditCardCVCKey, r.FormValue(CreditCardCVCKey))
+	c.storeProductCategories(details, r)
 }
 
 func (c *Context) UpdateProductData(product *models.ProductData, r *http.Request) error {
 	c.SetProductDetails(product.Details, r)
 
-	if err := c.UserDBController.UpdateProductDetails(product); err != nil && err != dbcontrollers.ErrMissingProductDetail {
+	if err := c.UserDBController.UpdateProductDetails(product); err != nil && err != dbcontrollers.ErrNoProductDetailUpdate {
 		return err
 	}
 
-	if err := c.UserDBController.UpdateProductAssets(product); err != nil && err != dbcontrollers.ErrMissingProductAsset {
+	if err := c.UserDBController.UpdateProductAssets(product); err != nil && err != dbcontrollers.ErrNoProductAssetUpdate {
 		return err
 	}
 	return nil

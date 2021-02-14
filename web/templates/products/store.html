@@ -4,43 +4,121 @@
 
 <body class="hold-transition dark-skin sidebar-mini theme-primary">
 	<div class="wrapper">
-	
+		
 	{{template "main-header" .}} 
 	{{template "side-bar" .}}
   
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 	  <div class="container-full">
-		{{template "content-header" .}}
+			{{template "content-header" .}}
+		</div>   
 
-
-		<div class="row fx-element-overlay">
-			{{range $i, $a := .product}}
-				<div class="col-12 col-lg-6 col-xl-4">
-					<div class="box box-default">
-					<div class="fx-card-item">
-						<div class="fx-card-avatar fx-overlay-1"> <img src="{{index $a "product_avatar"}}" alt="product">
-							<div class="fx-overlay scrl-up">						
-								<ul class="fx-info">
-									<li><a class="btn btn-outline" href="{{index $a "path"}}"><i class="mdi mdi-magnify"></i></a></li>
-									<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-delete"></i></a></li>
-									<li><a class="btn btn-outline" href="javascript:void(0);"><i class="mdi mdi-settings"></i></a></li>
-								</ul>
+		<!-- Main content -->
+		<section class="content">
+			<div class="col-12">
+			  <div class="box box-default">
+				<!-- /.box-header -->
+				<div class="box-body">
+					<!-- Nav tabs -->
+					<div class="vtabs">
+						<ul class="nav nav-tabs tabs-vertical" role="tablist">
+							<li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#recommended" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Recommended</span> </a> </li>
+							<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#recent" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Recent</span> </a> </li>
+							{{range $k, $c := .categories}}
+								<li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#{{$k}}" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">{{index $c "name"}}</span> </a> </li>
+							{{end}}
+						</ul>
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div class="tab-pane active" id="recommended" role="tabpanel">
+								<div class="row fx-element-overlay">
+									{{range $i, $a := (index .recommended)}}
+										<div class="col-12 col-lg-3">
+											<div class="box box-default">
+												<div class="fx-card-item">
+													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
+														<div class="fx-overlay scrl-up">						
+															<ul class="fx-info">
+																<li><a class="btn btn-outline" href="{{index $a "detail_path"}}"><i class="mdi mdi-magnify"></i></a></li>
+															</ul>
+														</div>
+													</div>
+													<div class="fx-card-content text-left mb-0">							
+														<div class="product-text">
+															<h4 class="box-title mb-0">{{index $a "name"}}</h4>
+															<h5><small class="text-muted db">{{index $a "short_description"}}</small></h5>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- /.box -->				  
+										</div>
+									{{end}} 
+								</div>
 							</div>
-						</div>
-						<div class="fx-card-content text-left mb-0">							
-							<div class="product-text">
-								<h2 class="pro-price text-blue">$270</h2>
-								<h4 class="box-title mb-0">{{index $a "name"}}</h4>
-								<small class="text-muted db">{{index $a "product_description"}}</small>
+							<div class="tab-pane" id="recent" role="tabpanel">
+								<div class="row fx-element-overlay">
+									{{range $i, $a := (index .recent)}}
+										<div class="col-10 col-lg-2">
+											<div class="box box-default">
+												<div class="fx-card-item">
+													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
+														<div class="fx-overlay scrl-up">						
+															<ul class="fx-info">
+																<li><a class="btn btn-outline" href="{{index $a "detail_path"}}"><i class="mdi mdi-magnify"></i></a></li>
+															</ul>
+														</div>
+													</div>
+													<div class="fx-card-content text-left mb-0">							
+														<div class="product-text">
+															<h4 class="box-title mb-0">{{index $a "name"}}</h4>
+															<h5><small class="text-muted db">{{index $a "short_description"}}</small></h5>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- /.box -->				  
+										</div>
+									{{end}} 
+								</div>
 							</div>
+							{{range $k, $c := .categories}}
+								<div class="tab-pane" id="{{$k}}" role="tabpanel">
+									<div class="row fx-element-overlay">
+										{{range $i, $a := (index $c "products")}}
+											<div class="col-10 col-lg-2">
+												<div class="box box-default">
+													<div class="fx-card-item">
+														<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
+															<div class="fx-overlay scrl-up">						
+																<ul class="fx-info">
+																	<li><a class="btn btn-outline" href="{{index $a "detail_path"}}"><i class="mdi mdi-magnify"></i></a></li>
+																</ul>
+															</div>
+														</div>
+														<div class="fx-card-content text-left mb-0">							
+															<div class="product-text">
+																<h4 class="box-title mb-0">{{index $a "name"}}</h4>
+																<h5><small class="text-muted db">{{index $a "short_description"}}</small></h5>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.box -->				  
+											</div>
+										{{end}} 
+									</div>
+								</div>
+							{{end}}
 						</div>
 					</div>
-					</div>
-					<!-- /.box -->				  
 				</div>
-			{{end}} 
-		</div>
+				<!-- /.box-body -->
+			  </div>
+			  <!-- /.box -->
+			</div>
+		</section>
 		<!-- /.content -->
 	  </div>
   </div>
@@ -71,15 +149,13 @@
 
 	<!-- Vendor JS -->
 	<script src="/assets/js/vendors.min.js"></script>
-    <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
-    
-    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
-    <script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
+	<script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+	<script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+	<script src="/assets/vendor_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
 	
 	<!-- Venusx Admin App -->
 	<script src="/assets/js/template.js"></script>
 	<script src="/assets/js/demo.js"></script>
-	
 
 </body>
 </html>

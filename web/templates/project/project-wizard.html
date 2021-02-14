@@ -20,19 +20,19 @@
 		 <!-- Step wizard -->
 		  <div class="box box-default">
 			<div class="box-header with-border">
-			  <h4 class="box-title">New product creation</h4>	
+			  <h4 class="box-title">New project creation</h4>	
 			</div>
 			<!-- /.box-header -->
 			<div class="box-body wizard-content">
-				<form action="{{index .new_project}}" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
+				<form action="{{index .product "new_project"}}" enctype="multipart/form-data" class="validation-wizard wizard-circle" method="post">
 					<!-- Step 1 -->
 					<h6>Basic configuration</h6>
 					<section>
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label for="projectName">Project Name :<span class="danger">*</span></label>
-									<input type="text" class="form-control required" id="projectName" name="projectName"> </div>
+									<label for="name">Project Name :<span class="danger">*</span></label>
+									<input type="text" class="form-control required" id="name" name="name"> </div>
 							</div>
 						</div>
 						<div class="row">
@@ -52,8 +52,8 @@
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="project_avatar">Upload project avatar :</label>
-								<input type="file" class="btn btn-primary form-control" id="project_avatar" name="project_avatar" accept="image/*">
+								<label for="avatar">Upload project avatar :</label>
+								<input type="file" class="btn btn-primary form-control" id="avatar" name="avatar" accept="image/*">
 							</div>
 						</div>
 					</section>
@@ -65,10 +65,10 @@
 								<div class="form-group">
 									<label>App config :</label>
 									<div class="c-inputs-stacked">
-										<input type="checkbox" id="serverLogging" name="serverLogging" value="Yes">
-										<label for="serverLogging" class="d-block">Server app logging</label>
-										<input type="checkbox" id="clientLogging" name="clientLogging" value="Yes">
-										<label for="clientLogging" class="d-block">Client app logging</label>
+										<input type="checkbox" id="server_logging" name="server_logging" value="checked">
+										<label for="server_logging" class="d-block">Server app logging</label>
+										<input type="checkbox" id="client_logging" name="client_logging" value="checked">
+										<label for="client_logging" class="d-block">Client app logging</label>
 									</div>
 								</div>
 							</div>
@@ -88,23 +88,8 @@
 	  </div>
   </div>
   <!-- /.content-wrapper -->
-  
-   <footer class="main-footer">
-    <div class="pull-right d-none d-sm-inline-block">
-        <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
-		  <li class="nav-item">
-			<a class="nav-link" href="javascript:void(0)">FAQ</a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" href="#">Purchase Now</a>
-		  </li>
-		</ul>
-    </div>
-	  &copy; 2020 <a href="https://www.multipurposethemes.com/">Multipurpose Themes</a>. All Rights Reserved.
-	</footer>
 	
-	<!-- Side bar-->
-	{{template "side-bar" .}}
+	{{template "footer" .}}
   
   <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>

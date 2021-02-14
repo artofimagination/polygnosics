@@ -57,18 +57,9 @@ func untar(fileName string) error {
 
 			outFile.Close()
 		case tar.TypeSymlink:
-			outFile, err := os.Create(dst)
-			if err != nil {
-				return fmt.Errorf("ExtractTarGz: Create() failed: %s", err.Error())
+			if err := os.Symlink(header.Linkname, dst); err != nil {
+				return err
 			}
-
-			limited := io.LimitReader(tarReader, MaxWrittenBytes)
-
-			if _, err = io.Copy(outFile, limited); err != nil {
-				return fmt.Errorf("ExtractTarGz: Copy() failed: %s", err.Error())
-			}
-
-			outFile.Close()
 		default:
 			return fmt.Errorf(
 				"ExtractTarGz: uknown type: %x in %s",

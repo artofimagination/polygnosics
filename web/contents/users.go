@@ -56,8 +56,8 @@ func (c *ContentController) GetUserContent(user *models.UserData) map[string]int
 	userContent[UserNameKey] = user.Name
 	userContent[UserFullNameKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserFullNameKey, "")
 
-	country := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCountryKey, "")
-	city := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCityKey, "")
+	country := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCountryKey, "").(string)
+	city := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCityKey, "").(string)
 	userContent[UserCountryKey] = country
 	userContent[UserCityKey] = city
 	userContent[UserLocationKey] = setLocationString(country, city)

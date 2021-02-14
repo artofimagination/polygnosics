@@ -30,7 +30,7 @@
 						<div class="box-body p-0">
 							<div class="media-list media-list-hover media-list-divided">
 							{{range $i, $a := .product}}
-								<a class="media media-single" href="{{index $a "3rdparty_detail_path"}}">
+								<a class="media media-single" href="{{index $a "detail_path"}}">
 									<img class="w-80 rounded" src="{{index $a "avatar"}}" alt="...">
 									<div class="media-body">
 										<h6>{{index $a "name"}}</h6>
@@ -51,8 +51,8 @@
 						<div class="box-body">
 							{{range $i, $a := .project}}
 								<div class="font-size-18 flexbox align-items-center">
-									<h6><a href="{{index $a "project_path"}}"><span>{{index $a "name"}}</span></a></h6>
-									<span class="badge badge-sm {{index $a "state_badge"}}">{{index $a "project_state"}}</span>
+									<h6><a href="{{index $a "detail_path"}}"><span>{{index $a "name"}}</span></a></h6>
+									<span class="badge badge-sm {{index $a "state_badge"}}">{{index $a "state"}}</span>
 								</div>
 
 								<div class="progress progress-xxs mt-10 mb-10">

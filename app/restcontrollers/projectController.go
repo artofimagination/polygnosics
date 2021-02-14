@@ -6,8 +6,6 @@ import (
 	"polygnosics/app/businesslogic"
 	"polygnosics/web/contents"
 
-	"github.com/artofimagination/golang-docker/docker"
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -17,107 +15,74 @@ func (c *RESTController) MyProjects(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Failed to get project content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	c.RenderTemplate(w, "my-projects", content)
+	c.RenderTemplate(w, MyProjects, content)
 }
 
 func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent(c.ContentController.UserData)
-	name := UserMain
-	if err := r.ParseForm(); err != nil {
-		p["message"] = ErrFailedToParseForm
-		c.RenderTemplate(w, name, p)
-		return
-	}
-	projectID, err := uuid.Parse(r.FormValue("project"))
+	projectID, err := parseItemID(r)
 	if err != nil {
-		c.RenderTemplate(w, name, p)
+		http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	pProject, err := c.ContentController.GetProjectContent(&projectID)
+	content, err := c.ContentController.BuildProjectDetailsContent(projectID)
 	if err != nil {
-		p["message"] = "Failed to get project content"
-		c.RenderTemplate(w, name, p)
+		http.Error(w, fmt.Sprintf("Failed to get project content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	for k, v := range pProject {
-		p[k] = v
-	}
-	c.RenderTemplate(w, "project-details", p)
+	c.RenderTemplate(w, "project-details", content)
 }
 
 func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
-	p := c.ContentController.GetUserContent(c.ContentController.UserData)
-	name := UserMain
-	if err := r.ParseForm(); err != nil {
-		p["message"] = ErrFailedToParseForm
-		c.RenderTemplate(w, name, p)
-		return
-	}
-	productID, err := uuid.Parse(r.FormValue("product"))
+	productID, err := parseItemID(r)
 	if err != nil {
-		p["message"] = "Failed to parse product id"
-		c.RenderTemplate(w, name, p)
+		http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
-	}
-
-	pProduct, err := c.ContentController.GetProductContent(&productID)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
-	for k, v := range pProduct {
-		p[k] = v
 	}
 
 	if r.Method == GET {
-		c.RenderTemplate(w, "new-project-wizard", p)
+		content, err := c.ContentController.BuildProjectWizardContent(productID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get project wizard content content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+		c.RenderTemplate(w, ProjectWizard, content)
 	} else {
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
-			p["message"] = ErrFailedToParseForm
 			http.Error(w, fmt.Sprintf("Failed to parse avatar. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		if err := contents.ValidateVisibility(r.FormValue("visibility")); err != nil {
-			p["message"] = err
+		if err := contents.ValidateVisibility(r.FormValue(businesslogic.ProjectVisibilityKey)); err != nil {
 			http.Error(w, fmt.Sprintf("Failed to parse visibility. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		productID, err := uuid.Parse(r.FormValue("product"))
-		if err != nil {
-			p["message"] = "Failed to parse project id"
-			http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
-			return
-		}
-
 		projectData, err := c.UserDBController.CreateProject(
-			r.FormValue("projectName"),
-			r.FormValue("visibility"),
+			r.FormValue(businesslogic.ProjectNameKey),
+			r.FormValue(businesslogic.ProjectVisibilityKey),
 			&c.ContentController.UserData.ID,
-			&productID,
+			productID,
 			businesslogic.GeneratePath)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("Failed to create project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		err = c.BackendContext.UploadFile(projectData.Assets, contents.ProjectAvatar, businesslogic.DefaultProjectAvatarPath, r)
+		err = c.BackendContext.UploadFile(projectData.Assets, businesslogic.ProjectAvatar, businesslogic.DefaultProjectAvatarPath, r)
 		if err != nil {
 			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
 			http.Error(w, fmt.Sprintf("Failed to upload avatar. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		containerName := fmt.Sprintf("%s/%s", c.ContentController.UserData.ID.String(), projectData.ID.String())
-		containerID, err := docker.CreateNewContainer(containerName, "0.0.0.0", "10000")
+		containerID, err := c.BackendContext.CreateDockerContainer(&c.ContentController.UserData.ID, &projectData.ProductID)
 		if err != nil {
-			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
+			if errDelete := c.BackendContext.DeleteProject(projectData); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
 				http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
@@ -125,61 +90,116 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c.ContentController.SetProjectDetails(projectData.Details, r, containerID)
-
-		if err := c.UserDBController.UpdateProjectDetails(projectData); err != nil {
-			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
+		if err := c.BackendContext.UpdateProjectData(projectData, containerID, r); err != nil {
+			if errDelete := c.BackendContext.DeleteProject(projectData); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			}
-			http.Error(w, fmt.Sprintf("Failed to update product details. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("Failed to update project data. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 
-		if err := c.UserDBController.UpdateProjectAssets(projectData); err != nil {
-			if errDelete := c.UserDBController.DeleteProject(&projectData.ID); errDelete != nil {
-				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
-			}
-			http.Error(w, fmt.Sprintf("Failed to update product assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
-			return
-		}
-
-		c.RenderTemplate(w, name, p)
+		c.MyProjects(w, r)
 	}
 }
 
 func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
-	name := UserMain
-	p := c.ContentController.GetUserContent(c.ContentController.UserData)
-	if err := r.ParseForm(); err != nil {
-		p["message"] = ErrFailedToParseForm
-		c.RenderTemplate(w, name, p)
-		return
-	}
-
-	projectID, err := uuid.Parse(r.FormValue("project"))
+	projectID, err := parseItemID(r)
 	if err != nil {
-		p["message"] = "Failed to parse project id"
-		c.RenderTemplate(w, name, p)
+		http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	pProject, err := c.ContentController.GetProjectContent(&projectID)
+	if err := c.BackendContext.RunProject(&c.ContentController.UserData.ID, projectID); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to run project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	content, err := c.ContentController.BuildProjectRunContent(projectID)
 	if err != nil {
-		p["message"] = "Failed to get project details"
-		c.RenderTemplate(w, name, p)
+		http.Error(w, fmt.Sprintf("Failed to get project content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	for k, v := range pProject {
-		p[k] = v
-	}
+	c.RenderTemplate(w, "show", content)
+}
 
-	if err := docker.StartContainer(p[contents.ProjectContainerID].(string)); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to start project container. %s", errors.WithStack(err)), http.StatusInternalServerError)
+func (c *RESTController) ShowProject(w http.ResponseWriter, r *http.Request) {
+	projectID, err := parseItemID(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
 
-	c.RenderTemplate(w, "run", p)
+	content, err := c.ContentController.BuildProjectRunContent(projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get project content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	c.RenderTemplate(w, "show", content)
+}
+
+func (c *RESTController) DeleteProject(w http.ResponseWriter, r *http.Request) {
+	if r.Method == POST {
+		projectID, err := parseItemID(r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		project, err := c.UserDBController.GetProject(projectID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.BackendContext.DeleteProject(project); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to delete project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		c.MyProjects(w, r)
+	}
+}
+
+func (c *RESTController) EditProject(w http.ResponseWriter, r *http.Request) {
+	projectID, err := parseItemID(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	if r.Method == GET {
+		content, err := c.ContentController.BuildProjectEditContent(projectID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to build project edit content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		c.RenderTemplate(w, "project-edit", content)
+	} else {
+		project, err := c.UserDBController.GetProject(projectID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.BackendContext.UploadFiles(project.Assets, r); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to upload assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		if err := c.BackendContext.EditProjectData(project, r); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		content, err := c.ContentController.BuildMyProjectsContent()
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to get my projects content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+		c.RenderTemplate(w, MyProjects, content)
+	}
 }
