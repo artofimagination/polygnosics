@@ -77,12 +77,13 @@ const (
 	ProjectWizard = "project-wizard"
 	MyProjects    = "my-projects"
 
-	ProjectStats   = "project-stats"
-	ProductStats   = "product-stats"
-	UserStats      = "user-stats"
-	ProductProject = "product-project"
-	SystemHealth   = "system-health"
-	Accounting     = "accounting"
+	ProjectStats        = "project-stats"
+	ProductStats        = "product-stats"
+	UserStats           = "user-stats"
+	ProductProjectStats = "product-project-stats"
+	UIStats             = "ui-stats"
+	SystemHealthStats   = "system-health"
+	AccountingStats     = "accounting"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {

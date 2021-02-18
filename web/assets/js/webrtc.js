@@ -19,7 +19,7 @@ function initWebRTC(channelName) {
   pc.onicecandidate = event => {
     if (event.candidate === null) {
       value = btoa(JSON.stringify(pc.localDescription))
-      var params = "offer=" + value;
+      var params = "offer=" + value + "&type=" + channelName;
       var http = new XMLHttpRequest();
       var url = "/user-main/stats/webrtc";
       http.open('POST', url, true);

@@ -3,7 +3,7 @@ $(function () {
 
   'use strict';
 	
-	initWebRTC("chart-data")	
+	initWebRTC("user-data")	
 	
 	var options = {
 	  chart: {
@@ -218,6 +218,10 @@ $(function () {
 		{
 			name: 'Online',
 			data: data
+		},
+		{
+			name: 'Deleted',
+			data: data
 		}],
 		markers: {
 			size: 0,
@@ -426,6 +430,9 @@ $(function () {
 		},
 		{
 			data: data["users_online"]
+		},
+		{
+			data: data["users_deleted"]
 		}])
 
 		// Update dev client ratio

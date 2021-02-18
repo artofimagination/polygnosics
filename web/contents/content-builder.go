@@ -38,6 +38,12 @@ const (
 	ResourcesPageNewsName = "News"
 )
 
+const (
+	StatsPageName = "Statistics"
+	UserStats     = "User Statistics"
+	ItemStats     = "Overall Product and Project Stats"
+)
+
 // TODO Issue#40: Replace  user/product/project data with redis storage.
 type ContentController struct {
 	UserData         *models.UserData
@@ -194,6 +200,18 @@ func (c *ContentController) BuildErrorContent(errString string) map[string]inter
 func (c *ContentController) BuildNewsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageNewsName)
+	return content
+}
+
+func (c *ContentController) BuildUserStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, UserStats)
+	return content
+}
+
+func (c *ContentController) BuildItemStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, ItemStats)
 	return content
 }
 

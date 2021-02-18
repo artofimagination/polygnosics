@@ -16,7 +16,13 @@ func (c *RESTController) StatsWebRTC(w http.ResponseWriter, r *http.Request) {
 	}
 
 	offer := r.FormValue("offer")
-	if err := webrtc.SetupFrontend(w, r, offer, c.BackendContext.ProvideUserStats); err != nil {
+	statsFunc, err := c.BackendContext.GetDataChannelProvider(r.FormValue("type"))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get webrtc data provider. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	if err := webrtc.SetupFrontend(w, r, offer, statsFunc); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to start frontend webrtc. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
@@ -41,21 +47,22 @@ func (c *RESTController) ProjectStats(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) UserStats(w http.ResponseWriter, r *http.Request) {
-	content, err := c.ContentController.BuildStoreContent()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
+	content := c.ContentController.BuildUserStatsContent()
 	c.RenderTemplate(w, UserStats, content)
 }
 
 func (c *RESTController) ProductsProjectsStats(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildItemStatsContent()
+	c.RenderTemplate(w, ProductProjectStats, content)
+}
+
+func (c *RESTController) UIStats(w http.ResponseWriter, r *http.Request) {
 	content, err := c.ContentController.BuildStoreContent()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	c.RenderTemplate(w, ProductProject, content)
+	c.RenderTemplate(w, UIStats, content)
 }
 
 func (c *RESTController) AccountingStats(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +71,7 @@ func (c *RESTController) AccountingStats(w http.ResponseWriter, r *http.Request)
 		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	c.RenderTemplate(w, Accounting, content)
+	c.RenderTemplate(w, AccountingStats, content)
 }
 
 func (c *RESTController) SystemHealthStats(w http.ResponseWriter, r *http.Request) {
@@ -73,5 +80,5 @@ func (c *RESTController) SystemHealthStats(w http.ResponseWriter, r *http.Reques
 		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	c.RenderTemplate(w, SystemHealth, content)
+	c.RenderTemplate(w, SystemHealthStats, content)
 }

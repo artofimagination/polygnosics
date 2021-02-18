@@ -3,20 +3,22 @@ package businesslogic
 import (
 	"crypto/rand"
 	"encoding/json"
+	"fmt"
 	"math/big"
 )
 
 const (
-	UsersTotal           = "users_total"
-	UsersOnline          = "users_online"
-	UsersDevClient       = "users_dev_client"
-	UsersActivityHistory = "users_activity_history"
-	UsersOnlinePeak      = "users_online_peaks"
-	UsersOnlinePeriod    = "users_online_period"
-	UsersOnlineTime      = "user_online_time"
-	UsersOnlineTimeMin   = "user_online_time_min"
-	UsersOnlineTimeMax   = "user_online_time_max"
-
+	userDataChannel      = "user-data"
+	usersTotal           = "users_total"
+	usersDeleted         = "users_deleted"
+	usersOnline          = "users_online"
+	usersDevClient       = "users_dev_client"
+	usersActivityHistory = "users_activity_history"
+	usersOnlinePeak      = "users_online_peaks"
+	usersOnlinePeriod    = "users_online_period"
+	usersOnlineTime      = "user_online_time"
+)
+const (
 	ProjectUsers           = "project_user"
 	ProjectViewers         = "project_viewers"
 	ProjectWatchlisters    = "project_watchlisters"
@@ -24,27 +26,43 @@ const (
 	ProjectActiveUsers     = "project_active_users"
 	ProjectActivityHistory = "project_activity_history"
 	ProjectRatingHistory   = "project_rating_history"
+)
 
+const (
 	ProductViewers           = "product_viewers"
 	ProductUsers             = "product_users"
 	ProductWatchlisters      = "product_watchlister"
 	ProductViewAndPurchase   = "product_success" // Returns the stats showing how many products have actually been purchased after viewing or watching
 	ProductProjectGeneration = "product_project_generation"
-
-	Timestamp = "timestamp"
-	Value     = "value"
 )
 
 const (
-	Min        = "min"
-	MinPercent = "min_percent"
-	MinTrend   = "min_trend"
-	Max        = "max"
-	MaxPercent = "max_percent"
-	MaxTrend   = "max_trend"
-	Avg        = "avg"
-	AvgPercent = "avg_percent"
-	AvgTrend   = "avg_trend"
+	itemDataChannel            = "item-data"
+	itemsUsersProjectActivity  = "users_project_activity"
+	itemsProjectLength         = "project_length"
+	itemsProjectCount          = "project_count"
+	itemsProductCount          = "product_count"
+	itemsCurrentProductCount   = "product_current_count"
+	itemsCurrentProjectCount   = "project_current_count"
+	itemsProductPerUser        = "products_per_user"
+	itemsProjectPerUser        = "prodjets_per_user"
+	itemsCurrentProductPerUser = "current_products_per_user"
+	itemsCurrentProjectPerUser = "current_prodjets_per_user"
+)
+
+const (
+	Min            = "min"
+	MinPercent     = "min_percent"
+	MinTrend       = "min_trend"
+	Max            = "max"
+	MaxPercent     = "max_percent"
+	MaxTrend       = "max_trend"
+	Avg            = "avg"
+	AvgPercent     = "avg_percent"
+	AvgTrend       = "avg_trend"
+	Current        = "current"
+	CurrentPercent = "current_percent"
+	CurrentTrend   = "current_trend"
 )
 
 func genRandNum() int {
@@ -62,31 +80,87 @@ func genRandNum() int {
 	return int(n.Int64())
 }
 
-func (c *Context) ProvideUserStats() ([]byte, error) {
+func (c *Context) GetDataChannelProvider(channelType string) (func() ([]byte, error), error) {
+	switch channelType {
+	case userDataChannel:
+		return c.provideUserStats, nil
+	case itemDataChannel:
+		return c.provideItemStats, nil
+	default:
+		return nil, fmt.Errorf("Unknown data channel %s", channelType)
+	}
+}
+
+func (c *Context) provideItemStats() ([]byte, error) {
 	data := make(map[string]interface{})
-	data[UsersTotal] = make([][]int, 0)
-	data[UsersDevClient] = [4]int{10, 10, 20, 60}
-	data[UsersOnline] = make([][]int, 0)
-	data[UsersOnlinePeak] = make(map[string]interface{})
-	data[UsersOnlinePeriod] = make([][]int, 0)
-	data[UsersActivityHistory] = make([][]int, 0)
-	data[UsersOnlineTime] = make([][]int, 0)
-	data[UsersOnlineTimeMin] = make([][]int, 0)
-	data[UsersOnlineTimeMax] = make([][]int, 0)
+	data[itemsUsersProjectActivity] = make([][]int, 0)
+	data[itemsProjectLength] = make([][]int, 0)
+	data[itemsProjectCount] = make([][]int, 0)
+	data[itemsProductCount] = make([][]int, 0)
+	data[itemsCurrentProductCount] = make(map[string]interface{})
+	data[itemsCurrentProjectCount] = make(map[string]interface{})
+	data[itemsCurrentProductPerUser] = make(map[string]interface{})
+	data[itemsCurrentProjectPerUser] = make(map[string]interface{})
+	data[itemsProductPerUser] = make([][]int, 0)
+	data[itemsProjectPerUser] = make([][]int, 0)
 	timestamp := 1550197757000
 	for i := 0; i < 300; i++ {
 		dataPoint := []int{timestamp, genRandNum()}
-		data[UsersTotal] = append(data[UsersTotal].([][]int), dataPoint)
+		data[itemsUsersProjectActivity] = append(data[itemsUsersProjectActivity].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[itemsProjectLength] = append(data[itemsProjectLength].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[itemsProjectCount] = append(data[itemsProjectCount].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[itemsProductCount] = append(data[itemsProductCount].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[itemsProductPerUser] = append(data[itemsProductPerUser].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[itemsProjectPerUser] = append(data[itemsProjectPerUser].([][]int), dataPoint)
+		timestamp += 5000000
+	}
+	total := 600
+	data[itemsCurrentProductCount].(map[string]interface{})[Current] = 200
+	data[itemsCurrentProductCount].(map[string]interface{})[CurrentTrend] = "up"
+	data[itemsCurrentProductCount].(map[string]interface{})[CurrentPercent] = (100 * 200) / total
+	data[itemsCurrentProjectCount].(map[string]interface{})[Current] = 450
+	data[itemsCurrentProjectCount].(map[string]interface{})[CurrentTrend] = "down"
+	data[itemsCurrentProjectCount].(map[string]interface{})[CurrentPercent] = (100 * 450) / total
+	data[itemsCurrentProductPerUser].(map[string]interface{})[Current] = 320
+	data[itemsCurrentProductPerUser].(map[string]interface{})[CurrentTrend] = "up"
+	data[itemsCurrentProductPerUser].(map[string]interface{})[CurrentPercent] = (100 * 320) / total
+	data[itemsCurrentProjectPerUser].(map[string]interface{})[Current] = 320
+	data[itemsCurrentProjectPerUser].(map[string]interface{})[CurrentTrend] = "up"
+	data[itemsCurrentProjectPerUser].(map[string]interface{})[CurrentPercent] = (100 * 100) / total
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return jsonData, nil
+}
+
+func (c *Context) provideUserStats() ([]byte, error) {
+	data := make(map[string]interface{})
+	data[usersTotal] = make([][]int, 0)
+	data[usersDeleted] = make([][]int, 0)
+	data[usersDevClient] = [4]int{10, 10, 20, 60}
+	data[usersOnline] = make([][]int, 0)
+	data[usersOnlinePeak] = make(map[string]interface{})
+	data[usersOnlinePeriod] = make([][]int, 0)
+	data[usersActivityHistory] = make([][]int, 0)
+	data[usersOnlineTime] = make([][]int, 0)
+	timestamp := 1550197757000
+	for i := 0; i < 300; i++ {
+		dataPoint := []int{timestamp, genRandNum()}
+		data[usersTotal] = append(data[usersTotal].([][]int), dataPoint)
 		dataPoint = []int{timestamp, genRandNum() + 10}
-		data[UsersOnline] = append(data[UsersOnline].([][]int), dataPoint)
+		data[usersOnline] = append(data[usersOnline].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 60}
+		data[usersDeleted] = append(data[usersDeleted].([][]int), dataPoint)
 		dataPoint = []int{timestamp, genRandNum() + 20}
-		data[UsersActivityHistory] = append(data[UsersActivityHistory].([][]int), dataPoint)
+		data[usersActivityHistory] = append(data[usersActivityHistory].([][]int), dataPoint)
 		dataPoint = []int{timestamp, genRandNum() + 30}
-		data[UsersOnlineTime] = append(data[UsersOnlineTime].([][]int), dataPoint)
-		dataPoint = []int{timestamp, genRandNum() + 40}
-		data[UsersOnlineTimeMin] = append(data[UsersOnlineTimeMin].([][]int), dataPoint)
-		dataPoint = []int{timestamp, genRandNum() + 50}
-		data[UsersOnlineTimeMax] = append(data[UsersOnlineTimeMax].([][]int), dataPoint)
+		data[usersOnlineTime] = append(data[usersOnlineTime].([][]int), dataPoint)
 		timestamp += 5000000
 	}
 	offset := 0
@@ -96,18 +170,18 @@ func (c *Context) ProvideUserStats() ([]byte, error) {
 			dataPoints = append(dataPoints, genRandNum()+offset)
 		}
 		offset += 40
-		data[UsersOnlinePeriod] = append(data[UsersOnlinePeriod].([][]int), dataPoints)
+		data[usersOnlinePeriod] = append(data[usersOnlinePeriod].([][]int), dataPoints)
 	}
 	usersCount := 600
-	data[UsersOnlinePeak].(map[string]interface{})[Min] = 200
-	data[UsersOnlinePeak].(map[string]interface{})[MinTrend] = "up"
-	data[UsersOnlinePeak].(map[string]interface{})[MinPercent] = (100 * 200) / usersCount
-	data[UsersOnlinePeak].(map[string]interface{})[Max] = 450
-	data[UsersOnlinePeak].(map[string]interface{})[MaxTrend] = "down"
-	data[UsersOnlinePeak].(map[string]interface{})[MaxPercent] = (100 * 450) / usersCount
-	data[UsersOnlinePeak].(map[string]interface{})[Avg] = 320
-	data[UsersOnlinePeak].(map[string]interface{})[AvgTrend] = "up"
-	data[UsersOnlinePeak].(map[string]interface{})[AvgPercent] = (100 * 320) / usersCount
+	data[usersOnlinePeak].(map[string]interface{})[Min] = 200
+	data[usersOnlinePeak].(map[string]interface{})[MinTrend] = "up"
+	data[usersOnlinePeak].(map[string]interface{})[MinPercent] = (100 * 200) / usersCount
+	data[usersOnlinePeak].(map[string]interface{})[Max] = 450
+	data[usersOnlinePeak].(map[string]interface{})[MaxTrend] = "down"
+	data[usersOnlinePeak].(map[string]interface{})[MaxPercent] = (100 * 450) / usersCount
+	data[usersOnlinePeak].(map[string]interface{})[Avg] = 320
+	data[usersOnlinePeak].(map[string]interface{})[AvgTrend] = "up"
+	data[usersOnlinePeak].(map[string]interface{})[AvgPercent] = (100 * 320) / usersCount
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -117,9 +191,9 @@ func (c *Context) ProvideUserStats() ([]byte, error) {
 
 func (c *Context) ProvideProjectStats() ([]byte, error) {
 	data := make(map[string]interface{})
-	data[UsersTotal] = make(map[int64]int)
-	data[UsersOnline] = make(map[int64]int)
-	data[UsersActivityHistory] = make(map[int64]int)
+	data[usersTotal] = make(map[int64]int)
+	data[usersOnline] = make(map[int64]int)
+	data[usersActivityHistory] = make(map[int64]int)
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err

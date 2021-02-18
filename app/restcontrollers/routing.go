@@ -67,6 +67,7 @@ func CreateRouter(c *RESTController) *mux.Router {
 	userMain.HandleFunc("/accounting", c.MakeHandler(c.AccountingStats, r, false))
 	userMain.HandleFunc("/system-health", c.MakeHandler(c.SystemHealthStats, r, false))
 	userMain.HandleFunc("/products-projects", c.MakeHandler(c.ProductsProjectsStats, r, false))
+	userMain.HandleFunc("/ui-stats", c.MakeHandler(c.UIStats, r, false))
 	stats := userMain.PathPrefix("/stats").Subrouter()
 	stats.HandleFunc("/webrtc", c.MakeHandler(c.StatsWebRTC, r, false))
 	myProducts := userMain.PathPrefix("/my-products").Subrouter()
