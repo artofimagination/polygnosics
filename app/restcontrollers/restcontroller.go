@@ -72,10 +72,11 @@ const (
 )
 
 const (
-	UserMain      = "user-main"
-	MyProducts    = "my-products"
-	ProjectWizard = "project-wizard"
-	MyProjects    = "my-projects"
+	UserMain       = "user-main"
+	MyProducts     = "my-products"
+	ProjectWizard  = "project-wizard"
+	MyProjects     = "my-projects"
+	ProjectDetails = "project-details"
 
 	ProjectStats        = "project-stats"
 	ProductStats        = "product-stats"

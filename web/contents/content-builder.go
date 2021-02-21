@@ -217,6 +217,12 @@ func (c *ContentController) BuildProductStatsContent() map[string]interface{} {
 	return content
 }
 
+func (c *ContentController) BuildProjectStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsProjects)
+	return content
+}
+
 func (c *ContentController) BuildItemStatsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, StatsPageName, StatsItems)

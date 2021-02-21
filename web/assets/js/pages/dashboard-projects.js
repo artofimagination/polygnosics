@@ -3,7 +3,7 @@ $(function () {
 
   'use strict';
 	
-	initWebRTC("product-data")	
+	initWebRTC("project-data")	
 
 	function initScoreChart() {
 		var plot1 = $.plot('#scoreChart', [{
@@ -132,7 +132,7 @@ $(function () {
 	// data for the sparklines that appear below header area
 	var sparklineData = [47, 10, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46];
   	
-	var avgProjectGen = {
+	var avgUsageTime = {
 		chart: {
 			type: 'area',
 			height: 290,
@@ -167,8 +167,8 @@ $(function () {
 		},
 	};
 
-	var avgProjectGenChart = new ApexCharts(document.querySelector("#avg-project-gen"), avgProjectGen);
-	avgProjectGenChart.render();
+	var avgUsageTimeChart = new ApexCharts(document.querySelector("#avg-usage-time"), avgUsageTime);
+	avgUsageTimeChart.render();
 
 	var data = []
 	data.push([0, 0])
@@ -206,7 +206,7 @@ $(function () {
 			data: data
 		},
 		{
-			name: 'Purchases',
+			name: 'Connections',
 			data: data
 		}],
 		markers: {
@@ -268,13 +268,13 @@ $(function () {
 		}
 
 		details.updateSeries([{
-			data: data["product_viewers"]
+			data: data["project_viewers"]
 		},
 		{
-			data: data["product_purchase"]
+			data: data["project_connections"]
 		},
 		{
-			data: data["product_pins"]
+			data: data["project_pins"]
 		}])	 
 	}, 2000)
 	

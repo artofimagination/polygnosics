@@ -31,7 +31,7 @@ func (c *RESTController) ProjectDetails(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	c.RenderTemplate(w, "project-details", content)
+	c.RenderTemplate(w, ProjectDetails, content)
 }
 
 func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {

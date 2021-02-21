@@ -19,13 +19,14 @@ const (
 	usersOnlineTime      = "user_online_time"
 )
 const (
-	ProjectUsers           = "project_user"
-	ProjectViewers         = "project_viewers"
-	ProjectPins            = "project_pins"
-	ProjectObservers       = "project_observers"
-	ProjectActiveUsers     = "project_active_users"
-	ProjectActivityHistory = "project_activity_history"
-	ProjectRatingHistory   = "project_rating_history"
+	projectDataChannel = "project-data"
+	projectViewers     = "project_viewers"
+	projectConnections = "project_connections"
+	projectPins        = "project_pins"
+	projectPopularity  = "project_popularity" // Returns how many people are viewing/pining, and connecting compared to overall
+	projectSuccess     = "project_success"    // Returns the stats showing how many projects have actually been connected to after viewing or pinning
+	projectUsageTime   = "project_usage_time"
+	projectRating      = "project_rating"
 )
 
 const (
@@ -91,6 +92,8 @@ func (c *Context) GetDataChannelProvider(channelType string) (func() ([]byte, er
 		return c.provideItemStats, nil
 	case productDataChannel:
 		return c.provideProductStats, nil
+	case projectDataChannel:
+		return c.provideProjectStats, nil
 	default:
 		return nil, fmt.Errorf("Unknown data channel %s", channelType)
 	}
@@ -199,6 +202,10 @@ func (c *Context) provideProductStats() ([]byte, error) {
 	data[productViewers] = make([][]int, 0)
 	data[productPins] = make([][]int, 0)
 	data[productPurchase] = make([][]int, 0)
+	data[productPopularity] = make([][]int, 0)
+	data[productSuccess] = make([][]int, 0)
+	data[productProjectGeneration] = make([][]int, 0)
+	data[productRating] = make([][]int, 0)
 	timestamp := 1550197757000
 	for i := 0; i < 300; i++ {
 		dataPoint := []int{timestamp, genRandNum()}
@@ -224,11 +231,33 @@ func (c *Context) provideProductStats() ([]byte, error) {
 	return jsonData, nil
 }
 
-func (c *Context) ProvideProjectStats() ([]byte, error) {
+func (c *Context) provideProjectStats() ([]byte, error) {
 	data := make(map[string]interface{})
-	data[usersTotal] = make(map[int64]int)
-	data[usersOnline] = make(map[int64]int)
-	data[usersActivityHistory] = make(map[int64]int)
+	data[projectViewers] = make([][]int, 0)
+	data[projectPins] = make([][]int, 0)
+	data[projectConnections] = make([][]int, 0)
+	data[projectPopularity] = make([][]int, 0)
+	data[projectSuccess] = make([][]int, 0)
+	data[projectUsageTime] = make([][]int, 0)
+	data[projectRating] = make([][]int, 0)
+	timestamp := 1550197757000
+	for i := 0; i < 300; i++ {
+		dataPoint := []int{timestamp, genRandNum()}
+		data[projectViewers] = append(data[projectViewers].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 10}
+		data[projectConnections] = append(data[projectConnections].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 60}
+		data[projectPins] = append(data[projectPins].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 80}
+		data[projectPopularity] = append(data[projectPopularity].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 100}
+		data[projectSuccess] = append(data[projectSuccess].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 120}
+		data[projectUsageTime] = append(data[projectUsageTime].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 120}
+		data[projectRating] = append(data[projectRating].([][]int), dataPoint)
+		timestamp += 5000000
+	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
