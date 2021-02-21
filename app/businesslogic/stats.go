@@ -21,7 +21,7 @@ const (
 const (
 	ProjectUsers           = "project_user"
 	ProjectViewers         = "project_viewers"
-	ProjectWatchlisters    = "project_watchlisters"
+	ProjectPins            = "project_pins"
 	ProjectObservers       = "project_observers"
 	ProjectActiveUsers     = "project_active_users"
 	ProjectActivityHistory = "project_activity_history"
@@ -29,11 +29,14 @@ const (
 )
 
 const (
-	ProductViewers           = "product_viewers"
-	ProductUsers             = "product_users"
-	ProductWatchlisters      = "product_watchlister"
-	ProductViewAndPurchase   = "product_success" // Returns the stats showing how many products have actually been purchased after viewing or watching
-	ProductProjectGeneration = "product_project_generation"
+	productDataChannel       = "product-data"
+	productViewers           = "product_viewers"
+	productPurchase          = "product_purchase"
+	productPins              = "product_pins"
+	productPopularity        = "product_popularity" // Returns how many people are viewing/pining, and purchasing compared to overall
+	productSuccess           = "product_success"    // Returns the stats showing how many products have actually been purchased after viewing or watching
+	productProjectGeneration = "product_project_generation"
+	productRating            = "product_rating"
 )
 
 const (
@@ -86,6 +89,8 @@ func (c *Context) GetDataChannelProvider(channelType string) (func() ([]byte, er
 		return c.provideUserStats, nil
 	case itemDataChannel:
 		return c.provideItemStats, nil
+	case productDataChannel:
+		return c.provideProductStats, nil
 	default:
 		return nil, fmt.Errorf("Unknown data channel %s", channelType)
 	}
@@ -182,6 +187,36 @@ func (c *Context) provideUserStats() ([]byte, error) {
 	data[usersOnlinePeak].(map[string]interface{})[Avg] = 320
 	data[usersOnlinePeak].(map[string]interface{})[AvgTrend] = "up"
 	data[usersOnlinePeak].(map[string]interface{})[AvgPercent] = (100 * 320) / usersCount
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return jsonData, nil
+}
+
+func (c *Context) provideProductStats() ([]byte, error) {
+	data := make(map[string]interface{})
+	data[productViewers] = make([][]int, 0)
+	data[productPins] = make([][]int, 0)
+	data[productPurchase] = make([][]int, 0)
+	timestamp := 1550197757000
+	for i := 0; i < 300; i++ {
+		dataPoint := []int{timestamp, genRandNum()}
+		data[productViewers] = append(data[productViewers].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 10}
+		data[productPurchase] = append(data[productPurchase].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 60}
+		data[productPins] = append(data[productPins].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 80}
+		data[productPopularity] = append(data[productPopularity].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 100}
+		data[productSuccess] = append(data[productSuccess].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 120}
+		data[productProjectGeneration] = append(data[productProjectGeneration].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 120}
+		data[productRating] = append(data[productRating].([][]int), dataPoint)
+		timestamp += 5000000
+	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err

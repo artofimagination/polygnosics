@@ -307,7 +307,7 @@ $(function () {
 		if (loadOnce == false) {
 			loadOnce = true
 		} 
-		console.log(data)
+
 		// Update user count chart
 		userActivityChart.updateSeries([{
 			data: data["users_project_activity"]

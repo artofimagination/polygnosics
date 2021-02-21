@@ -29,11 +29,7 @@ func (c *RESTController) StatsWebRTC(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) ProductStats(w http.ResponseWriter, r *http.Request) {
-	content, err := c.ContentController.BuildStoreContent()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
+	content := c.ContentController.BuildProductStatsContent()
 	c.RenderTemplate(w, ProductStats, content)
 }
 
