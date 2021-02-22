@@ -49,12 +49,13 @@ func (c *RESTController) ProductsProjectsStats(w http.ResponseWriter, r *http.Re
 }
 
 func (c *RESTController) UIStats(w http.ResponseWriter, r *http.Request) {
-	content, err := c.ContentController.BuildStoreContent()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
+	content := c.ContentController.BuildUIStatsContent()
 	c.RenderTemplate(w, UIStats, content)
+}
+
+func (c *RESTController) MisuseMetrics(w http.ResponseWriter, r *http.Request) {
+	content := make(map[string]interface{})
+	c.RenderTemplate(w, MisuseMetrics, content)
 }
 
 func (c *RESTController) AccountingStats(w http.ResponseWriter, r *http.Request) {

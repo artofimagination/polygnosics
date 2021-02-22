@@ -61,6 +61,8 @@ var htmls = []string{
 	"/web/templates/stats/user-stats.html",
 	"/web/templates/stats/system-health.html",
 	"/web/templates/stats/accounting.html",
+	"/web/templates/stats/ui-stats.html",
+	"/web/templates/stats/misuse-metrics.html",
 	"/web/templates/stats/product-project-stats.html",
 }
 var paths = []string{}
@@ -85,6 +87,7 @@ const (
 	UIStats             = "ui-stats"
 	SystemHealthStats   = "system-health"
 	AccountingStats     = "accounting"
+	MisuseMetrics       = "misuse-metrics"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {

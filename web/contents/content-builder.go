@@ -45,6 +45,7 @@ const (
 	StatsProducts   = "Product Statistics"
 	StatsProjects   = "Project Statistics"
 	StatsAccounting = "Accounting Statistics"
+	StatsUI         = "UI Statistics"
 )
 
 // TODO Issue#40: Replace  user/product/project data with redis storage.
@@ -227,6 +228,12 @@ func (c *ContentController) BuildProjectStatsContent() map[string]interface{} {
 func (c *ContentController) BuildAccountingStatsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, StatsPageName, StatsAccounting)
+	return content
+}
+
+func (c *ContentController) BuildUIStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsUI)
 	return content
 }
 
