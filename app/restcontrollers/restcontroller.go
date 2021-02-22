@@ -35,6 +35,9 @@ var htmls = []string{
 	"/web/templates/user/profile-edit-avatar.html",
 	"/web/templates/user/user-settings.html",
 	"/web/templates/user/new-project.html",
+	"/web/templates/user/mail-inbox.html",
+	"/web/templates/user/mail-compose.html",
+	"/web/templates/user/mail-read.html",
 	"/web/templates/admin/dashboard.html",
 	"/web/templates/project/show.html",
 	"/web/templates/project/browser.html",
@@ -74,11 +77,14 @@ const (
 )
 
 const (
-	UserMain       = "user-main"
-	MyProducts     = "my-products"
-	ProjectWizard  = "project-wizard"
-	MyProjects     = "my-projects"
-	ProjectDetails = "project-details"
+	UserMain            = "user-main"
+	UserMainMyProducts  = "my-products"
+	ProjectWizard       = "project-wizard"
+	MyProjects          = "my-projects"
+	ProjectDetails      = "project-details"
+	UserMainMailInbox   = "mail-inbox"
+	UserMainMailCompose = "mail-compose"
+	UserMainMailRead    = "mail-read"
 
 	ProjectStats        = "project-stats"
 	ProductStats        = "product-stats"

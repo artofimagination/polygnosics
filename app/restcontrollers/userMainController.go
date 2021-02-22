@@ -54,3 +54,18 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 			businesslogic.DefaultUserAvatarPath)
 	http.Redirect(w, r, "profile", http.StatusSeeOther)
 }
+
+func (c *RESTController) MailInbox(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildMailInboxContent()
+	c.RenderTemplate(w, UserMainMailInbox, content)
+}
+
+func (c *RESTController) MailCompose(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildMailComposeContent()
+	c.RenderTemplate(w, UserMainMailCompose, content)
+}
+
+func (c *RESTController) MailRead(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildMailReadContent()
+	c.RenderTemplate(w, UserMainMailRead, content)
+}
