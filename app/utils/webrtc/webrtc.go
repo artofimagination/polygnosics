@@ -438,6 +438,10 @@ func SetupFrontend(w http.ResponseWriter, r *http.Request, offerStr string, data
 
 	<-gatherComplete
 
-	w.Write([]byte(encode(*peerConnection.LocalDescription())))
+	_, err = w.Write([]byte(encode(*peerConnection.LocalDescription())))
+	if err != nil {
+		peerConnection.Close()
+		return err
+	}
 	return nil
 }
