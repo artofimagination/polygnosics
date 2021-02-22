@@ -252,6 +252,21 @@ func (c *ContentController) BuildItemStatsContent() map[string]interface{} {
 	return content
 }
 
+func (c *ContentController) BuildMailInboxContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	return content
+}
+
+func (c *ContentController) BuildMailComposeContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	return content
+}
+
+func (c *ContentController) BuildMailReadContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	return content
+}
+
 func (c *ContentController) BuildStoreContent() (map[string]interface{}, error) {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ProductsPageName, ProductsPageStoreName)

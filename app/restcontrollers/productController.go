@@ -13,10 +13,10 @@ func (c *RESTController) MyProducts(w http.ResponseWriter, r *http.Request) {
 	content, err := c.ContentController.BuildMyProductsContent()
 	if err != nil {
 		errString := fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err))
-		c.RenderTemplate(w, MyProducts, c.ContentController.BuildErrorContent(errString))
+		c.RenderTemplate(w, UserMainMyProducts, c.ContentController.BuildErrorContent(errString))
 		return
 	}
-	c.RenderTemplate(w, MyProducts, content)
+	c.RenderTemplate(w, UserMainMyProducts, content)
 }
 
 func (c *RESTController) MyProductDetails(w http.ResponseWriter, r *http.Request) {
@@ -165,6 +165,6 @@ func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("Failed to get my products content. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
-		c.RenderTemplate(w, MyProducts, content)
+		c.RenderTemplate(w, UserMainMyProducts, content)
 	}
 }

@@ -12,7 +12,7 @@
           <a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">{{index .user "username"}}</a>
           <div class="dropdown-menu">
             <a class="dropdown-item" href="{{index .user "profile"}}"><i class="ti-user"></i> Profile</a>
-            <a class="dropdown-item" href="#"><i class="ti-email"></i> Inbox</a>
+            <a class="dropdown-item" href="/user-main/mail-inbox"><i class="ti-email"></i> Inbox</a>
             {{if eq (index . "future_feature") 0}}
             <a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
             {{end}}
