@@ -41,6 +41,15 @@ const (
 )
 
 const (
+	accountingDataChannel = "accounting-data"
+	accountingExpenses    = "expenses"
+	accountingProfit      = "profit"
+	accountingRevenue     = "revenue"
+	accountingExpenseItem = "expense_item"
+	accountingForecast    = "forecast"
+)
+
+const (
 	itemDataChannel            = "item-data"
 	itemsUsersProjectActivity  = "users_project_activity"
 	itemsProjectLength         = "project_length"
@@ -94,6 +103,8 @@ func (c *Context) GetDataChannelProvider(channelType string) (func() ([]byte, er
 		return c.provideProductStats, nil
 	case projectDataChannel:
 		return c.provideProjectStats, nil
+	case accountingDataChannel:
+		return c.provideAccountingStats, nil
 	default:
 		return nil, fmt.Errorf("Unknown data channel %s", channelType)
 	}
@@ -256,6 +267,34 @@ func (c *Context) provideProjectStats() ([]byte, error) {
 		data[projectUsageTime] = append(data[projectUsageTime].([][]int), dataPoint)
 		dataPoint = []int{timestamp, genRandNum() + 120}
 		data[projectRating] = append(data[projectRating].([][]int), dataPoint)
+		timestamp += 5000000
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return jsonData, nil
+}
+
+func (c *Context) provideAccountingStats() ([]byte, error) {
+	data := make(map[string]interface{})
+	data[accountingExpenses] = make([][]int, 0)
+	data[accountingProfit] = make([][]int, 0)
+	data[accountingRevenue] = make([][]int, 0)
+	data[accountingExpenseItem] = make([][]int, 0)
+	data[accountingForecast] = make([][]int, 0)
+	timestamp := 1550197757000
+	for i := 0; i < 300; i++ {
+		dataPoint := []int{timestamp, genRandNum()}
+		data[accountingExpenses] = append(data[accountingExpenses].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[accountingProfit] = append(data[accountingProfit].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 60}
+		data[accountingRevenue] = append(data[accountingRevenue].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 60}
+		data[accountingExpenseItem] = append(data[accountingExpenseItem].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum()}
+		data[accountingForecast] = append(data[accountingForecast].([][]int), dataPoint)
 		timestamp += 5000000
 	}
 	jsonData, err := json.Marshal(data)

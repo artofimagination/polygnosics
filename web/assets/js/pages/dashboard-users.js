@@ -110,20 +110,6 @@ $(function () {
 
 	var devClientRatio = new ApexCharts(document.querySelector("#dev-client-ratio"), options);
 	devClientRatio.render();
-	
-	window.Apex = {
-		stroke: {
-			width: 3
-		},
-		markers: {
-			size: 0
-		},
-		tooltip: {
-			fixed: {
-				enabled: false,
-			}
-		}
-  };
     
 	var randomizeArray = function (arg) {
 		var array = arg.slice();

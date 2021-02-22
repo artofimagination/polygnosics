@@ -58,11 +58,7 @@ func (c *RESTController) UIStats(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) AccountingStats(w http.ResponseWriter, r *http.Request) {
-	content, err := c.ContentController.BuildStoreContent()
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get product content. %s", errors.WithStack(err)), http.StatusInternalServerError)
-		return
-	}
+	content := c.ContentController.BuildAccountingStatsContent()
 	c.RenderTemplate(w, AccountingStats, content)
 }
 
