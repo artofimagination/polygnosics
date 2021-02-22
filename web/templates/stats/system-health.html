@@ -16,351 +16,239 @@
 
 		<!-- Main content -->
 		<section class="content">
-			<div class="row">
-				<div class="col-12 col-xl-4">
-					<div class="box">	
-						<div class="box-header no-border">
-							<h4>Total Income</h4>
-							<ul class="box-controls pull-right">
-							  <li class="dropdown">
-								<a data-toggle="dropdown" href="#" class="btn btn-rounded btn-primary px-10">Stats</a>
-								<div class="dropdown-menu dropdown-menu-right">
-								  <a class="dropdown-item" href="#"><i class="ti-import"></i> Import</a>
-								  <a class="dropdown-item" href="#"><i class="ti-export"></i> Export</a>
-								  <a class="dropdown-item" href="#"><i class="ti-printer"></i> Print</a>
-								  <div class="dropdown-divider"></div>
-								  <a class="dropdown-item" href="#"><i class="ti-settings"></i> Settings</a>
+			<div class="loader" id="webrtc-loader"></div>
+			<div class="row hidden-during-loading" id="charts">
+				<div class="row">
+					<div class="col-lg-3 col-md-6">
+						<div class="box">
+							<div class="box-header no-border">
+								<h4 class="box-title">Request load</h4>
+							</div>
+							<div class="box-body">
+								<div class="text-right"> <span class="text-muted">Average/day</span>
+									<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-success"></i> 43</h2>
 								</div>
-							  </li>
-							</ul>
+								<span class="text-success">20%</span>
+								<div class="progress">
+									<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>
+									</div>
+							</div>
 						</div>
-						<div class="box-body pb-40">
-							<h1 class="text-center font-size-50"><small>$</small>84,125k</h1>
-						</div>
-						  <div class="box-body p-0 overflow-h">					  	
-							<div id="spark4"></div>
-						  </div>
-					</div>	
-					<div class="box">
-						<div class="box-header with-border">
-							<h4 class="box-title">Item Sales <span class="font-size-12 text-fade">Total Sales By item</span></h4>
-							<ul class="box-controls pull-right">
-							  <li class="dropdown">
-								<a data-toggle="dropdown" href="#"><i class="ti-more-alt"></i></a>
-								<div class="dropdown-menu dropdown-menu-right">
-								  <a class="dropdown-item" href="#"><i class="iconsmind-Flash-2"></i> Activity</a>
-								  <a class="dropdown-item" href="#"><i class="iconsmind-Email"></i> Messages</a>
-								  <a class="dropdown-item" href="#"><i class="iconsmind-File-Edit"></i> FAQ</a>
-								  <div class="dropdown-divider"></div>
-								  <a class="dropdown-item" href="#"><i class="consmind-Gear-2"></i> Support</a>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="box">
+							<div class="box-header no-border">
+								<h4 class="box-title">Memory</h4>
+							</div>
+							<div class="box-body">
+								<div class="text-right"> <span class="text-muted">Average/month</span>
+									<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-warning"></i> 67</h2>
 								</div>
-							  </li>
-							</ul>
-						</div>
-						<div class="box-body bb-1 bbr-0">
-							<span class="font-size-50 text-primary">$154k</span>
-							<span class="text-fade">Total Revenue This Month</span>
-						</div>
-						<div class="box-body">
-							<div class="row justify-content-between pb-25">
-								<div class="col-4">
-									<h2 class="mb-0">60%</h2>				         
-									<div class="progress progress-xs mb-0 mb-10">
-									  <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>					  
-									</div>						 
-									<span class="font-size-16 text-fade">
-										Sales
-									</span>
-								</div>
-								<div class="col-4">
-									<h2 class="mb-0">40%</h2>				         
-									<div class="progress progress-xs mb-0 mb-10">
-									  <div class="progress-bar bg-danger" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>					  
-									</div>						 
-									<span class="font-size-16 text-fade">
-										Product
-									</span>
-								</div>
-								<div class="col-4">
-									<h2 class="mb-0">50%</h2>				         
-									<div class="progress progress-xs mb-0 mb-10">
-									  <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>					  
-									</div>						 
-									<span class="font-size-16 text-fade">
-										Community
-									</span>
+								<span class="text-warning">40%</span>
+								<div class="progress">
+									<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">
-								Department Sales
-							</h4>
-						</div>
-						<div class="box-body text-center">
-							<div class="bar mx-auto" data-peity='{ "fill": ["#45b6c6", "#f49107", "#ef0753"], "height": 250, "width": 320, "padding":0.2 }'>52,58,34</div>
-							<div class="d-flex justify-content-center mt-30">
-								<div class="d-flex text-left">
-									<i class="fa fa-circle text-success mr-5"></i>
-									<h4 class="font-weight-600">748 <br><small class="text-fade">Clothing</small></h4>
-								</div>
-								<div class="d-flex text-left mx-50">
-									<i class="fa fa-circle text-warning mr-5"></i>
-									<h4 class="font-weight-600">543 <br><small class="text-fade">Grocery</small></h4>
-								</div>
-								<div class="d-flex text-left">
-									<i class="fa fa-circle text-danger mr-5"></i>
-									<h4 class="font-weight-600">264 <br><small class="text-fade">Electronics</small></h4>
-								</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="box">
+							<div class="box-header no-border">
+								<h4 class="box-title">CPU</h4>
 							</div>
-						</div>
-					</div>	
-				</div>
-				<div class="col-xl-8 col-12">
-					<div class="box">
-						<div class="box-header">
-							<h4 class="box-title">History Overview</h4>
-						</div>
-						<div class="box-body">
-							<div id="balancehistory"></div>
+							<div class="box-body">
+								<div class="text-right"> <span class="text-muted">Average/month</span>
+									<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-info"></i> 1</h2>
+								</div>
+								<span class="text-info">20%</span>
+								<div class="progress">
+									<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>
+									</div>
+							</div>
 						</div>
 					</div>
-					<div class="box">
-						<div class="box-header with-border">
-						  <h4 class="box-title">Invoice List</h4>
-						</div>
-						<div class="box-body">
-						  <div class="table-responsive">
-							<table id="invoice-list" class="table table-hover no-wrap" data-page-size="10">
-								<thead>
-									<tr>
-										<th>#Invoice</th>
-										<th>Description</th>
-										<th>Amount</th>
-										<th>Status</th>
-										<th>Issue</th>
-										<th>View</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>#5010</td>
-										<td>Lorem Ipsum</td>
-										<td>$548</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Jan</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5011</td>
-										<td>Lorem Ipsum</td>
-										<td>$548</td>
-										<td><span class="label label-success">Paid</span> </td>
-										<td>15-Sep</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5012</td>
-										<td>Lorem Ipsum</td>
-										<td>$9658</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Jun</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5013</td>
-										<td>Lorem Ipsum</td>
-										<td>$4587</td>
-										<td><span class="label label-success">Paid</span> </td>
-										<td>15-May</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5014</td>
-										<td>Lorem Ipsum</td>
-										<td>$856</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Mar</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5015</td>
-										<td>Lorem Ipsum</td>
-										<td>$956</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Aug</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5016</td>
-										<td>Lorem Ipsum</td>
-										<td>$745</td>
-										<td><span class="label label-success">Paid</span> </td>
-										<td>15-Aug</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5010</td>
-										<td>Lorem Ipsum</td>
-										<td>$548</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Jan</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5011</td>
-										<td>Lorem Ipsum</td>
-										<td>$548</td>
-										<td><span class="label label-success">Paid</span> </td>
-										<td>15-Sep</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5012</td>
-										<td>Lorem Ipsum</td>
-										<td>$9658</td>
-										<td><span class="label label-danger">Unpaid</span> </td>
-										<td>15-Jun</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-									<tr>
-										<td>#5013</td>
-										<td>Lorem Ipsum</td>
-										<td>$4587</td>
-										<td><span class="label label-success">Paid</span> </td>
-										<td>15-May</td>
-										<td>
-											<a href="#"><i class="fa fa-file-text-o" aria-hidden="true"></i></a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						</div>					
-				  </div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">ORDER RECEIVED</h4>
-						</div>
-						<div class="box-body">
-							<div class="text-right"> <span class="text-muted">Todays Order</span>
-								<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-success"></i> 120k</h2>
+					<div class="col-lg-3 col-md-6">
+						<div class="box">
+							<div class="box-header no-border">
+								<h4 class="box-title">Storage</h4>
 							</div>
-							<span class="text-success">20%</span>
-							<div class="progress">
-								<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-								  <span class="sr-only">40% Complete (primary)</span>
+							<div class="box-body">
+								<div class="text-right"> <span class="text-muted">Average/day</span>
+									<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-danger"></i> 2</h2>
 								</div>
-						    </div>
+								<span class="text-danger">20%</span>
+								<div class="progress">
+									<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">TAX DEDUCATION</h4>
-						</div>
-						<div class="box-body">
-							<div class="text-right"> <span class="text-muted">Monthly Deduction</span>
-								<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-warning"></i> $48k</h2>
+					<div class="col-12 col-xl-6">
+						<div class="box">
+							<div class="box-header with-border">
+								<h4 class="box-title">Running instances</h4>
 							</div>
-							<span class="text-warning">40%</span>
-							<div class="progress">
-								<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-								  <span class="sr-only">40% Complete (primary)</span>
-								</div>
-						    </div>
+							<div class="box-body">
+								<div class="table-responsive">
+								<table id="invoice-list" class="table table-hover no-wrap" data-page-size="10">
+									<thead>
+										<tr>
+											<th>#ID</th>
+											<th>Uptime</th>
+											<th>Status</th>
+											<th>Request load</th>
+											<th>CPU</th>
+											<th>Mem</th>
+											<th>Network</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>#5010</td>
+											<td>1m 23d 12h</td>
+											<td><span class="label label-danger">Not running</span> </td>
+											<td>2345 req/s (12%)</td>
+											<td>23%</td>
+											<td>1.2 Gb (23%)</td>
+											<td>1.2 Mbit/s</td>
+										</tr>
+										<tr>
+											<td>#5011</td>
+											<td>1m 23d 12h</td>
+											<td><span class="label label-success">Running</span> </td>
+											<td>2345 req/s  (23%)</td>
+											<td>13%</td>
+											<td>1.2 Gb (23%)</td>
+											<td>1.2 Mbit/s</td>
+										</tr>
+										<tr>
+											<td>#5012</td>
+											<td>1m 23d 12h</td>
+											<td><span class="label label-danger">Not Running</span> </td>
+											<td>2345 req/s  (39%)</td>
+											<td>45%</td>
+											<td>1.2 Gb (23%)</td>
+											<td>1.2 Mbit/s</td>
+										</tr>
+										<tr>
+											<td>#5013</td>
+											<td>1m 23d 12h</td>
+											<td><span class="label label-success">Running</span> </td>
+											<td>2345 req/s  (12%)</td>
+											<td>12%</td>
+											<td>1.2 Gb (23%)</td>
+											<td>1.2 Mbit/s</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							</div>					
+						</div>
+						<div class="box">
+							<div class="box-header with-border">
+								<h4 class="box-title">Warnings/Errors</h4>
+							</div>
+							<div class="box-body">
+								<div class="table-responsive">
+								<table id="invoice-list" class="table table-hover no-wrap" data-page-size="10">
+									<thead>
+										<tr>
+											<th>#ID</th>
+											<th>Severity</th>
+											<th>Instance</th>
+											<th>Text</th>
+											<th>Raise Date</th>
+											<th>Resolution Date</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>#5010</td>
+											<td><span class="label label-danger">Error</span> </td>
+											<td>#poly1</td>
+											<td>No memory</td>
+											<td>10.10.2020 13:45:34.123</td>
+											<td>10.10.2020 13:45:34.123</td>
+										</tr>
+										<tr>
+											<td>#5011</td>
+											<td><span class="label label-warning">Warning</span> </td>
+											<td>#poly2</td>
+											<td>Empty table</td>
+											<td>10.10.2020 13:45:34.123</td>
+											<td>10.10.2020 13:45:34.123</td>
+										</tr>
+										<tr>
+											<td>#5012</td>
+											<td><span class="label label-primary">Info</span> </td>
+											<td>#poly1</td>
+											<td>User created</td>
+											<td>10.10.2020 13:45:34.123</td>
+											<td>10.10.2020 13:45:34.123</td>
+										</tr>
+										<tr>
+											<td>#5013</td>
+											<td><span class="label label-danger">Error</span> </td>
+											<td>#poly3</td>
+											<td>No memory</td>
+											<td>10.10.2020 13:45:34.123</td>
+											<td>10.10.2020 13:45:34.123</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							</div>					
+						</div>
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">DB Requests</h4>
+							</div>
+							<div class="box-body">
+								<div id="db-stats"></div>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">REVENUE STATS</h4>
-						</div>
-						<div class="box-body">
-							<div class="text-right"> <span class="text-muted">Todays Income</span>
-								<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-info"></i> $24k</h2>
+					<div class="col-12 col-xl-6">
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">CPU</h4>
 							</div>
-							<span class="text-info">20%</span>
-							<div class="progress">
-								<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-								  <span class="sr-only">40% Complete (primary)</span>
-								</div>
-						    </div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">YEARLY SALES</h4>
-						</div>
-						<div class="box-body">
-							<div class="text-right"> <span class="text-muted">Yearly Income</span>
-								<h2 class="font-weight-300 mt-0"><i class="ti-arrow-up text-danger"></i> $155k</h2>
-							</div>
-							<span class="text-danger">20%</span>
-							<div class="progress">
-								<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-								  <span class="sr-only">40% Complete (primary)</span>
-								</div>
-						    </div>
-						</div>
-					</div>
-				</div>
-				<div class="col-xl-7 col-12">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">
-								Overview
-							</h4>
-						</div>
-						<div class="box-body pt-0">
-							<div id="yearly-comparison"></div>
-						</div>
-					</div>										
-				</div>
-				<div class="col-xl-5 col-12">
-					<div class="box">
-						<div class="box-header no-border">
-							<h4 class="box-title">
-								Earning in Month
-							</h4>
-						</div>
-						<div class="box-body">
-							<div id="earning-chart"></div>
-							<div>
-								<hr>
-								<p class="d-flex justify-content-between font-weight-700"><span class="text-fade">Deposit :</span>$20 54 1 875 574</p>
-								<p class="d-flex justify-content-between font-weight-700"><span class="text-fade">Expese:</span>$54 1 875 574</p>
-								<p class="d-flex justify-content-between font-weight-700 mb-0"><span class="text-fade">payable:</span>$805 875 574</p>
+							<div class="box-body">
+								<div id="cpu-stats"></div>
 							</div>
 						</div>
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">Memory</h4>
+							</div>
+							<div class="box-body">
+								<div id="mem-stats"></div>
+							</div>
+						</div>
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">Storage</h4>
+							</div>
+							<div class="box-body">
+								<div id="storage-stats"></div>
+							</div>
+						</div>
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">Requests</h4>
+							</div>
+							<div class="box-body">
+								<div id="requests-stats"></div>
+							</div>
+						</div>
+						<div class="box">
+							<div class="box-header">
+								<h4 class="box-title">Network</h4>
+							</div>
+							<div class="box-body">
+								<div id="network-stats"></div>
+							</div>
+						</div>	
 					</div>
 				</div>
 			</div>
@@ -381,17 +269,14 @@
 	<!-- Vendor JS -->
 	<script src="/assets/js/vendors.min.js"></script>
   <script src="/assets/css/icons/feather-icons/feather.min.js"></script>	
-    
-	<script src="/assets/vendor_components/apexcharts-bundle/irregular-data-series.js"></script>
 	<script src="/assets/vendor_components/apexcharts-bundle/dist/apexcharts.js"></script>	
-  <script src="/assets/vendor_components/datatable/datatables.min.js"></script>
 	<script src="/assets/vendor_components/jquery.peity/jquery.peity.js"></script>
+	<script src="/assets/vendor_components/chart.js-master/Chart.min.js"></script>
 	
 	<!-- Venusx Admin App -->
 	<script src="/assets/js/template.js"></script>
-	<script src="/assets/js/pages/dashboard.js"></script>
+	<script src="/assets/js/pages/dashboard-sys-mon.js"></script>
+	<script src="/assets/js/webrtc.js"></script>
 	<script src="/assets/js/demo.js"></script>
-	
-	
 </body>
 </html>

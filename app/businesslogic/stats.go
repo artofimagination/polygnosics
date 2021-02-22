@@ -18,6 +18,7 @@ const (
 	usersOnlinePeriod    = "users_online_period"
 	usersOnlineTime      = "user_online_time"
 )
+
 const (
 	projectDataChannel = "project-data"
 	projectViewers     = "project_viewers"
@@ -53,6 +54,16 @@ const (
 	uiDataChannel = "ui-data"
 	uiClicks      = "clicks"
 	uiPopularity  = "popularity"
+)
+
+const (
+	sysMonDataChannel = "sys-mon-data"
+	sysMonCPU         = "cpu"
+	sysMonMemory      = "memory"
+	sysMonStorage     = "storage"
+	sysMonRequests    = "requests"
+	sysMonNetwork     = "network"
+	sysMonDB          = "db_requests"
 )
 
 const (
@@ -113,6 +124,8 @@ func (c *Context) GetDataChannelProvider(channelType string) (func() ([]byte, er
 		return c.provideAccountingStats, nil
 	case uiDataChannel:
 		return c.provideUIStats, nil
+	case sysMonDataChannel:
+		return c.provideSystemHealthStats, nil
 	default:
 		return nil, fmt.Errorf("Unknown data channel %s", channelType)
 	}
@@ -322,6 +335,37 @@ func (c *Context) provideUIStats() ([]byte, error) {
 		data[uiClicks] = append(data[uiClicks].([][]int), dataPoint)
 		dataPoint = []int{timestamp, genRandNum() + 20}
 		data[uiPopularity] = append(data[uiPopularity].([][]int), dataPoint)
+		timestamp += 5000000
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return jsonData, nil
+}
+
+func (c *Context) provideSystemHealthStats() ([]byte, error) {
+	data := make(map[string]interface{})
+	data[sysMonCPU] = make([][]int, 0)
+	data[sysMonMemory] = make([][]int, 0)
+	data[sysMonStorage] = make([][]int, 0)
+	data[sysMonRequests] = make([][]int, 0)
+	data[sysMonNetwork] = make([][]int, 0)
+	data[sysMonDB] = make([][]int, 0)
+	timestamp := 1550197757000
+	for i := 0; i < 300; i++ {
+		dataPoint := []int{timestamp, genRandNum()}
+		data[sysMonCPU] = append(data[sysMonCPU].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[sysMonMemory] = append(data[sysMonMemory].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[sysMonStorage] = append(data[sysMonStorage].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[sysMonRequests] = append(data[sysMonRequests].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[sysMonNetwork] = append(data[sysMonNetwork].([][]int), dataPoint)
+		dataPoint = []int{timestamp, genRandNum() + 20}
+		data[sysMonDB] = append(data[sysMonDB].([][]int), dataPoint)
 		timestamp += 5000000
 	}
 	jsonData, err := json.Marshal(data)

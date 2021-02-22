@@ -39,14 +39,17 @@ const (
 )
 
 const (
-	StatsPageName   = "Statistics"
-	StatsUsers      = "User Statistics"
-	StatsItems      = "Overall Product and Project Stats"
-	StatsProducts   = "Product Statistics"
-	StatsProjects   = "Project Statistics"
-	StatsAccounting = "Accounting Statistics"
-	StatsUI         = "UI Statistics"
+	StatsPageName     = "Statistics"
+	StatsUsers        = "User Statistics"
+	StatsItems        = "Overall Product and Project Stats"
+	StatsProducts     = "Product Statistics"
+	StatsProjects     = "Project Statistics"
+	StatsAccounting   = "Accounting Statistics"
+	StatsUI           = "UI Statistics"
+	StatsSystemHealth = "System Health"
 )
+
+var FutureFeature = "future_feature"
 
 // TODO Issue#40: Replace  user/product/project data with redis storage.
 type ContentController struct {
@@ -228,6 +231,12 @@ func (c *ContentController) BuildProjectStatsContent() map[string]interface{} {
 func (c *ContentController) BuildAccountingStatsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, StatsPageName, StatsAccounting)
+	return content
+}
+
+func (c *ContentController) BuildSystemHealthContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsSystemHealth)
 	return content
 }
 

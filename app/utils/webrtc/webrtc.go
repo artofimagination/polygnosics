@@ -391,11 +391,14 @@ func SetupFrontend(w http.ResponseWriter, r *http.Request, offerStr string, data
 			for range time.NewTicker(2 * time.Second).C {
 				jsonData, err := dataProvider()
 				if err != nil {
-					panic(err)
+					log.Println(err)
+					peerConnection.Close()
+					break
 				}
-				sendErr := d.SendText(string(jsonData))
-				if sendErr != nil {
-					panic(sendErr)
+				if err := d.SendText(string(jsonData)); err != nil {
+					log.Println(err)
+					peerConnection.Close()
+					break
 				}
 			}
 		})
@@ -413,12 +416,14 @@ func SetupFrontend(w http.ResponseWriter, r *http.Request, offerStr string, data
 	// Set the remote SessionDescription
 	err = peerConnection.SetRemoteDescription(offer)
 	if err != nil {
+		peerConnection.Close()
 		return err
 	}
 
 	// Create an answer
 	answer, err := peerConnection.CreateAnswer(nil)
 	if err != nil {
+		peerConnection.Close()
 		return err
 	}
 
@@ -427,6 +432,7 @@ func SetupFrontend(w http.ResponseWriter, r *http.Request, offerStr string, data
 	// Sets the LocalDescription, and starts our UDP listeners
 	err = peerConnection.SetLocalDescription(answer)
 	if err != nil {
+		peerConnection.Close()
 		return err
 	}
 

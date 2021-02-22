@@ -10,8 +10,6 @@ import (
 
 // Details and assets field keys
 const (
-	FutureFeature = "future_feature"
-
 	UserMapKey                 = "user"
 	UserAvatarKey              = "avatar"
 	UserProfilePathKey         = "profile"
