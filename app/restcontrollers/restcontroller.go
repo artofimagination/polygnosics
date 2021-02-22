@@ -56,6 +56,14 @@ var htmls = []string{
 	"/web/templates/components/footer.html",
 	"/web/templates/components/news-feed.html",
 	"/web/templates/resources/news.html",
+	"/web/templates/stats/project-stats.html",
+	"/web/templates/stats/product-stats.html",
+	"/web/templates/stats/user-stats.html",
+	"/web/templates/stats/system-health.html",
+	"/web/templates/stats/accounting.html",
+	"/web/templates/stats/ui-stats.html",
+	"/web/templates/stats/misuse-metrics.html",
+	"/web/templates/stats/product-project-stats.html",
 }
 var paths = []string{}
 
@@ -66,10 +74,20 @@ const (
 )
 
 const (
-	UserMain      = "user-main"
-	MyProducts    = "my-products"
-	ProjectWizard = "project-wizard"
-	MyProjects    = "my-projects"
+	UserMain       = "user-main"
+	MyProducts     = "my-products"
+	ProjectWizard  = "project-wizard"
+	MyProjects     = "my-projects"
+	ProjectDetails = "project-details"
+
+	ProjectStats        = "project-stats"
+	ProductStats        = "product-stats"
+	UserStats           = "user-stats"
+	ProductProjectStats = "product-project-stats"
+	UIStats             = "ui-stats"
+	SystemHealthStats   = "system-health"
+	AccountingStats     = "accounting"
+	MisuseMetrics       = "misuse-metrics"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {
@@ -99,7 +117,8 @@ func NewRESTController(userDB *dbcontrollers.MYSQLController) *RESTController {
 // MakeHandler creates the page handler and check the route validity.
 func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request), router *mux.Router, isPublicPage bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("X-Content-Type-Options", "nosniff")
+		// TODO Issue#71: Figure out the proper settings and fix UI code that breaks because of CSP
+		//w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Add("Content-Type", "text/html; charset=utf-8")
 		// TODO Issue#71: Figure out the proper settings and fix UI code that breaks because of CSP
 		//w.Header().Set("Content-Security-Policy", "default-src 'self' http://0.0.0.0:10000; script-src 'self';")

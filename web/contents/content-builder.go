@@ -38,6 +38,19 @@ const (
 	ResourcesPageNewsName = "News"
 )
 
+const (
+	StatsPageName     = "Statistics"
+	StatsUsers        = "User Statistics"
+	StatsItems        = "Overall Product and Project Stats"
+	StatsProducts     = "Product Statistics"
+	StatsProjects     = "Project Statistics"
+	StatsAccounting   = "Accounting Statistics"
+	StatsUI           = "UI Statistics"
+	StatsSystemHealth = "System Health"
+)
+
+var FutureFeature = "future_feature"
+
 // TODO Issue#40: Replace  user/product/project data with redis storage.
 type ContentController struct {
 	UserData         *models.UserData
@@ -194,6 +207,48 @@ func (c *ContentController) BuildErrorContent(errString string) map[string]inter
 func (c *ContentController) BuildNewsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageNewsName)
+	return content
+}
+
+func (c *ContentController) BuildUserStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsUsers)
+	return content
+}
+
+func (c *ContentController) BuildProductStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsProducts)
+	return content
+}
+
+func (c *ContentController) BuildProjectStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsProjects)
+	return content
+}
+
+func (c *ContentController) BuildAccountingStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsAccounting)
+	return content
+}
+
+func (c *ContentController) BuildSystemHealthContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsSystemHealth)
+	return content
+}
+
+func (c *ContentController) BuildUIStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsUI)
+	return content
+}
+
+func (c *ContentController) BuildItemStatsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, StatsPageName, StatsItems)
 	return content
 }
 
