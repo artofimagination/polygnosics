@@ -2,7 +2,7 @@ $(function() {
 	
   'use strict'
 
-    $.fn.raty.defaults.path = '../images/rating/';
+    $.fn.raty.defaults.path = '/assets/images/rating/';
 
     // Default
     $('#default-star-rating').raty();

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "header-info" .}}
+<body class="hold-transition dark-skin sidebar-mini theme-primary fixed">
+  <div class="wrapper">
+    {{template "main-header" .}}
+    {{template "side-bar" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      {{template "content-header" .}}
+      
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-md-6 col-12">
+            <div class="box">
+              <div class="box-body">
+                <h4 class="mb-a0">Tutorials</h4>
+                  <p class="mb-20">All tutorial videos and articles that will help you create your own content</p>
+                  <a href="/resources/tutorials" class="btn btn-primary">More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="box">
+              <div class="box-body">
+                <h4 class="mb-a0">FAQ</h4>
+                  <p class="mb-20">If you need a quick guide Frequently Asked Questions is where you want to start.</p>
+                  <a href="/resources/faq" class="btn btn-primary">More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="box">
+              <div class="box-body">
+                <h4 class="mb-a0">Instructions</h4>
+                  <p class="mb-20">If you are interested in step by step instructions this is the place to go</p>
+                  <a href="/resources/instructions" class="btn btn-primary">More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-12">
+            <div class="box">
+              <div class="box-body">
+                <h4 class="mb-a0">Examples</h4>
+                  <p class="mb-20">Coding examples to help you arrange your own product</p>
+                  <a href="/resources/examples" class="btn btn-primary">More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      </div>
+    </div>
+    <!-- /.content-wrapper -->
+    {{template "footer" .}}
+  
+    <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+  </div>
+  <!-- ./wrapper -->	 
+	
+	<!-- Vendor JS -->
+	<script src="/assets/js/vendors.min.js"></script>
+    <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+		
+	<!-- Venusx Admin App -->
+	<script src="/assets/js/template.js"></script>
+	<script src="/assets/js/demo.js"></script>
+</body>
+</html>
