@@ -24,6 +24,11 @@ func (c *RESTController) FAQ(w http.ResponseWriter, r *http.Request) {
 	c.RenderTemplate(w, ResourcesFAQ, content)
 }
 
+func (c *RESTController) Files(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildFilesContent()
+	c.RenderTemplate(w, ResourcesFiles, content)
+}
+
 func (c *RESTController) Instructions(w http.ResponseWriter, r *http.Request) {
 	content := make(map[string]interface{})
 	c.RenderTemplate(w, ResourcesInstructions, content)

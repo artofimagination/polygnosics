@@ -39,6 +39,7 @@ const (
 	ResourcesPageDocumentationName = "Documentation"
 	ResourcesPageTutorialsName     = "Tutorials"
 	ResourcesPageFAQsName          = "FAQs"
+	ResourcesPageFilesName         = "Files"
 )
 
 const (
@@ -268,6 +269,12 @@ func (c *ContentController) BuildMailComposeContent() map[string]interface{} {
 func (c *ContentController) BuildDocsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageDocumentationName)
+	return content
+}
+
+func (c *ContentController) BuildFilesContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageFilesName)
 	return content
 }
 

@@ -50,6 +50,7 @@ func CreateRouter(c *RESTController) *mux.Router {
 	resources.HandleFunc("/faq", c.MakeHandler(c.FAQ, r, true))
 	resources.HandleFunc("/instructions", c.MakeHandler(c.Instructions, r, true))
 	resources.HandleFunc("/examples", c.MakeHandler(c.Examples, r, true))
+	resources.HandleFunc("/files", c.MakeHandler(c.Files, r, true))
 	about := r.PathPrefix("/about").Subrouter()
 	about.HandleFunc("/who-we-are", c.MakeHandler(c.About, r, true))
 	about.HandleFunc("/contact", c.MakeHandler(c.Contact, r, true))

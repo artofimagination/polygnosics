@@ -66,6 +66,7 @@ var htmls = []string{
 	"/web/templates/resources/faq.html",
 	"/web/templates/resources/instructions.html",
 	"/web/templates/resources/examples.html",
+	"/web/templates/resources/files.html",
 	"/web/templates/stats/project-stats.html",
 	"/web/templates/stats/product-stats.html",
 	"/web/templates/stats/user-stats.html",
@@ -112,6 +113,7 @@ const (
 	ResourcesFAQ          = "faq"
 	ResourcesExamples     = "examples"
 	ResourcesInstructions = "instructions"
+	ResourcesFiles        = "files"
 )
 
 const (
