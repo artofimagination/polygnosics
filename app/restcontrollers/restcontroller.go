@@ -24,7 +24,9 @@ type RESTController struct {
 var ErrFailedToParseForm = "Failed to parse form"
 
 var htmls = []string{
-	"/web/templates/about.html",
+	"/web/templates/about/about.html",
+	"/web/templates/about/career.html",
+	"/web/templates/about/contact.html",
 	"/web/templates/error.html",
 	"/web/templates/index.html",
 	"/web/templates/confirm.html",
@@ -59,6 +61,12 @@ var htmls = []string{
 	"/web/templates/components/footer.html",
 	"/web/templates/components/news-feed.html",
 	"/web/templates/resources/news.html",
+	"/web/templates/resources/docs.html",
+	"/web/templates/resources/tutorials.html",
+	"/web/templates/resources/faq.html",
+	"/web/templates/resources/instructions.html",
+	"/web/templates/resources/examples.html",
+	"/web/templates/resources/files.html",
 	"/web/templates/stats/project-stats.html",
 	"/web/templates/stats/product-stats.html",
 	"/web/templates/stats/user-stats.html",
@@ -77,23 +85,41 @@ const (
 )
 
 const (
-	UserMain            = "user-main"
-	UserMainMyProducts  = "my-products"
-	ProjectWizard       = "project-wizard"
-	MyProjects          = "my-projects"
-	ProjectDetails      = "project-details"
-	UserMainMailInbox   = "mail-inbox"
-	UserMainMailCompose = "mail-compose"
-	UserMainMailRead    = "mail-read"
+	UserMain               = "user-main"
+	UserMainMyProducts     = "my-products"
+	ProjectWizard          = "project-wizard"
+	MyProjects             = "my-projects"
+	UserMainProjectDetails = "project-details"
+	UserMainMailInbox      = "mail-inbox"
+	UserMainMailCompose    = "mail-compose"
+	UserMainMailRead       = "mail-read"
+)
 
-	ProjectStats        = "project-stats"
-	ProductStats        = "product-stats"
-	UserStats           = "user-stats"
-	ProductProjectStats = "product-project-stats"
-	UIStats             = "ui-stats"
-	SystemHealthStats   = "system-health"
-	AccountingStats     = "accounting"
-	MisuseMetrics       = "misuse-metrics"
+const (
+	StatsProject        = "project-stats"
+	StatsProduct        = "product-stats"
+	StatsUser           = "user-stats"
+	StatsProductProject = "product-project-stats"
+	StatsUI             = "ui-stats"
+	StatsSystemHealth   = "system-health"
+	StatsAccounting     = "accounting"
+	StatsMisuseMetrics  = "misuse-metrics"
+)
+
+const (
+	ResourcesNews         = "news"
+	ResourcesDocs         = "docs"
+	ResourcesTutorials    = "tutorials"
+	ResourcesFAQ          = "faq"
+	ResourcesExamples     = "examples"
+	ResourcesInstructions = "instructions"
+	ResourcesFiles        = "files"
+)
+
+const (
+	AboutWhoWeAre = "about"
+	AboutCareer   = "career"
+	AboutContact  = "contact"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {

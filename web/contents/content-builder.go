@@ -34,8 +34,12 @@ const (
 )
 
 const (
-	ResourcesPageName     = "Resources"
-	ResourcesPageNewsName = "News"
+	ResourcesPageName              = "Resources"
+	ResourcesPageNewsName          = "News"
+	ResourcesPageDocumentationName = "Documentation"
+	ResourcesPageTutorialsName     = "Tutorials"
+	ResourcesPageFAQsName          = "FAQs"
+	ResourcesPageFilesName         = "Files"
 )
 
 const (
@@ -262,7 +266,36 @@ func (c *ContentController) BuildMailComposeContent() map[string]interface{} {
 	return content
 }
 
+func (c *ContentController) BuildDocsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageDocumentationName)
+	return content
+}
+
+func (c *ContentController) BuildFilesContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageFilesName)
+	return content
+}
+
+func (c *ContentController) BuildTutorialsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageDocumentationName)
+	return content
+}
+
+func (c *ContentController) BuildFAQContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageFAQsName)
+	return content
+}
+
 func (c *ContentController) BuildMailReadContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	return content
+}
+
+func (c *ContentController) BuildContactContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	return content
 }

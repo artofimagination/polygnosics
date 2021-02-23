@@ -30,40 +30,40 @@ func (c *RESTController) StatsWebRTC(w http.ResponseWriter, r *http.Request) {
 
 func (c *RESTController) ProductStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildProductStatsContent()
-	c.RenderTemplate(w, ProductStats, content)
+	c.RenderTemplate(w, StatsProduct, content)
 }
 
 func (c *RESTController) ProjectStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildProjectStatsContent()
-	c.RenderTemplate(w, ProjectStats, content)
+	c.RenderTemplate(w, StatsProject, content)
 }
 
 func (c *RESTController) UserStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildUserStatsContent()
-	c.RenderTemplate(w, UserStats, content)
+	c.RenderTemplate(w, StatsUser, content)
 }
 
 func (c *RESTController) ProductsProjectsStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildItemStatsContent()
-	c.RenderTemplate(w, ProductProjectStats, content)
+	c.RenderTemplate(w, StatsProductProject, content)
 }
 
 func (c *RESTController) UIStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildUIStatsContent()
-	c.RenderTemplate(w, UIStats, content)
+	c.RenderTemplate(w, StatsUI, content)
 }
 
 func (c *RESTController) MisuseMetrics(w http.ResponseWriter, r *http.Request) {
 	content := make(map[string]interface{})
-	c.RenderTemplate(w, MisuseMetrics, content)
+	c.RenderTemplate(w, StatsMisuseMetrics, content)
 }
 
 func (c *RESTController) AccountingStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildAccountingStatsContent()
-	c.RenderTemplate(w, AccountingStats, content)
+	c.RenderTemplate(w, StatsAccounting, content)
 }
 
 func (c *RESTController) SystemHealthStats(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildSystemHealthContent()
-	c.RenderTemplate(w, SystemHealthStats, content)
+	c.RenderTemplate(w, StatsSystemHealth, content)
 }

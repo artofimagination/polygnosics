@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "header-info" .}}
+<body class="hold-transition dark-skin sidebar-mini theme-primary fixed">
+  <div class="wrapper">
+    {{template "main-header" .}}
+    {{template "side-bar" .}}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      {{template "content-header" .}}
+      
+      <!-- Main content -->
+      <section class="content">
+        <div class="row">
+          <div class="col-12">
+            <div class="card-deck">
+              <div class="card">
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe width="854" height="480" src="https://www.youtube.com/embed/fn3KWM1kuAw" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="card-body">
+                  <h4 class="card-title b-0 px-0">Introduction</h4>
+                  <p>Introduction to the platform. What it offers to you.</p>
+                </div>
+                <div class="card-footer justify-content-between d-flex">
+                <span class="text-muted">Last updated 3 mins ago</span>
+                <span>
+                  <div id="default-star-rating"></div>
+                  <span class="text-muted ml-2">(12)</span>
+                </span>
+                </div>
+              </div>
+    
+              <div class="card text-left">
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe width="854" height="480" src="https://www.youtube.com/embed/AHrCI9eSJGQ" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="card-body">
+                  <h4 class="card-title b-0 px-0">Create a product</h4>
+                  <p>Creating a product</p>
+                </div>
+                <div class="card-footer justify-content-between d-flex">
+                <span class="text-muted">Last updated 3 mins ago</span>
+                <span>
+                  <div id="default-star-rating"></div>
+                  <span class="text-muted ml-2">(12)</span>
+                </span>
+                </div>
+              </div>
+    
+              <div class="card text-left">
+                <img class="card-img-top" src="/assets/images/coding.gif" alt="card image cap">
+                <div class="card-body">
+                  <h4 class="card-title b-0 px-0">Adding interface code to python</h4>
+                  <p>How to create your python interface?</p>
+                  <a href="/resources/instructions" class="btn btn-primary">More</a>
+                </div>
+                <div class="card-footer justify-content-between d-flex">
+                <span class="text-muted">Last updated 3 mins ago</span>
+                <span>
+                  <div id="default-star-rating"></div>
+                  <span class="text-muted ml-2">(12)</span>
+                </span>
+                </div>
+              </div>
+            </div>	
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      </div>
+    </div>
+    <!-- /.content-wrapper -->
+    {{template "footer" .}}
+  
+    <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+  </div>
+  <!-- ./wrapper -->	 
+	
+	<!-- Vendor JS -->
+	<script src="/assets/js/vendors.min.js"></script>
+    <script src="/assets/css/icons/feather-icons/feather.min.js"></script>
+		
+	<!-- Venusx Admin App -->
+	<script src="/assets/js/template.js"></script>
+	<script src="/assets/js/demo.js"></script>
+</body>
+</html>
