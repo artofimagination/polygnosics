@@ -24,7 +24,9 @@ type RESTController struct {
 var ErrFailedToParseForm = "Failed to parse form"
 
 var htmls = []string{
-	"/web/templates/about.html",
+	"/web/templates/about/about.html",
+	"/web/templates/about/career.html",
+	"/web/templates/about/contact.html",
 	"/web/templates/error.html",
 	"/web/templates/index.html",
 	"/web/templates/confirm.html",
@@ -110,6 +112,12 @@ const (
 	ResourcesFAQ          = "faq"
 	ResourcesExamples     = "examples"
 	ResourcesInstructions = "instructions"
+)
+
+const (
+	AboutWhoWeAre = "about"
+	AboutCareer   = "career"
+	AboutContact  = "contact"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {
