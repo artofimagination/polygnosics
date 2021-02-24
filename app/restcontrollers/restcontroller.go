@@ -35,7 +35,7 @@ var htmls = []string{
 	"/web/templates/user/profile-side-bar.html",
 	"/web/templates/user/profile-edit.html",
 	"/web/templates/user/profile-edit-avatar.html",
-	"/web/templates/user/user-settings.html",
+	"/web/templates/user/settings.html",
 	"/web/templates/user/new-project.html",
 	"/web/templates/user/mail-inbox.html",
 	"/web/templates/user/mail-compose.html",
@@ -93,6 +93,7 @@ const (
 	UserMainMailInbox      = "mail-inbox"
 	UserMainMailCompose    = "mail-compose"
 	UserMainMailRead       = "mail-read"
+	UserMainSettings       = "settings"
 )
 
 const (

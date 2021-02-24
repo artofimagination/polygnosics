@@ -88,6 +88,7 @@ func CreateRouter(c *RESTController) *mux.Router {
 	userMain.HandleFunc("/mail-inbox", c.MakeHandler(c.MailInbox, r, false))
 	userMain.HandleFunc("/mail-compose", c.MakeHandler(c.MailCompose, r, false))
 	userMain.HandleFunc("/mail-read", c.MakeHandler(c.MailRead, r, false))
+	userMain.HandleFunc("/settings", c.MakeHandler(c.Settings, r, false))
 	stats := userMain.PathPrefix("/stats").Subrouter()
 	stats.HandleFunc("/webrtc", c.MakeHandler(c.StatsWebRTC, r, false))
 	myProducts := userMain.PathPrefix("/my-products").Subrouter()

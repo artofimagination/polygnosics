@@ -69,3 +69,8 @@ func (c *RESTController) MailRead(w http.ResponseWriter, r *http.Request) {
 	content := c.ContentController.BuildMailReadContent()
 	c.RenderTemplate(w, UserMainMailRead, content)
 }
+
+func (c *RESTController) Settings(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildSettingsContent()
+	c.RenderTemplate(w, UserMainSettings, content)
+}
