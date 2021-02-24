@@ -16,28 +16,65 @@
   <!-- Header Navbar -->
   <nav class="navbar navbar-static-top pl-10">
     <!-- Sidebar toggle button-->
-    <div class="app-menu">
-      <ul class="header-megamenu nav">
-        <li class="btn-group nav-item d-md-none">
-          <a href="#" class="waves-effect waves-light nav-link rounded" data-toggle="push-menu" role="button">
-            <i class="nav-link-icon mdi mdi-menu text-dark"></i>
-          </a>
-        </li>
-        <li class="btn-group nav-item d-xl-inline-flex d-none">
-					<a href="#" data-toggle="control-sidebar" title="Setting" class="waves-effect waves-light nav-link rounded">
-						<i class="nav-link-icon mdi mdi-monitor text-dark mx-5 mx-lg-0"> </i>
-						<i class="mdi mdi-dots-vertical ml-2"></i></span>
-					</a>
-				</li>
-        <li class="btn-group nav-item">
-          <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link rounded" title="Full Screen">
-            <i class="nav-link-icon mdi mdi-crop-free text-dark"></i>
-          </a>
-        </li>
-        <li class="search-bar nav-item">	  
-          <div class="nav-link lookup lookup-circle lookup-right">
-            <input type="text" name="s">
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <li class="search-bar">		  
+          <div class="lookup lookup-circle lookup-right">
+             <input type="text" name="s">
           </div>
+        </li>
+        <li class="btn-group dropdown notifications-menu">
+          <a href="#" class="waves-effect waves-light dropdown-toggle" data-toggle="dropdown" title="Notifications">
+            <i class="mdi mdi-bell"></i>
+          </a>
+          <ul class="dropdown-menu animated bounceIn">
+            <li class="header">
+              <div class="p-20">
+                <div class="flexbox">
+                  <div>
+                    <h4 class="mb-0 mt-0">Notifications</h4>
+                  </div>
+                  <div>
+                    <a href="#" class="text-danger">Clear All</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+    
+            <li>
+              <ul class="menu sm-scrol">
+                <li>
+                  <a href="#">
+                    <i class="fa fa-users text-info"></i> Important notification on news board.
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="fa fa-warning text-warning"></i> Project is halted
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="fa fa-users text-danger"></i> User cancelled subscription
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="fa fa-shopping-cart text-success"></i> Project finished
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="footer">
+              <a href="#">View all</a>
+            </li>
+          </ul>
+        </li>
+        <li class="btn-group">
+          <a href="#" data-provide="fullscreen" class="waves-effect waves-light dropdown-toggle" title="Full Screen"><i class="mdi mdi-crop-free"></i></a>
+        </li>	
+        <li class="btn-group">
+          <a href="#" data-toggle="control-sidebar" title="Setting" class="waves-effect waves-light"><i class="mdi mdi-monitor"></i></a>
         </li>
       </ul>
     </div>

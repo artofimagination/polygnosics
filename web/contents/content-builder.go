@@ -31,6 +31,7 @@ const (
 	UserPageName         = "User"
 	UserPageProfileName  = "Profile"
 	UserPageMainPageName = "Info board"
+	UserPageSettingsName = "Settings"
 )
 
 const (
@@ -281,6 +282,12 @@ func (c *ContentController) BuildFilesContent() map[string]interface{} {
 func (c *ContentController) BuildTutorialsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, ResourcesPageName, ResourcesPageDocumentationName)
+	return content
+}
+
+func (c *ContentController) BuildSettingsContent() map[string]interface{} {
+	content := c.GetUserContent(c.UserData)
+	content = c.prepareContentHeader(content, UserPageName, UserPageSettingsName)
 	return content
 }
 
