@@ -6,29 +6,25 @@
     <div class="user-profile px-20 py-5">
       <div class="d-flex align-items-center">			
         <div class="image">
-          <img src="{{index .user "avatar"}}" class="avatar avatar-lg" alt="User Image">
+          <a href="{{index .user "profile"}}"><img src="{{index .user "avatar"}}" class="avatar avatar-lg" alt="User Image"></a>
         </div>
         <div class="info">
-          <a class="dropdown-toggle px-20" data-toggle="dropdown" href="#">{{index .user "username"}}</a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="{{index .user "profile"}}"><i class="ti-user"></i> Profile</a>
-            <a class="dropdown-item" href="/user-main/mail-inbox"><i class="ti-email"></i> Inbox</a>
-            {{if eq (index . "future_feature") 0}}
-            <a class="dropdown-item" href="#"><i class="ti-link"></i> Connections</a>
-            {{end}}
-          </div>
+          <a class="px-20" href="{{index .user "profile"}}">{{index .user "username"}}</a>
         </div>
       </div>
       <ul class="list-inline profile-setting mt-10 mb-0 d-flex justify-content-between">
         <li><a href="/user-main" data-toggle="tooltip" data-placement="top" title="Home"><i data-feather="home"></i></a></li>
-        <li><a href="#" data-toggle="tooltip" data-placement="top" title="Notification"><i data-feather="bell"></i></a></li>
+        <li><a href="/user-main/mail-inbox" data-toggle="tooltip" data-placement="top" title="Inbox"><i data-feather="mail"></i></a></li>
+        {{if eq (index . "future_feature") 0}}
+        <li><a href="#" data-toggle="tooltip" data-placement="top" title="Connections"><i data-feather="users"></i></a></li>
+        {{end}}
         {{if eq (index . "future_feature") 0}}
         <li><a href="#" data-toggle="tooltip" data-placement="top" title="Chat"><i data-feather="message-square"></i></a></li>
         {{end}}
         <li><a href="/user-main/settings" data-toggle="tooltip" data-placement="top" title="Settings"><i data-feather="settings"></i></a></li>
         <li><a href="/auth_logout" data-toggle="tooltip" data-placement="top" title="Logout"><i data-feather="log-out"></i></a></li>
       </ul>
-    </div>	
+    </div>
   
     <!-- sidebar menu-->
     <ul class="sidebar-menu" data-widget="tree">
