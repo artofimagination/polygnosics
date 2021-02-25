@@ -30,6 +30,8 @@ var htmls = []string{
 	"/web/templates/error.html",
 	"/web/templates/index.html",
 	"/web/templates/confirm.html",
+	"/web/templates/general-contact.html",
+	"/web/templates/general-news.html",
 	"/web/templates/user/user-main.html",
 	"/web/templates/user/profile.html",
 	"/web/templates/user/profile-side-bar.html",
@@ -60,7 +62,10 @@ var htmls = []string{
 	"/web/templates/components/main-header.html",
 	"/web/templates/components/footer.html",
 	"/web/templates/components/news-feed.html",
+	"/web/templates/components/index-header.html",
+	"/web/templates/components/index-footer.html",
 	"/web/templates/resources/news.html",
+	"/web/templates/resources/news-content.html",
 	"/web/templates/resources/docs.html",
 	"/web/templates/resources/tutorials.html",
 	"/web/templates/resources/faq.html",
@@ -121,6 +126,12 @@ const (
 	AboutWhoWeAre = "about"
 	AboutCareer   = "career"
 	AboutContact  = "contact"
+)
+
+const (
+	IndexPage    = "index"
+	IndexContact = "general-contact"
+	IndexNews    = "general-news"
 )
 
 func parseItemID(r *http.Request) (*uuid.UUID, error) {

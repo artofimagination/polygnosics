@@ -10,9 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func UserSettings(w http.ResponseWriter, r *http.Request) {
-}
-
 // UserMainHandler renders the main page after login.
 func (c *RESTController) UserMainHandler(w http.ResponseWriter, r *http.Request) {
 	content, err := c.ContentController.BuildUserMainContent()

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Governlia Government HTML Template</title>
+<!-- Stylesheets -->
+<link href="/assets/css/bootstrap.css" rel="stylesheet">
+<link href="/assets/css/style-front-page.css" rel="stylesheet">
+<!-- Responsive File -->
+<link href="/assets/css/responsive.css" rel="stylesheet">
+<!-- Color File -->
+<link href="/assets/css/color.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Merriweather:ital@0;1&display=swap" rel="stylesheet">
+
+
+<link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
+<link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+
+<!-- Responsive -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script><![endif]-->
+<!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+</head>
+
+<body>
+
+<div class="page-wrapper">
+    <!-- Preloader -->
+    <div class="loader-wrap">
+        <div class="preloader"><div class="preloader-close">Preloader Close</div></div>
+        <div class="layer layer-one"><span class="overlay"></span></div>
+        <div class="layer layer-two"><span class="overlay"></span></div>        
+        <div class="layer layer-three"><span class="overlay"></span></div>
+    </div>
+
+    {{template "index-header" .}}
+
+    <!--Search Popup-->
+    <div id="search-popup" class="search-popup">
+        <div class="close-search theme-btn"><span class="far fa-times-circle"></span></div>
+        <div class="popup-inner">
+            <div class="overlay-layer"></div>
+            <div class="search-form">
+                <form method="post" action="index.html">
+                    <div class="form-group">
+                        <fieldset>
+                            <input type="search" class="form-control" name="search-input" value="" placeholder="Search Here" required >
+                            <input type="submit" value="Search Now!" class="theme-btn">
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section class="page-title" style="background-image: url(assets/images/background/bg-9.jpg);">
+        <div class="auto-container">
+            <div class="content-box">
+                <div class="content-wrapper">
+                    <div class="title">
+                        <h1>Contact Us.</h1>
+                    </div>
+                    <ul class="bread-crumb">
+                        <li><a href="index.html">Home</a></li>
+                        <li>get in touch</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form section -->
+    <section class="contact-form-section">
+        <div class="auto-container">
+            <div class="wrapper-box">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="our-facts" style="background-image: url(assets/images/resource/image-54.jpg);">
+                            <div class="column counter-column">
+                                <div class="inner wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
+                                    <div class="icon-outer">
+                                        <div class="icon"><span class="icon-ambulance"></span></div>
+                                    </div>
+                                    <div class="count-outer count-box">
+                                        <span class="count-text" data-speed="3000" data-stop="345">0</span>
+                                    </div>
+                                    <div class="text">For Any Type of <br> Medical Emergency </div>
+                                </div>
+                            </div>
+                            <div class="column counter-column">
+                                <div class="inner wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
+                                    <div class="icon-outer">
+                                        <div class="icon"><span class="icon-police"></span></div>
+                                    </div>
+                                    <div class="count-outer count-box">
+                                        <span class="count-text" data-speed="3000" data-stop="911">0</span>
+                                    </div>
+                                    <div class="text">For Police and <br> Law Enforcement</div>
+                                </div>
+                            </div>
+                            <div class="column counter-column">
+                                <div class="inner wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
+                                    <div class="icon-outer">
+                                        <div class="icon"><span class="icon-recyclebin"></span></div>
+                                    </div>
+                                    <div class="count-outer count-box">
+                                        <span class="count-text" data-speed="3000" data-stop="667">0</span>
+                                    </div>
+                                    <div class="text">For Recycling And <br> Garbage Related  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="contact-form-area">
+                            <div class="sec-title mb-30">
+                                <h2>Looking For Any Help <br> Or Have A Question</h2>
+                            </div>
+                            <div class="text mb-30">Enim ad minim veniam quis nostrud exercitation ullamco laboris aliquip <br> ex ea reprehenderit sint occaecat cupidata proids. </div>
+                            <!--Contact Form-->
+                            <div class="contact-form">
+                                <form method="post" action="inc/sendemail.php" id="contact-form">
+                                    <div class="row">
+                                        <div class="form-group col-md-12">
+                                            <input type="text" name="form_name" value="" placeholder="Your Name" required>
+                                        </div>                      
+                                        <div class="form-group col-md-12">
+                                            <input type="text" name="email" value="" placeholder="Your Email" required>
+                                        </div>                        
+                                        <div class="form-group col-md-12">
+                                            <input type="text" name="form_subject" value="" placeholder="Subject" required>
+                                        </div>                        
+                                        <div class="form-group col-md-12">
+                                            <textarea name="form_message" placeholder="Massage"></textarea>
+                                        </div>                        
+                                        <div class="form-group col-md-12">
+                                            <input id="form_botcheck" name="form_botcheck" class="form-control" type="hidden" value="">
+                                            <button class="theme-btn btn-style-one" type="submit" data-loading-text="Please wait..."><span>Send Message</span></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Info section -->
+    <section class="contact-info-section">
+        <div class="auto-container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="contact-info-block">
+                        <h3>City Mayor Office</h3>
+                        <div class="text mb-30">Fugiat nulla pariatur excepteur sint occaecat proident <br> sunt in culp  mollit anim id est laborum. </div>
+                        <ul class="contact-info">
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-1.png" alt=""></div>
+                                <div class="text"><strong>Visit Mayor Office</strong> 36 King Street, LaneWalk, <br> Governlia 030204 - US</div>
+                            </li>
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-2.png" alt=""></div>
+                                <div class="text">
+                                    <strong>Phone No.</strong>
+                                    <a href="tel:+1(345)2067849">+ 1 (345) 206 7849</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-3.png" alt=""></div>
+                                <div class="text">
+                                    <strong>Email</strong>
+                                    <a href="mailto:munciple@example.net">munciple@example.net</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact-info-block">
+                        <h3>City Muncipal Office</h3>
+                        <div class="text mb-30">Fugiat nulla pariatur excepteur sint occaecat proident <br> sunt in culp  mollit anim id est laborum. </div>
+                        <ul class="contact-info">
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-1.png" alt=""></div>
+                                <div class="text"><strong>Visit Mayor Office</strong> 36 King Street, LaneWalk, <br> Governlia 030204 - US</div>
+                            </li>
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-2.png" alt=""></div>
+                                <div class="text">
+                                    <strong>Phone No.</strong>
+                                    <a href="tel:+1(345)2067849">+ 1 (345) 206 7849</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="icon"><img src="assets/images/icons/icon-3.png" alt=""></div>
+                                <div class="text">
+                                    <strong>Email</strong>
+                                    <a href="mailto:munciple@example.net">munciple@example.net</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{template "index-footer" .}}
+	
+</div>
+<!--End pagewrapper-->
+
+<!--Scroll to top-->
+<div class="scroll-to-top scroll-to-target" data-target="html"><span class="icon-arrow"></span></div>
+
+<script src="/assets/js/jquery-3.5.1.min.js"></script>
+<script src="/assets/js/popper.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/bootstrap-select.min.js"></script>
+<script src="/assets/js/jquery.fancybox.js"></script>
+<script src="/assets/js/isotope.js"></script>
+<script src="/assets/js/owl.js"></script>
+<script src="/assets/js/appear.js"></script>
+<script src="/assets/js/wow.js"></script>
+<script src="/assets/js/lazyload.js"></script>
+<script src="/assets/js/scrollbar.js"></script>
+<script src="/assets/js/TweenMax.min.js"></script>
+<script src="/assets/js/swiper.min.js"></script>
+<script src="/assets/js/jquery.polyglot.language.switcher.js"></script>
+<script src="/assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="/assets/js/parallax-scroll.js"></script>
+
+<script src="/assets/js/script.js"></script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
