@@ -30,8 +30,6 @@ func (c *RESTController) GeneralNews(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *RESTController) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	p := make(map[string]interface{})
-	p["title"] = "Welcome!"
-	p["body"] = "Welcome to AI Playground"
-	c.RenderTemplate(w, IndexPage, p)
+	content := make(map[string]interface{})
+	c.RenderTemplate(w, IndexPage, content)
 }
