@@ -34,7 +34,7 @@
 							<div class="tab-pane active" id="recommended" role="tabpanel">
 								<div class="row fx-element-overlay">
 									{{range $i, $a := (index .recommended)}}
-										<div class="col-12 col-lg-3">
+										<div class="col-12 col-lg-4">
 											<div class="box box-default">
 												<div class="fx-card-item">
 													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
@@ -60,7 +60,7 @@
 							<div class="tab-pane" id="recent" role="tabpanel">
 								<div class="row fx-element-overlay">
 									{{range $i, $a := (index .recent)}}
-										<div class="col-10 col-lg-2">
+										<div class="col-12 col-lg-4">
 											<div class="box box-default">
 												<div class="fx-card-item">
 													<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
@@ -87,7 +87,7 @@
 								<div class="tab-pane" id="{{$k}}" role="tabpanel">
 									<div class="row fx-element-overlay">
 										{{range $i, $a := (index $c "products")}}
-											<div class="col-10 col-lg-2">
+											<div class="col-12 col-lg-4">
 												<div class="box box-default">
 													<div class="fx-card-item">
 														<div class="fx-card-avatar fx-overlay-1"><img src="{{index $a "avatar"}}" alt="product">
