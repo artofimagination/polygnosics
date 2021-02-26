@@ -17820,6 +17820,8 @@ textarea.form-control {
   transform: rotate(180deg); }
 
 /*User card page*/
+.fx-element-overlay {
+  min-width: 940px; }
 .fx-element-overlay .white-box {
   padding: 0px; }
 .fx-element-overlay .fx-card-item {
