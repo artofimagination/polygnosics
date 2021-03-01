@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="/assets/images/favicon.ico">
-
-    <title>Polygnosics - Registration </title>
-  
-	<!-- Vendors Style-->
-	<link rel="stylesheet" href="/assets/css/vendors_css.css">
-	  
-	<!-- Style-->  
-	<link rel="stylesheet" href="/assets/css/style.css">
-	<link rel="stylesheet" href="/assets/css/skin_color.css">	
-</head>
+	{{template "header-info" .}}
 
 <body class="hold-transition theme-primary dark-skin">
 	
@@ -32,7 +16,7 @@
 								<p class="text-primary-50 mb-0">Register a new membership</p>							
 							</div>
 							<div class="p-30">
-								<form action="/auth_signup" method="post">
+								<form id="signup" action="/auth_signup">
 									<div class="form-group">
 										<div class="input-group mb-3">
 											<div class="input-group-prepend">
@@ -66,25 +50,30 @@
 											<script src="/assets/js/confirm_pw.js"></script>
 										</div>
 									</div>
-									  <div class="row">
+									<div class="row">
 										<div class="col-12">
-										  <div class="checkbox text-grey">
-											<input type="checkbox" id="basic_checkbox_1" >
-											<label for="basic_checkbox_1">I agree to the <a href="#" class="text-warning"><b>Terms</b></a></label>
-										  </div>
+											<input type="checkbox" id="developer" name="developer" value="developer">
+											<label for="developer">I am a developer</label>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<div class="checkbox text-grey">
+												<input type="checkbox" id="terms" name="terms" required>
+												<label for="terms">I agree to the <a href="#" class="text-warning"><b>Terms</b></a></label>
+											</div>
 										</div>
 										<!-- /.col -->
 										<div class="col-12 text-center">
-										  <button type="submit" class="btn btn-primary margin-top-10">SIGN UP</button>
+											<button id="register" name="register" class="btn btn-primary margin-top-10">SIGN UP</button>
 										</div>
 										<!-- /.col -->
-									  </div>
-								</form>													
-
+									</div>											
+								</form>
 								<div class="text-center text-grey">
-								  <p class="mt-20">- Register With -</p>
-								  <p class="gap-items-2 mb-20">
-									  <a class="btn btn-social-icon btn-round btn-outline btn-grey" href="#"><i class="fa fa-google-plus"></i></a>
+									<p class="mt-20">- Register With -</p>
+									<p class="gap-items-2 mb-20">
+										<a class="btn btn-social-icon btn-round btn-outline btn-grey" href="#"><i class="fa fa-google-plus"></i></a>
 									</p>	
 								</div>
 
@@ -98,5 +87,10 @@
 			</div>			
 		</div>
 	</div>
+
+	<script src="/assets/js/vendors.min.js"></script>
+	<script src="/assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js"></script>
+	<script src="/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+	<script src="/assets/js/auth.js"></script>
 </body>
 </html>

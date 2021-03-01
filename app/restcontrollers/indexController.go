@@ -1,7 +1,11 @@
 package restcontrollers
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+	"github.com/pkg/errors"
 )
 
 func (c *RESTController) Contact(w http.ResponseWriter, r *http.Request) {
@@ -31,5 +35,21 @@ func (c *RESTController) GeneralNews(w http.ResponseWriter, r *http.Request) {
 
 func (c *RESTController) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	content := make(map[string]interface{})
-	c.RenderTemplate(w, IndexPage, content)
+	// TODO Issue#107: Replace this with proper way of detecting if root has already been created.
+	_, err := c.BackendContext.GetUserByEmail("root@test.com")
+	name := IndexPage
+	if err == dbcontrollers.ErrUserNotFound {
+		if r.Host == "polygnosics.localhost" {
+			name = "auth_signup"
+		} else {
+			http.Error(w, "Server is not configured yet", http.StatusInternalServerError)
+			return
+		}
+
+	} else if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get root user. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	c.RenderTemplate(w, name, content)
 }

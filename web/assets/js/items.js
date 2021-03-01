@@ -3,9 +3,7 @@
   "use strict";
 
   var SweetAlert = function() {};
-
   SweetAlert.prototype.init = function() {
-    //Parameter
     var i;
     for (i = 0; i < deleteLinks.length; i++)
     {	
@@ -35,7 +33,8 @@
                       swal({
                         title: "Deleted!", 
                         text: deleteSuccessText, 
-                        type: "success" }, 
+                        type: "success" 
+                        }, 
                         function(){
                           location.reload()
                         }); 
