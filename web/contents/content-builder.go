@@ -18,6 +18,11 @@ const (
 )
 
 const (
+	IndexPageSignupName = "Sign up"
+	IndexPageLoginName  = "Sign in"
+)
+
+const (
 	ProjectsPageName           = "Projects"
 	ProjectsPageCreateName     = "Project Wizard"
 	ProjectsPageMyProjectsName = "My Projects"
@@ -224,6 +229,12 @@ func (c *ContentController) BuildUserStatsContent() map[string]interface{} {
 func (c *ContentController) BuildProductStatsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, StatsPageName, StatsProducts)
+	return content
+}
+
+func (c *ContentController) BuildSignupContent() map[string]interface{} {
+	content := make(map[string]interface{})
+	content = c.prepareContentHeader(content, IndexPageSignupName, "")
 	return content
 }
 

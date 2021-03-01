@@ -35,7 +35,7 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "User is not configured", http.StatusInternalServerError)
 	}
 
-	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, contents.UserAvatarKey, businesslogic.DefaultUserAvatarPath, r)
+	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, businesslogic.UserAvatarKey, businesslogic.DefaultUserAvatarPath, r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 	}
@@ -44,10 +44,10 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
 		return
 	}
-	p[contents.UserMapKey].(map[string]interface{})[contents.UserAvatarKey] =
+	p[contents.UserMapKey].(map[string]interface{})[businesslogic.UserAvatarKey] =
 		c.UserDBController.ModelFunctions.GetFilePath(
 			c.ContentController.UserData.Assets,
-			contents.UserAvatarKey,
+			businesslogic.UserAvatarKey,
 			businesslogic.DefaultUserAvatarPath)
 	http.Redirect(w, r, "profile", http.StatusSeeOther)
 }

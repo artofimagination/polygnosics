@@ -239,6 +239,5 @@ func (c *RESTController) RenderTemplate(w http.ResponseWriter, tmpl string, p ma
 func (c *RESTController) HandleError(route string, errorStr string, w http.ResponseWriter) {
 	p := make(map[string]interface{})
 	p["message"] = errorStr
-	p["route"] = fmt.Sprintf("/%s", route)
 	c.RenderTemplate(w, Confirm, p)
 }

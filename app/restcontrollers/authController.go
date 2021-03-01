@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"polygnosics/app/businesslogic"
 	"polygnosics/app/restcontrollers/session"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -31,8 +30,6 @@ func (c *RESTController) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		name := Confirm
 		p := make(map[string]interface{})
-		p["route"] = "/index"
-		p["button_text"] = "OK"
 
 		if err := r.ParseForm(); err != nil {
 			p["message"] = ErrFailedToParseForm
@@ -118,37 +115,29 @@ func (*RESTController) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/index", http.StatusSeeOther)
 }
 
-func encryptPassword(password []byte) ([]byte, error) {
-	var hashedPassword []byte
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, 16)
-	if err != nil {
-		return hashedPassword, err
-	}
-	return hashedPassword, nil
-}
-
 func (c *RESTController) SignupHandler(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildSignupContent()
 	if r.Method == GET {
-		p := make(map[string]interface{})
-		c.RenderTemplate(w, "auth_signup", p)
+		c.RenderTemplate(w, "auth_signup", content)
 	} else {
 		if err := r.ParseForm(); err != nil {
-			c.HandleError("index", ErrFailedToParseForm, w)
+			http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
 			return
 		}
 		uName := r.FormValue("username")
 		email := r.FormValue("email")
 		pwd := []byte(r.FormValue("psw"))
-
-		p := make(map[string]interface{})
-		p["message"] = "Registration successful."
-		p["route"] = "/index"
-		p["button_text"] = "OK"
-
-		_, err := c.UserDBController.CreateUser(uName, email, pwd, businesslogic.GeneratePath, encryptPassword)
-		if err != nil {
-			p["message"] = fmt.Sprintf("Failed to add user. %s", err.Error())
+		group := r.FormValue("developer")
+		if group == "" {
+			group = "client"
 		}
-		c.RenderTemplate(w, Confirm, p)
+
+		if err := c.BackendContext.AddUser(uName, email, pwd, group); err != nil {
+			http.Error(w, fmt.Sprintf("Failed to add user. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "Registration successful")
 	}
 }

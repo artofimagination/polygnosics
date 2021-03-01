@@ -11,24 +11,9 @@ import (
 // Details and assets field keys
 const (
 	UserMapKey                 = "user"
-	UserAvatarKey              = "avatar"
 	UserProfilePathKey         = "profile"
 	UserProfileEditPathKey     = "profile_edit"
 	UserProfileAvatarUploadKey = "avatar_upload"
-	UserNameKey                = "username"
-	UserFullNameKey            = "full_name"
-	UserLocationKey            = "location"
-	UserCountryKey             = "country"
-	UserCityKey                = "city"
-	UserEmailKey               = "email"
-	UserWebsiteKey             = "website"
-	UserPhoneKey               = "phone"
-	UserConnectionCountKey     = "connection_count"
-	UserHiddenConnectionsKey   = "hidden_connections"
-	UserAboutKey               = "about"
-	UserFacebookKey            = "facebook_link"
-	UserTwitterKey             = "twitter_link"
-	UserGithubKey              = "github_link"
 )
 
 func setLocationString(country string, city string) string {
@@ -48,43 +33,44 @@ func (c *ContentController) GetUserContent(user *models.UserData) map[string]int
 	content[FutureFeature] = 1
 	content[UserMapKey] = make(map[string]interface{})
 	userContent := content[UserMapKey].(map[string]interface{})
-	path := c.UserDBController.ModelFunctions.GetFilePath(user.Assets, UserAvatarKey, businesslogic.DefaultUserAvatarPath)
-	userContent[UserAvatarKey] = path
-	userContent[UserProfileAvatarUploadKey] = "Upload your avatar"
-	userContent[UserNameKey] = user.Name
-	userContent[UserFullNameKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserFullNameKey, "")
+	path := c.UserDBController.ModelFunctions.GetFilePath(user.Assets, businesslogic.UserAvatarKey, businesslogic.DefaultUserAvatarPath)
+	userContent[businesslogic.UserAvatarKey] = path
+	userContent[businesslogic.UserNameKey] = user.Name
+	userContent[businesslogic.UserFullNameKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserFullNameKey, "")
+	country := c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserCountryKey, "").(string)
+	city := c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserCityKey, "").(string)
+	userContent[businesslogic.UserCountryKey] = country
+	userContent[businesslogic.UserCityKey] = city
+	userContent[businesslogic.UserLocationKey] = setLocationString(country, city)
+	userContent[businesslogic.UserEmailKey] = user.Email
+	userContent[businesslogic.UserPhoneKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserPhoneKey, "")
+	userContent[businesslogic.UserConnectionCountKey] = 20
+	userContent[businesslogic.UserHiddenConnectionsKey] = 15
+	userContent[businesslogic.UserAboutKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserAboutKey, "")
+	userContent[businesslogic.UserWebsiteKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserWebsiteKey, "#")
+	userContent[businesslogic.UserFacebookKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserFacebookKey, "#")
+	userContent[businesslogic.UserTwitterKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserTwitterKey, "#")
+	userContent[businesslogic.UserGithubKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserGithubKey, "#")
+	userContent[businesslogic.UserPrivilegesKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, businesslogic.UserPrivilegesKey, "#")
 
-	country := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCountryKey, "").(string)
-	city := c.UserDBController.ModelFunctions.GetField(user.Settings, UserCityKey, "").(string)
-	userContent[UserCountryKey] = country
-	userContent[UserCityKey] = city
-	userContent[UserLocationKey] = setLocationString(country, city)
-	userContent[UserEmailKey] = user.Email
-	userContent[UserPhoneKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserPhoneKey, "")
-	userContent[UserConnectionCountKey] = 20
-	userContent[UserHiddenConnectionsKey] = 15
-	userContent[UserAboutKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserAboutKey, "")
+	userContent[UserProfileAvatarUploadKey] = "Upload your avatar"
 	userContent[UserProfilePathKey] = fmt.Sprintf("/user-main/profile?user=%s", user.ID.String())
 	userContent[UserProfileEditPathKey] = "/user-main/profile-edit"
-	userContent[UserWebsiteKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserWebsiteKey, "#")
-	userContent[UserFacebookKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserFacebookKey, "#")
-	userContent[UserTwitterKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserTwitterKey, "#")
-	userContent[UserGithubKey] = c.UserDBController.ModelFunctions.GetField(user.Settings, UserGithubKey, "#")
 	return content
 }
 
 func (c *ContentController) StoreUserInfo(r *http.Request) error {
-	c.UserData.Name = r.FormValue(UserNameKey)
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserNameKey, r.FormValue(UserNameKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserFullNameKey, r.FormValue(UserFullNameKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserCountryKey, r.FormValue(UserCountryKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserCityKey, r.FormValue(UserCityKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserPhoneKey, r.FormValue(UserPhoneKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserWebsiteKey, r.FormValue(UserWebsiteKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserAboutKey, r.FormValue(UserAboutKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserFacebookKey, r.FormValue(UserFacebookKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserTwitterKey, r.FormValue(UserTwitterKey))
-	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, UserGithubKey, r.FormValue(UserGithubKey))
+	c.UserData.Name = r.FormValue(businesslogic.UserNameKey)
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserNameKey, r.FormValue(businesslogic.UserNameKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserFullNameKey, r.FormValue(businesslogic.UserFullNameKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserCountryKey, r.FormValue(businesslogic.UserCountryKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserCityKey, r.FormValue(businesslogic.UserCityKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserPhoneKey, r.FormValue(businesslogic.UserPhoneKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserWebsiteKey, r.FormValue(businesslogic.UserWebsiteKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserAboutKey, r.FormValue(businesslogic.UserAboutKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserFacebookKey, r.FormValue(businesslogic.UserFacebookKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserTwitterKey, r.FormValue(businesslogic.UserTwitterKey))
+	c.UserDBController.ModelFunctions.SetField(c.UserData.Settings, businesslogic.UserGithubKey, r.FormValue(businesslogic.UserGithubKey))
 	if err := c.UserDBController.UpdateUserSettings(c.UserData); err != nil {
 		return err
 	}
