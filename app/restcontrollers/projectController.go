@@ -103,6 +103,27 @@ func (c *RESTController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (c *RESTController) HandleStatusRequest(w http.ResponseWriter, r *http.Request) {
+	projectID, err := parseItemID(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to parse project id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	reachable, err := c.BackendContext.CheckProject(projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to access project. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		return
+	}
+
+	if !reachable {
+		http.Error(w, "Failed to access project", http.StatusNoContent)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func (c *RESTController) RunProject(w http.ResponseWriter, r *http.Request) {
 	projectID, err := parseItemID(r)
 	if err != nil {

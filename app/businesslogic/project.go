@@ -59,6 +59,33 @@ func (c *Context) getProjectState(details *models.Asset) string {
 	return state
 }
 
+func (c *Context) CheckProject(id *uuid.UUID) (bool, error) {
+	// TODO Issue#109: Add status end point to the project servers. Also need to find a way to
+	// Have predefined IP addresses for the project docker.
+	// (To handle: G107: Potential HTTP request made with variable url)
+	// project, err := c.UserDBController.GetProject(id)
+	// if err != nil {
+	// 	return false, err
+	// }
+	// containerID := c.UserDBController.ModelFunctions.GetField(project.Details, ProjectContainerID, "")
+
+	// ip, err := docker.GetIPAddress(containerID.(string), "polygnosics_poly_backend")
+	// if err != nil {
+	// 	return false, err
+	// }
+	// ip = strings.Split(ip, "/")[0]
+	// ipString := fmt.Sprintf("http://%s:10000/", ip)
+	// response, err := http.Get(ip)
+	// if err != nil {
+	// 	return false, err
+	// }
+
+	// if response.StatusCode == 200 {
+	// 	return true, nil
+	// }
+	return true, nil
+}
+
 func (c *Context) SetProjectDetails(details *models.Asset, productDetails *models.Asset, r *http.Request, containerID string) {
 	c.UserDBController.ModelFunctions.SetField(details, ProjectContainerID, containerID)
 	c.UserDBController.ModelFunctions.SetField(details, ProjectState, c.getProjectState(details))
@@ -117,7 +144,7 @@ func (c *Context) RunProject(userID *uuid.UUID, projectID *uuid.UUID) error {
 		}
 	}
 
-	if err := docker.StartContainer(containerID); err != nil {
+	if err := docker.StartContainer(containerID, "polygnosics_poly_backend"); err != nil {
 		c.UserDBController.ModelFunctions.SetField(project.Details, ProjectState, NotRunning)
 		return err
 	}

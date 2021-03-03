@@ -36,7 +36,7 @@
 											var deleteText = '{{index $a "delete_text"}}'
 											var deleteSuccessText = '{{index $a "delete_success_text"}}'
 											var deleteUrl = '{{index $a "delete_url"}}'
-											deleteLinks.push('{{index $a "project_to_delete"}}')
+											deleteLinks.push('{{index $a "project_id"}}')
 										{{end}}
 									</script>
 									{{range $i, $a := .project}}
