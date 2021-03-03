@@ -117,7 +117,7 @@ func (c *RESTController) HandleStatusRequest(w http.ResponseWriter, r *http.Requ
 	}
 
 	if !reachable {
-		http.Error(w, fmt.Sprintf("Failed to access project"), http.StatusNoContent)
+		http.Error(w, "Failed to access project", http.StatusNoContent)
 		return
 	}
 
