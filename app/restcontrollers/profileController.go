@@ -18,7 +18,7 @@ func (c *RESTController) ProfileHandler(w http.ResponseWriter, r *http.Request) 
 	userIDString := r.FormValue("user")
 	userUUID, err := uuid.Parse(userIDString)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get user id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to get user id. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 		return
 	}
 

@@ -28,7 +28,7 @@ func (c *RESTController) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		p := make(map[string]interface{})
 		c.RenderTemplate(w, "auth_login", p)
 	} else {
-		name := Confirm
+		name := "confirm"
 		p := make(map[string]interface{})
 
 		if err := r.ParseForm(); err != nil {
@@ -94,25 +94,25 @@ func (c *RESTController) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/user-main", http.StatusSeeOther)
+		http.Redirect(w, r, UserMainPath, http.StatusSeeOther)
 	}
 }
 
-func (*RESTController) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+func (c *RESTController) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	session, err := session.Store.Get(r, "cookie-name")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get cookie. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to get cookie. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 		return
 	}
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false
 	if err := session.Save(r, w); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to save cookie. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to save cookie. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 		return
 	}
 
-	http.Redirect(w, r, "/index", http.StatusSeeOther)
+	http.Redirect(w, r, IndexPath, http.StatusSeeOther)
 }
 
 func (c *RESTController) SignupHandler(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +121,7 @@ func (c *RESTController) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		c.RenderTemplate(w, "auth_signup", content)
 	} else {
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 			return
 		}
 		uName := r.FormValue("username")
@@ -133,7 +133,7 @@ func (c *RESTController) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := c.BackendContext.AddUser(uName, email, pwd, group); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to add user. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to add user. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 			return
 		}
 

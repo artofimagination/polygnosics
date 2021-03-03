@@ -38,7 +38,6 @@ var htmls = []string{
 	"/web/templates/user/profile-edit.html",
 	"/web/templates/user/profile-edit-avatar.html",
 	"/web/templates/user/settings.html",
-	"/web/templates/user/new-project.html",
 	"/web/templates/user/mail-inbox.html",
 	"/web/templates/user/mail-compose.html",
 	"/web/templates/user/mail-read.html",
@@ -88,12 +87,12 @@ var htmls = []string{
 var paths = []string{}
 
 const (
-	GET     = "GET"
-	POST    = "POST"
-	Confirm = "confirm"
+	GET  = "GET"
+	POST = "POST"
 )
 
 const (
+	UserMainPath           = "/user-main"
 	UserMain               = "user-main"
 	UserMainMyProducts     = "my-products"
 	ProjectWizard          = "project-wizard"
@@ -133,6 +132,7 @@ const (
 )
 
 const (
+	IndexPath    = "/index"
 	IndexPage    = "index"
 	IndexContact = "general-contact"
 	IndexNews    = "general-news"
@@ -173,44 +173,44 @@ func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request)
 
 		routeMatch := mux.RouteMatch{}
 		if matched := router.Match(r, &routeMatch); !matched {
-			http.Error(w, "Url does not exist", http.StatusInternalServerError)
+			c.HandleError(w, "Url does not exist", http.StatusInternalServerError, IndexPath)
 			return
 		}
 
 		if !isPublicPage {
 			sess, err := session.Store.Get(r, "cookie-name")
 			if err != nil {
-				http.Error(w, "Unable to retrieve session cookie.", http.StatusForbidden)
+				c.HandleError(w, "Unable to retrieve session cookie.", http.StatusForbidden, IndexPath)
 				return
 			}
 
 			uuidString, ok := sess.Values["user"].(string)
 			if !ok {
-				http.Error(w, "Unable to decode session cookie.", http.StatusInternalServerError)
+				c.HandleError(w, "Unable to decode session cookie.", http.StatusInternalServerError, IndexPath)
 				return
 			}
 
 			userUUID, err := uuid.Parse(uuidString)
 			if err != nil {
-				http.Error(w, fmt.Sprintf("Failed to get user id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				c.HandleError(w, fmt.Sprintf("Failed to get user id. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 				return
 			}
 
 			user, err := c.UserDBController.GetUser(&userUUID)
 			if err != nil {
-				http.Error(w, "Unable to retrieve user info", http.StatusInternalServerError)
+				c.HandleError(w, "Unable to retrieve user info", http.StatusInternalServerError, IndexPath)
 				return
 			}
 
 			match, err := session.IsAuthenticated(user.ID, sess, r)
 			if err != nil {
 				errorString := fmt.Sprintf("Unable to check session cookie:\n%s\n", errors.WithStack(err))
-				http.Error(w, errorString, http.StatusInternalServerError)
+				c.HandleError(w, errorString, http.StatusInternalServerError, IndexPath)
 				return
 			}
 
 			if !match {
-				http.Error(w, "Forbidden access", http.StatusForbidden)
+				c.HandleError(w, "Forbidden access", http.StatusForbidden, IndexPath)
 				return
 			}
 		}
@@ -222,7 +222,7 @@ func (c *RESTController) MakeHandler(fn func(http.ResponseWriter, *http.Request)
 func (c *RESTController) RenderTemplate(w http.ResponseWriter, tmpl string, p map[string]interface{}) {
 	wd, err := os.Getwd()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.HandleError(w, err.Error(), http.StatusInternalServerError, IndexPath)
 	}
 
 	if len(paths) == 0 {
@@ -235,13 +235,17 @@ func (c *RESTController) RenderTemplate(w http.ResponseWriter, tmpl string, p ma
 
 	err = t.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.HandleError(w, err.Error(), http.StatusInternalServerError, IndexPath)
 	}
 }
 
 // HandleError creates page details and renders html template for an error modal.
-func (c *RESTController) HandleError(route string, errorStr string, w http.ResponseWriter) {
-	p := make(map[string]interface{})
-	p["message"] = errorStr
-	c.RenderTemplate(w, Confirm, p)
+func (c *RESTController) HandleError(w http.ResponseWriter, errorStr string, statusCode int, backPage string) {
+	content := make(map[string]interface{})
+	content["parent_page"] = "Error"
+	content["status_code"] = statusCode
+	content["status_text"] = http.StatusText(statusCode)
+	content["message"] = errorStr
+	content["back_page"] = backPage
+	c.RenderTemplate(w, "error", content)
 }
