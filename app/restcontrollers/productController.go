@@ -71,22 +71,22 @@ func (c *RESTController) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		product, err := c.BackendContext.AddProduct(&c.ContentController.UserData.ID, r.FormValue(businesslogic.ProductNameKey), r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			c.HandleError(w, err.Error(), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		if err := c.BackendContext.CreateDockerImage(product, &c.ContentController.UserData.ID); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			c.HandleError(w, err.Error(), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		if err := c.BackendContext.UpdateProductData(product, r); err != nil {
 			if errDelete := c.BackendContext.DeleteProduct(product); errDelete != nil {
 				err = errors.Wrap(errors.WithStack(err), errDelete.Error())
-				http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				c.HandleError(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 				return
 			}
-			http.Error(w, fmt.Sprintf("Failed to update product details. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to update product details. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
@@ -98,18 +98,18 @@ func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	if r.Method == POST {
 		productID, err := parseItemID(r)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		product, err := c.UserDBController.GetProduct(productID)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to get product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to get product. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		if err := c.BackendContext.DeleteProduct(product); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
@@ -120,14 +120,14 @@ func (c *RESTController) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
 	productID, err := parseItemID(r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to parse product id. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 		return
 	}
 
 	if r.Method == GET {
 		content, err := c.ContentController.BuildProductEditContent(productID)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to get build product edit content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to get build product edit content. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
@@ -135,34 +135,34 @@ func (c *RESTController) EditProduct(w http.ResponseWriter, r *http.Request) {
 	} else {
 		product, err := c.UserDBController.GetProduct(productID)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to get product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to get product. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		if err := c.BackendContext.UploadFiles(product.Assets, r); err != nil {
-			http.Error(w, fmt.Sprintf("Failed to upload assets. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to upload assets. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 		_, _, err = r.FormFile(businesslogic.ProductMainAppKey)
 		if err == nil {
 			if err := c.BackendContext.CreateDockerImage(product, &c.ContentController.UserData.ID); err != nil {
 				if errDelete := c.BackendContext.DeleteProduct(product); errDelete != nil {
-					http.Error(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError)
+					c.HandleError(w, fmt.Sprintf("Failed to delete product. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 					return
 				}
-				http.Error(w, fmt.Sprintf("Failed to create main app docker image. %s", errors.WithStack(err)), http.StatusInternalServerError)
+				c.HandleError(w, fmt.Sprintf("Failed to create main app docker image. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 				return
 			}
 		}
 
 		if err := c.BackendContext.UpdateProductData(product, r); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			c.HandleError(w, err.Error(), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 
 		content, err := c.ContentController.BuildMyProductsContent()
 		if err != nil {
-			http.Error(w, fmt.Sprintf("Failed to get my products content. %s", errors.WithStack(err)), http.StatusInternalServerError)
+			c.HandleError(w, fmt.Sprintf("Failed to get my products content. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 			return
 		}
 		c.RenderTemplate(w, UserMainMyProducts, content)

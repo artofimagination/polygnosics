@@ -28,20 +28,20 @@ func (c *RESTController) UploadAvatarHandler(w http.ResponseWriter, r *http.Requ
 	p := c.ContentController.GetUserContent(c.ContentController.UserData)
 
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to parse form. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 	}
 
 	if c.ContentController.UserData == nil {
-		http.Error(w, "User is not configured", http.StatusInternalServerError)
+		c.HandleError(w, "User is not configured", http.StatusInternalServerError, UserMainPath)
 	}
 
 	err := c.BackendContext.UploadFile(c.ContentController.UserData.Assets, businesslogic.UserAvatarKey, businesslogic.DefaultUserAvatarPath, r)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to upload asset. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 	}
 
 	if err := c.UserDBController.UpdateUserAssets(c.ContentController.UserData); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to update asset. %s", errors.WithStack(err)), http.StatusInternalServerError, UserMainPath)
 		return
 	}
 	p[contents.UserMapKey].(map[string]interface{})[businesslogic.UserAvatarKey] =

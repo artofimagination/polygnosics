@@ -42,12 +42,12 @@ func (c *RESTController) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		if r.Host == "polygnosics.localhost" {
 			name = "auth_signup"
 		} else {
-			http.Error(w, "Server is not configured yet", http.StatusInternalServerError)
+			c.HandleError(w, "Server is not configured yet", http.StatusInternalServerError, IndexPath)
 			return
 		}
 
 	} else if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get root user. %s", errors.WithStack(err)), http.StatusInternalServerError)
+		c.HandleError(w, fmt.Sprintf("Failed to get root user. %s", errors.WithStack(err)), http.StatusInternalServerError, IndexPath)
 		return
 	}
 
