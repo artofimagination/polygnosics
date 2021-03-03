@@ -1,0 +1,31 @@
+{{define "project-docs"}}
+<div class="row">
+  <div class="col-md-6 col-12">
+    <div class="box">
+      <div class="box-body">
+        <h4 class="mb-a0">Tutorials</h4>
+          <p class="mb-20">All tutorial videos and articles that will help you create your own content</p>
+          <a href="/resources/tutorials?item-id={{index .project "project_id"}}" class="btn btn-primary">More</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-12">
+    <div class="box">
+      <div class="box-body">
+        <h4 class="mb-a0">FAQ</h4>
+          <p class="mb-20">If you need a quick guide Frequently Asked Questions is where you want to start.</p>
+          <a href="/resources/faq?item-id={{index .project "project_id"}}" class="btn btn-primary">More</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-12">
+    <div class="box">
+      <div class="box-body">
+        <h4 class="mb-a0">Instructions</h4>
+          <p class="mb-20">If you are interested in step by step instructions this is the place to go</p>
+          <a href="/resources/instructions?item-id={{index .project "project_id"}}" class="btn btn-primary">More</a>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}
