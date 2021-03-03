@@ -30,6 +30,7 @@ var htmls = []string{
 	"/web/templates/error.html",
 	"/web/templates/index.html",
 	"/web/templates/confirm.html",
+	"/web/templates/terms.html",
 	"/web/templates/general-contact.html",
 	"/web/templates/general-news.html",
 	"/web/templates/user/user-main.html",

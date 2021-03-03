@@ -61,7 +61,7 @@
 										<div class="col-12">
 											<div class="checkbox text-grey">
 												<input type="checkbox" id="terms" name="terms" required>
-												<label for="terms">I agree to the <a href="#" class="text-warning"><b>Terms</b></a></label>
+												<label for="terms">I agree to the <a class="text-primary" data-toggle="modal" data-target="#modal-terms"><b>Terms and Conditions</b></a></label>
 											</div>
 										</div>
 										<!-- /.col -->
@@ -88,6 +88,8 @@
 			</div>			
 		</div>
 	</div>
+
+	{{template "terms" .}}
 
 	<script src="/assets/js/vendors.min.js"></script>
 	<script src="/assets/vendor_components/jquery-validation-1.17.0/dist/jquery.validate.min.js"></script>
