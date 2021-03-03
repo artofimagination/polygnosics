@@ -17,7 +17,7 @@ const (
 	ShowProject                 = "show_project"
 	ProjectDetailsPageKey       = "detail_path"
 	ProjectStateBadge           = "state_badge"
-	ProjectDeleteIDKey          = "project_to_delete"
+	ProjectDeleteIDKey          = "project_id"
 	ProjectDeleteTextKey        = "delete_text"
 	ProjectDeleteSuccessTextKey = "delete_success_text"
 	ProjectDeleteURLKey         = "delete_url"

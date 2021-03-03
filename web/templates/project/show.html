@@ -16,7 +16,11 @@
 		<div class="container-full">
 		<!-- Main content -->
 		<section class="content">
-			<iframe src="http://0.0.0.0:10000/" width="100%" height="480"></iframe>
+			<div class="loader" id="show-loader"></div>
+			<script>
+				  var project = '{{index .project "project_id"}}'
+			</script>
+			<iframe id="show-frame" src="http://0.0.0.0:10000/" width="100%" height="480"></iframe>
 		</section>
 		<!-- /.content -->
 		</div>
@@ -39,6 +43,7 @@
 	
 	<!-- Venusx Admin App -->
 	<script src="/assets/js/template.js"></script>
+	<script src="/assets/js/pages/show.js"></script>
 	<script src="/assets/js/demo.js"></script>
 
 </body>

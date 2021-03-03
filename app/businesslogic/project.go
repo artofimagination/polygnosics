@@ -3,6 +3,7 @@ package businesslogic
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/artofimagination/golang-docker/docker"
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
@@ -57,6 +58,39 @@ func (c *Context) getProjectState(details *models.Asset) string {
 		state = NotRunning
 	}
 	return state
+}
+
+func isProjectReachable(web string) bool {
+	response, err := http.Get(web)
+	if err != nil {
+		return false
+	}
+
+	if response.StatusCode == 200 {
+		return true
+	}
+	return false
+}
+
+func (c *Context) CheckProject(id *uuid.UUID) (bool, error) {
+	project, err := c.UserDBController.GetProject(id)
+	if err != nil {
+		return false, err
+	}
+	containerID := c.UserDBController.ModelFunctions.GetField(project.Details, ProjectContainerID, "")
+
+	ip, err := docker.GetIPAddress(containerID.(string), "polygnosics_poly_backend")
+	if err != nil {
+		return false, err
+	}
+
+	ip = strings.Split(ip, "/")[0]
+	// TODO Issue#109: Add status end point to the project servers.
+	ipString := fmt.Sprintf("http://%s:10000/", ip)
+	if reachable := isProjectReachable(ipString); !reachable {
+		return false, errors.New("Failed to access project")
+	}
+	return true, nil
 }
 
 func (c *Context) SetProjectDetails(details *models.Asset, productDetails *models.Asset, r *http.Request, containerID string) {
@@ -117,7 +151,7 @@ func (c *Context) RunProject(userID *uuid.UUID, projectID *uuid.UUID) error {
 		}
 	}
 
-	if err := docker.StartContainer(containerID); err != nil {
+	if err := docker.StartContainer(containerID, "polygnosics_poly_backend"); err != nil {
 		c.UserDBController.ModelFunctions.SetField(project.Details, ProjectState, NotRunning)
 		return err
 	}

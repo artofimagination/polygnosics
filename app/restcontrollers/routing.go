@@ -48,6 +48,7 @@ func CreateRouter(c *RESTController) *mux.Router {
 	// Authenticated pages
 	r.HandleFunc("/auth_logout", c.MakeHandler(c.LogoutHandler, r, false))
 	r.HandleFunc("/user-main", c.MakeHandler(c.UserMainHandler, r, false))
+	r.HandleFunc("/check-state", c.MakeHandler(c.HandleStatusRequest, r, false))
 	about := r.PathPrefix("/about").Subrouter()
 	about.HandleFunc("/who-we-are", c.MakeHandler(c.About, r, false))
 	about.HandleFunc("/contact", c.MakeHandler(c.Contact, r, false))

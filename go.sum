@@ -31,6 +31,8 @@ github.com/artofimagination/golang-docker v0.0.0 h1:UfPuohZFI/cU1yH+Gyn/wjzyBQ7T
 github.com/artofimagination/golang-docker v0.0.0/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
 github.com/artofimagination/golang-docker v0.0.2 h1:nsONDSK7+40YftTVqGeTWkrGDrnhyaaPBUi2uXUgc6c=
 github.com/artofimagination/golang-docker v0.0.2/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
+github.com/artofimagination/golang-docker v0.0.3 h1:bIMl9YK5HmC+BkQ5oDRYKlgZ1AUDWjUiCmpvRoVwERs=
+github.com/artofimagination/golang-docker v0.0.3/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11 h1:uQ7hdDAT4fR9ZMy9Jb+KIwTGLS5sug8R/YdREWmnNj8=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.12 h1:hyNmXLyJdQeFFlIQMPQPG7qmyeKZjR7aZJ9HJTGAw4k=
