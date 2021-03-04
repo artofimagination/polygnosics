@@ -1,2 +1,6 @@
 .env.example
 user-store
+
+__pycache__
+.pytest_cache
+geckodriver.log
