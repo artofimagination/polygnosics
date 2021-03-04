@@ -1,0 +1,4 @@
+seleniumbase==1.56.5
+pytest_cases==2.5.0
+pytest-soft-assertions
+

@@ -2,9 +2,6 @@
 	
 	"use strict";
 
-
-
-
 	function marginClc() {
 		if ($(".industries-covered .outer-box").length) {
 			var windowSize = $(window).width();
@@ -41,31 +38,31 @@
 	}
 
 	if ($(".preloader-close").length) {
-        $(".preloader-close").on("click", function(){
-            $('.loader-wrap').delay(200).fadeOut(500);
-        })
-    }
+			$(".preloader-close").on("click", function(){
+					$('.loader-wrap').delay(200).fadeOut(500);
+			})
+	}
 
-    function dynamicCurrentMenuClass(selector) {
-        let FileName = window.location.href.split('/').reverse()[0];
+	function dynamicCurrentMenuClass(selector) {
+			let FileName = window.location.href.split('/').reverse()[0];
 
-        selector.find('li').each(function () {
-            let anchor = $(this).find('a');
-            if ($(anchor).attr('href') == FileName) {
-                $(this).addClass('current');
-            }
-        });
-        // if any li has .current elmnt add class
-        selector.children('li').each(function () {
-            if ($(this).find('.current').length) {
-                $(this).addClass('current');
-            }
-        });
-        // if no file name return 
-        if ('' == FileName) {
-            selector.find('li').eq(0).addClass('current');
-        }
-    }
+			selector.find('li').each(function () {
+					let anchor = $(this).find('a');
+					if ($(anchor).attr('href') == FileName) {
+							$(this).addClass('current');
+					}
+			});
+			// if any li has .current elmnt add class
+			selector.children('li').each(function () {
+					if ($(this).find('.current').length) {
+							$(this).addClass('current');
+					}
+			});
+			// if no file name return 
+			if ('' == FileName) {
+					selector.find('li').eq(0).addClass('current');
+			}
+	}
 
     // dynamic current class        
     let mainNavUL = $('.main-menu').find('.navigation');
