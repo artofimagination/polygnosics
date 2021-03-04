@@ -42,4 +42,4 @@ jobs:
     - name: Start test server
       run: cp test/.env_functional_test .env && docker-compose up -d polygnosics
     - name: Run tests
-      run: pip3 pytest -v tests
+      run: pip3 pytest -v tests/UI --soft-asserts
