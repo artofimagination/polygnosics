@@ -4,6 +4,7 @@ This module contains shared fixtures.
 
 import pytest
 import selenium.webdriver
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import requests
 import time
 
@@ -31,7 +32,10 @@ def browser():
     _pingServer()
 
     # Initialize the ChromeDriver instance
-    b = selenium.webdriver.Firefox()
+    options = selenium.webdriver.FirefoxOptions()
+    options.headless = True
+    b = selenium.webdriver.Firefox(options=options)
+    b.set_window_size(1920, 1080)
 
     # Make its calls wait up to 10 seconds for elements to appear
     b.implicitly_wait(10)

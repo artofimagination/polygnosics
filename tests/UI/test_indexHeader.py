@@ -25,7 +25,6 @@ def test_LoadingPageHeader(browser, data, expected):
         assert f"{e}" == ""
 
     try:
-        indexPageHeader.maximizeWindow()
         indexPageHeader.goToSignup()
     except Exception as e:
         assert f"{e}" == ""
