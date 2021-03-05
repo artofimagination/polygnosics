@@ -16,9 +16,10 @@ jobs:
       uses: actions/setup-python@v1
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
-    - name: Install SeleniumBase
+    - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
+        pip3 install -r tests/requirements.txt
     - name: Lint with flake8
       run: |
         pip3 install flake8
@@ -36,9 +37,6 @@ jobs:
       run: |
         seleniumbase install chromedriver
         seleniumbase install geckodriver
-    - name: Install dependencies
-      run: |
-        pip3 install -r tests/requirements.txt
     - name: Start test server
       run: cp tests/.env_functional_test .env && docker-compose up -d polygnosics
     - name: Run tests
