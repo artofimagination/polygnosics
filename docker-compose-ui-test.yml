@@ -1,0 +1,50 @@
+version: '3'    
+
+services:
+  system-mysql:
+    container_name: system-mysql
+    image: "mysql:8.0.19"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
+      MYSQL_DATABASE: user_database
+    ports:
+      - ${MYSQL_DB_PORT}:${MYSQL_DB_PORT}
+    volumes:
+      - /srv/user-database:/var/lib/mysql
+    command: >
+      --server-id=1
+      --port 3306
+      --character-set-server=utf8
+      --collation-server=utf8_general_ci
+      --sync_binlog=1
+      --binlog-format=ROW
+      --bind-address=0.0.0.0
+      --innodb_flush_log_at_trx_commit=1
+      --relay_log_info_repository=TABLE
+      --master_info_repository=TABLE
+      --gtid-mode=ON
+      --log-bin=mysql-bin
+      --enforce-gtid-consistency
+  data-timescaledb:
+    container_name: data-timescaledb
+    image: "timescale/timescaledb:1.7.0-pg12"
+    environment:
+      - POSTGRES_USER=${TIMESCALE_DB_USER}
+      - POSTGRES_PASSWORD=${TIMESCALE_DB_PASSWORD}
+      - POSTGRES_DB=data
+    ports:
+      - ${TIMESCALE_DB_PORT}:${TIMESCALE_DB_PORT}
+    volumes:
+      - /srv/data-timescaledb:/var/lib/postgresql/data
+    command: postgres -c shared_preload_libraries=timescaledb
+  polygnosics:
+    build: ./
+    image: artofimagination/polygnosics
+    volumes:
+      - ${USER_STORE}:${USER_STORE_DOCKER}
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8081:8081
+    depends_on:
+      - system-mysql
+      - data-timescaledb

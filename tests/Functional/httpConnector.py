@@ -4,7 +4,7 @@ import time
 
 class HTTPConnector():
     def __init__(self):
-        self.URL = "http://polygnosics.localhost"
+        self.URL = "http://0.0.0.0:8081"
         connected = False
         timeout = 15
         while timeout > 0:

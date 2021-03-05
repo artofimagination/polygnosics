@@ -9,7 +9,7 @@ import time
 
 
 def _pingServer():
-    URL = "http://polygnosics.localhost"
+    URL = "http://0.0.0.0:8081"
     connected = False
     timeout = 15
     while timeout > 0:
