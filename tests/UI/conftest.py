@@ -9,9 +9,9 @@ import time
 
 
 def _pingServer():
-    URL = "http://0.0.0.0:8081"
+    URL = "http://0.0.0.0:8081/index"
     connected = False
-    timeout = 15
+    timeout = 20
     while timeout > 0:
         try:
             r = requests.get(url=URL)
@@ -31,7 +31,10 @@ def browser():
     _pingServer()
 
     # Initialize the ChromeDriver instance
-    b = selenium.webdriver.Firefox()
+    options = selenium.webdriver.FirefoxOptions()
+    options.headless = True
+    b = selenium.webdriver.Firefox(options=options)
+    b.set_window_size(1920, 1080)
 
     # Make its calls wait up to 10 seconds for elements to appear
     b.implicitly_wait(10)

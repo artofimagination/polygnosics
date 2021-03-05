@@ -4,7 +4,7 @@ import time
 
 class HTTPConnector():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8081"
+        self.URL = "http://0.0.0.0:8081/index"
         connected = False
         timeout = 15
         while timeout > 0:

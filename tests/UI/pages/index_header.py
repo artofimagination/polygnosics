@@ -9,9 +9,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class IndexPageHeader:
-    URL = "http://0.0.0.0:8081"
+    URL = "http://0.0.0.0:8081/index"
 
-    SIGNUP_BUTTON = (By.LINK_TEXT, 'Join Us')
+    SIGNUP_BUTTON = (By.XPATH, "//a[@href='/auth_signup']")
     SIGNIN_BUTTON = (By.LINK_TEXT, 'Sign In')
     PRELOADER = (By.CLASS_NAME, 'loader-wrap')
 
@@ -28,6 +28,8 @@ class IndexPageHeader:
         return self.browser.title
 
     def goToSignup(self):
+        self.browser.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight*0.8);")
         signup = self.browser.find_element(*self.SIGNUP_BUTTON)
         signup.click()
 
