@@ -44,4 +44,4 @@ jobs:
       with:
         time: '8s'
     - name: Run tests
-      run: pytest -v tests/UI --soft-asserts && docker logs -f polygnosics_polygnosics_1
+      run: curl -i http://0.0.0.0:8081 && docker logs -f polygnosics_polygnosics_1 && pytest -v tests/UI --soft-asserts
