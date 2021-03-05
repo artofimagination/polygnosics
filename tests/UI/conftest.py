@@ -26,7 +26,7 @@ def _pingServer():
         raise Exception("Cannot connect to test server")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def browser():
     _pingServer()
 
