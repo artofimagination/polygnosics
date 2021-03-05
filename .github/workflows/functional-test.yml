@@ -22,4 +22,4 @@ jobs:
         run: cp tests/.env_functional_test .env && docker-compose --file docker-compose-test.yml up -d polygnosics
 
       - name: Run functional test
-        run: pip3 install -r tests/requirements.txt && pytest -v tests/Functional 
+        run: pip3 install -r tests/requirements.txt && pytest -v tests/Functional --soft-asserts
