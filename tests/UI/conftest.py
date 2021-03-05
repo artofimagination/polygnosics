@@ -4,7 +4,6 @@ This module contains shared fixtures.
 
 import pytest
 import selenium.webdriver
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import requests
 import time
 
