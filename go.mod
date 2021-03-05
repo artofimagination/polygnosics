@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
+	github.com/kr/pretty v0.2.1
 	github.com/lib/pq v1.2.0
 	github.com/pion/webrtc/v3 v3.0.0-beta.8
 	github.com/pkg/errors v0.9.1

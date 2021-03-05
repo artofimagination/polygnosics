@@ -1,4 +1,5 @@
-seleniumbase==1.56.5
-pytest_cases==2.5.0
+setuptools
+flake8
+seleniumbase
 pytest-soft-assertions
 
