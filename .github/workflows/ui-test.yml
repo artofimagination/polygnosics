@@ -38,6 +38,6 @@ jobs:
         seleniumbase install chromedriver
         seleniumbase install geckodriver
     - name: Start test server
-      run: cp tests/.env_functional_test .env && docker-compose up -d polygnosics
+      run: cp tests/.env_functional_test .env && docker-compose --file docker-compose-test.yml up -d polygnosics
     - name: Run tests
       run: pip3 pytest -v tests/UI --soft-asserts
