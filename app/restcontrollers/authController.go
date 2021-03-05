@@ -24,9 +24,9 @@ func authenticate(email string, password string, user *models.User) error {
 // LoginHandler checks the user email and password.
 // On success generates and stores a cookie in the session sotre and adds it to the response
 func (c *RESTController) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	content := c.ContentController.BuildLoginContent()
 	if r.Method == GET {
-		p := make(map[string]interface{})
-		c.RenderTemplate(w, "auth_login", p)
+		c.RenderTemplate(w, "auth_login", content)
 	} else {
 		name := "confirm"
 		p := make(map[string]interface{})

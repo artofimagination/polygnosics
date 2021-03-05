@@ -238,6 +238,12 @@ func (c *ContentController) BuildSignupContent() map[string]interface{} {
 	return content
 }
 
+func (c *ContentController) BuildLoginContent() map[string]interface{} {
+	content := make(map[string]interface{})
+	content = c.prepareContentHeader(content, IndexPageLoginName, "")
+	return content
+}
+
 func (c *ContentController) BuildProjectStatsContent() map[string]interface{} {
 	content := c.GetUserContent(c.UserData)
 	content = c.prepareContentHeader(content, StatsPageName, StatsProjects)
