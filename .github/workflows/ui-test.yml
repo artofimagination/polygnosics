@@ -39,5 +39,9 @@ jobs:
         seleniumbase install geckodriver
     - name: Start test server
       run: cp tests/.env_functional_test .env && docker-compose --file docker-compose-test.yml up -d polygnosics
+    - name: Sleep for 3 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '3s'
     - name: Run tests
-      run: pytest -v tests/UI --soft-asserts --browser=firefox --headless
+      run: pytest -v tests/UI --soft-asserts
