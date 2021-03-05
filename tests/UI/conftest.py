@@ -9,7 +9,7 @@ import time
 
 
 def _pingServer():
-    URL = "http://0.0.0.0:8081"
+    URL = "http://0.0.0.0:8081/"
     connected = False
     timeout = 15
     while timeout > 0:
@@ -24,6 +24,7 @@ def _pingServer():
 
     if connected is False:
         raise Exception("Cannot connect to test server")
+    time.sleep(3)
 
 
 @pytest.fixture()

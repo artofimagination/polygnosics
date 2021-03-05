@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class IndexPageHeader:
-    URL = "http://0.0.0.0:8081"
+    URL = "http://0.0.0.0:8081/"
 
     SIGNUP_BUTTON = (By.XPATH, "//a[@href='/auth_signup']")
     SIGNIN_BUTTON = (By.LINK_TEXT, 'Sign In')
