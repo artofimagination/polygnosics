@@ -9,25 +9,18 @@ import (
 	"syscall"
 	"time"
 
-	app "github.com/artofimagination/polygnosics/context"
-
-	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
+	"dummy-userdb/rest"
 )
 
 func main() {
-	appContext, err := app.NewContext()
+	restController, err := rest.NewController()
 	if err != nil {
-		log.Fatalf("Failed to initiate context. %s\n", errors.WithStack(err))
+		log.Fatal(err)
 	}
-
-	r := mux.NewRouter()
-	appContext.RESTFrontend.AddRouting(r)
-	appContext.RESTUserDB.AddRouting(r)
 
 	// Create Server and Route Handlers
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      restController.CreateRouter(),
 		Addr:         ":8082",
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
