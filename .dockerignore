@@ -1,6 +1,8 @@
 .env.example
 user-store
+docker-compose.yml
+docker-compose-test.yml
+run*.sh
 
 __pycache__
 .pytest_cache
-geckodriver.log
