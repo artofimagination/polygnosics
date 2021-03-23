@@ -1,6 +1,6 @@
 version: '3'
 networks:
-  poly_backend:
+  test-network:
     driver: bridge
     ipam:
       driver: default
@@ -8,39 +8,26 @@ networks:
       - subnet: 172.18.0.0/24    
 
 services:
-  system-mysql:
-    container_name: system-mysql
-    image: "mysql:8.0.19"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_DB_PASSWORD}
-      MYSQL_DATABASE: user_database
-    ports:
-      - ${MYSQL_DB_PORT}:${MYSQL_DB_PORT}
+  dummy-userdb:
+    build: ./tests/dummy-userdb
+    image: artofimagination/dummy-userdb
     volumes:
-      - /srv/user-database:/var/lib/mysql
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${USER_STORE}:${USER_STORE_DOCKER}
+    ports:
+      - 8083:8083
     networks: 
-      - poly_backend
-    command: >
-      --server-id=1
-      --port 3306
-      --character-set-server=utf8
-      --collation-server=utf8_general_ci
-      --sync_binlog=1
-      --binlog-format=ROW
-      --bind-address=0.0.0.0
-      --innodb_flush_log_at_trx_commit=1
-      --relay_log_info_repository=TABLE
-      --master_info_repository=TABLE
-      --gtid-mode=ON
-      --log-bin=mysql-bin
-      --enforce-gtid-consistency
+      test-network:
+        ipv4_address: 172.18.0.3
   backend:
     build: ./
-    image: artofimagination/polygnosics-backend
+    image: artofimagination/polygnosics
+    ports:
+      - 8084:8084
     volumes:
       - ${USER_STORE}:${USER_STORE_DOCKER}
-      - /var/run/docker.sock:/var/run/docker.sock
     networks: 
-      - poly_backend
+      test-network:
+        ipv4_address: 172.18.0.4
     depends_on:
-      - system-mysql
+      - dummy-userdb

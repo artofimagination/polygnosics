@@ -10,11 +10,8 @@ import (
 )
 
 const (
-	UserPathLogin          = "/login"
 	userPathAdd            = "/add-user"
-	UserPathDetectRootUser = "/detect-root-user"
-	userPathGetUserByID    = "/get-user-by-id"
-	userPathGetUserByEmail = "/get-user-by-email"
+	UserPathGetUserByEmail = "/get-user-by-email"
 	userPathUpdateSettings = "/update-user-settings"
 	userPathUpdateAssets   = "/update-user-assets"
 	userPathDelete         = "/delete-user"
@@ -23,19 +20,19 @@ const (
 func (c *RESTController) CreateUser(
 	name string,
 	email string,
-	password []byte) (*models.UserData, error) {
+	password string) (*models.UserData, error) {
 
 	params := make(map[string]interface{})
 	params["username"] = name
 	params["email"] = email
-	params["password"] = string(password)
+	params["password"] = password
 	data, err := rest.Post(rest.UserDBAddress, userPathAdd, params)
 	if err != nil {
 		return nil, err
 	}
 
 	userData := &models.UserData{}
-	if err := json.Unmarshal(data.([]byte), &userData); err != nil {
+	if err := json.Unmarshal([]byte(data.(string)), &userData); err != nil {
 		return nil, err
 	}
 
@@ -54,13 +51,18 @@ func (c *RESTController) DeleteUser(ID *uuid.UUID, nominatedOwners map[uuid.UUID
 
 func (c *RESTController) GetUserByEmail(email string) (*models.UserData, error) {
 	params := fmt.Sprintf("?email=%s", email)
-	data, err := rest.Get(rest.UserDBAddress, userPathGetUserByEmail, params)
+	data, err := rest.Get(rest.UserDBAddress, UserPathGetUserByEmail, params)
+	if err != nil {
+		return nil, err
+	}
+
+	bytesData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
 	userData := &models.UserData{}
-	if err := json.Unmarshal(data.([]byte), &userData); err != nil {
+	if err := json.Unmarshal(bytesData, &userData); err != nil {
 		return nil, err
 	}
 	return userData, nil
@@ -68,12 +70,9 @@ func (c *RESTController) GetUserByEmail(email string) (*models.UserData, error) 
 
 func (c *RESTController) UpdateUserSettings(userData *models.UserData) error {
 	params := make(map[string]interface{})
-	userDataBytes, err := json.Marshal(userData)
-	if err != nil {
-		return err
-	}
-	params["user-data"] = userDataBytes
-	_, err = rest.Post(rest.UserDBAddress, userPathUpdateSettings, params)
+	params["user-id"] = userData.ID
+	params["user-data"] = userData.Settings
+	_, err := rest.Post(rest.UserDBAddress, userPathUpdateSettings, params)
 	if err != nil {
 		return err
 	}
@@ -82,12 +81,9 @@ func (c *RESTController) UpdateUserSettings(userData *models.UserData) error {
 
 func (c *RESTController) UpdateUserAssets(userData *models.UserData) error {
 	params := make(map[string]interface{})
-	userDataBytes, err := json.Marshal(userData)
-	if err != nil {
-		return err
-	}
-	params["user-data"] = userDataBytes
-	_, err = rest.Post(rest.UserDBAddress, userPathUpdateAssets, params)
+	params["user-id"] = userData.ID
+	params["user-data"] = userData.Assets
+	_, err := rest.Post(rest.UserDBAddress, userPathUpdateAssets, params)
 	if err != nil {
 		return err
 	}

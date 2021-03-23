@@ -11,6 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Controller struct {
+	TestData    map[string]interface{}
+	RequestData map[string]interface{}
+}
+
+type ResponseWriter struct {
+	http.ResponseWriter
+}
+
+type Request struct {
+	*http.Request
+}
+
 func prettyPrint(v interface{}) {
 	b, err := json.MarshalIndent(v, "", "  ")
 	if err == nil {
@@ -20,41 +33,48 @@ func prettyPrint(v interface{}) {
 	fmt.Println("Failed to pretty print data")
 }
 
-func writeError(message string, w http.ResponseWriter, statusCode int) {
-	writeResponse(fmt.Sprintf("{\"error\":\"%s\"}", message), w, statusCode)
+func (w *ResponseWriter) writeError(message string, statusCode int) {
+	w.writeResponse(fmt.Sprintf("{\"error\":\"%s\"}", message), statusCode)
 }
 
-func writeData(data string, w http.ResponseWriter, statusCode int) {
-	writeResponse(fmt.Sprintf("{\"data\":\"%s\"}", data), w, statusCode)
+func (w *ResponseWriter) writeData(data string, statusCode int) {
+	w.writeResponse(fmt.Sprintf("{\"data\":\"%s\"}", data), statusCode)
 }
 
-func writeResponse(data string, w http.ResponseWriter, statusCode int) {
+func (w *ResponseWriter) writeResponse(data string, statusCode int) {
 	w.WriteHeader(statusCode)
 	fmt.Fprint(w, data)
 }
 
-func (c *Controller) getRequestData(w http.ResponseWriter, r *http.Request) {
-	encodeResponse(c.RequestData, w)
-}
-
-func (c Controller) ParseForm(r *http.Request) error {
-	if err := r.ParseForm(); err != nil {
-		return err
+func makeHandler(fn func(ResponseWriter, *Request)) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		r := &Request{request}
+		w := ResponseWriter{writer}
+		fn(w, r)
 	}
-
-	c.setRequestData(r)
-	return nil
 }
 
-func (c *Controller) setRequestData(r *http.Request) {
+func (c *Controller) clearRequestData(w ResponseWriter, r *Request) {
 	for k := range c.RequestData {
 		delete(c.RequestData, k)
 	}
-
-	c.RequestData["uri"] = r.RequestURI
 }
 
-func (c *Controller) decodeRequest(r *http.Request) (map[string]interface{}, error) {
+func (c *Controller) getRequestData(w ResponseWriter, r *Request) {
+	w.encodeResponse(c.RequestData, http.StatusOK)
+}
+
+func (c Controller) ParseForm(r *Request, requestPath string) error {
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	if requestPath != "" {
+		c.RequestData[requestPath] = r.RequestURI
+	}
+	return nil
+}
+
+func (c *Controller) decodeRequest(r *Request, requestPath string) (map[string]interface{}, error) {
 	data := make(map[string]interface{})
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -64,23 +84,26 @@ func (c *Controller) decodeRequest(r *http.Request) (map[string]interface{}, err
 	if err := json.Unmarshal(body, &data); err != nil {
 		return nil, err
 	}
-	c.RequestData = data
+
+	if requestPath != "" {
+		c.RequestData[requestPath] = data
+	}
 	return data, nil
 }
 
-func encodeResponse(data map[string]interface{}, w http.ResponseWriter) {
+func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 	b, err := json.Marshal(data)
 	if err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	writeResponse(string(b), w, http.StatusOK)
+	w.writeResponse(string(b), statusCode)
 }
 
-func (c *Controller) updateTestData(w http.ResponseWriter, r *http.Request) {
-	requestData, err := c.decodeRequest(r)
+func (c *Controller) updateTestData(w ResponseWriter, r *Request) {
+	requestData, err := c.decodeRequest(r, "")
 	if err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

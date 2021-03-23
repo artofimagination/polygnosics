@@ -1,4 +1,4 @@
-module dummy-backend
+module dummy-userdb
 
 go 1.15
 

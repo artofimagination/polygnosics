@@ -43,6 +43,10 @@ github.com/artofimagination/mysql-user-db-go-interface v0.0.14 h1:IwqU5R23TK/eYy
 github.com/artofimagination/mysql-user-db-go-interface v0.0.14/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.15 h1:2QN2Ji4Jorgc6Cslx83isDEn012P/NIyE6CXP+UnN1s=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.15/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.17 h1:3KZjctLTNaGUA5IVt+DBqoAy9MpTlO92tnrZHSKFr7A=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.17/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.18 h1:sBfaXgnfNFkoQfsZRVQ25NwPxt4Zgd2qrFuYbK5FlSQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.18/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/aryann/difflib v0.0.0-20170710044230-e206f873d14a/go.mod h1:DAHtR1m6lCRdSC2Tm3DSWRPvIPr6xNKyeHdqDQSQT+A=
 github.com/aws/aws-lambda-go v1.13.3/go.mod h1:4UKl9IzQMoD+QF79YdCuzCwp8VbmG4VAQwij/eHl5CU=
 github.com/aws/aws-sdk-go v1.27.0/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=

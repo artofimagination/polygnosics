@@ -11,8 +11,8 @@ RUN go mod tidy
 RUN cd $GOPATH/src/polygnosics/ && go build main.go
 RUN chmod 0766 $GOPATH/src/polygnosics/scripts/init.sh
 
-# This container exposes port 8081 to the outside world
-EXPOSE 8082
+# This container exposes port 8084 to the outside world
+EXPOSE 8084
 
 # Run the executable
 CMD ["./scripts/init.sh"]

@@ -1,6 +1,7 @@
 package businesslogic
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -100,6 +101,16 @@ func (c *Context) setGroupPrivileges(userData *models.UserData, group string) er
 	return nil
 }
 
+func encryptPassword(password []byte) (string, error) {
+	var hashedPassword []byte
+	hashedPassword, err := bcrypt.GenerateFromPassword(password, 16)
+	if err != nil {
+		return "", err
+	}
+	hashedPasswordBase64 := base64.URLEncoding.EncodeToString(hashedPassword)
+	return hashedPasswordBase64, nil
+}
+
 func authenticate(password []byte, storedPassword []byte) error {
 	if err := bcrypt.CompareHashAndPassword(storedPassword, password); err != nil {
 		return errIncorrectEmailOrPass
@@ -110,28 +121,19 @@ func authenticate(password []byte, storedPassword []byte) error {
 func (c *Context) Login(email string, password []byte) (*models.UserData, error) {
 	// TODO Issue#45: replace this with elastic search
 	user, err := c.UserDBController.GetUserByEmail(email)
-	if err == dbcontrollers.ErrUserNotFound {
+	if err != nil && err.Error() == dbcontrollers.ErrUserNotFound.Error() {
 		return nil, errIncorrectEmailOrPass
 	} else if err != nil {
 		return nil, err
 	}
 
 	// Get and check user and password
-	err = authenticate(password /*user.Password*/, []byte(""))
+	err = authenticate(password, user.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	return user, nil
-}
-
-func encryptPassword(password []byte) ([]byte, error) {
-	var hashedPassword []byte
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, 16)
-	if err != nil {
-		return hashedPassword, err
-	}
-	return hashedPassword, nil
 }
 
 func (c *Context) AddUser(uName string, email string, password []byte, group string) error {
@@ -146,7 +148,7 @@ func (c *Context) AddUser(uName string, email string, password []byte, group str
 	}
 
 	if err := GeneratePath(userData.Assets); err != nil {
-
+		return err
 	}
 
 	if err := c.setGroupPrivileges(userData, group); err != nil {
@@ -169,4 +171,15 @@ func (c *Context) GetUserByEmail(email string) (*models.UserData, error) {
 		return nil, err
 	}
 	return searchedUser, err
+}
+
+func (c *Context) DetectRootUser() (bool, error) {
+	// TODO Issue#107: Replace this with proper way of detecting if root has already been created.
+	_, err := c.UserDBController.GetUserByEmail("root@test.com")
+	if err != nil && err.Error() == dbcontrollers.ErrUserNotFound.Error() {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+	return true, nil
 }
