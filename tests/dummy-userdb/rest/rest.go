@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+	dbrest "github.com/artofimagination/mysql-user-db-go-interface/restcontrollers"
 	"github.com/gorilla/mux"
 )
 
@@ -44,16 +45,6 @@ const (
 	ProductPriceKey            = "amount"
 	ProductTagsKey             = "tags"
 	ProductCategoriesKey       = "categories"
-)
-
-const (
-	UserPathAdd            = "/add-user"
-	UserPathDetectRoot     = "/detect-root-user"
-	UserPathUpdateSettings = "/update-user-settings"
-	UserPathUpdateAssets   = "/update-user-assets"
-	UserPathGetByEmail     = "/get-user-by-email"
-	UserPathGetByID        = "/get-user-by-id"
-	UserPathDeleteByID     = "/delete-user"
 )
 
 const (
@@ -101,12 +92,12 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) CreateRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", sayHello)
-	r.HandleFunc(UserPathAdd, makeHandler(c.addUser))
-	r.HandleFunc(UserPathUpdateSettings, makeHandler(c.updateUserSettings))
-	r.HandleFunc(UserPathUpdateAssets, makeHandler(c.updateUserAssets))
-	r.HandleFunc(UserPathGetByID, makeHandler(c.getUserByID))
-	r.HandleFunc(UserPathGetByEmail, makeHandler(c.getUserByEmail))
-	r.HandleFunc(UserPathDeleteByID, makeHandler(c.deleteUserByID))
+	r.HandleFunc(dbrest.UserPathAdd, makeHandler(c.addUser))
+	r.HandleFunc(dbrest.UserPathUpdateSettings, makeHandler(c.updateUserSettings))
+	r.HandleFunc(dbrest.UserPathUpdateAssets, makeHandler(c.updateUserAssets))
+	r.HandleFunc(dbrest.UserPathGetByID, makeHandler(c.getUserByID))
+	r.HandleFunc(dbrest.UserPathGetByEmail, makeHandler(c.getUserByEmail))
+	r.HandleFunc(dbrest.UserPathDeleteByID, makeHandler(c.deleteUserByID))
 
 	r.HandleFunc("/clear-request-data", makeHandler(c.clearRequestData))
 	r.HandleFunc("/get-request-data", makeHandler(c.getRequestData))
@@ -115,7 +106,7 @@ func (c *Controller) CreateRouter() *mux.Router {
 }
 
 func (c *Controller) addUser(w ResponseWriter, r *Request) {
-	requestData, err := c.decodeRequest(r, UserPathAdd)
+	requestData, err := c.decodeRequest(r, dbrest.UserPathAdd)
 	if err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
@@ -154,7 +145,7 @@ func (c *Controller) addUser(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
-	requestData, err := c.decodeRequest(r, UserPathUpdateSettings)
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
 	if err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
@@ -166,7 +157,7 @@ func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) updateUserAssets(w ResponseWriter, r *Request) {
-	requestData, err := c.decodeRequest(r, UserPathUpdateAssets)
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateAssets)
 	if err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
@@ -179,7 +170,7 @@ func (c *Controller) updateUserAssets(w ResponseWriter, r *Request) {
 
 func (c *Controller) getUserByID(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
-	if err := c.ParseForm(r, UserPathGetByID); err != nil {
+	if err := c.ParseForm(r, dbrest.UserPathGetByID); err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
@@ -197,7 +188,7 @@ func (c *Controller) getUserByID(w ResponseWriter, r *Request) {
 
 func (c *Controller) getUserByEmail(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
-	if err := c.ParseForm(r, UserPathGetByEmail); err != nil {
+	if err := c.ParseForm(r, dbrest.UserPathGetByEmail); err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
@@ -217,7 +208,7 @@ func (c *Controller) getUserByEmail(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) deleteUserByID(w ResponseWriter, r *Request) {
-	requestData, err := c.decodeRequest(r, UserPathUpdateSettings)
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
 	if err != nil {
 		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return

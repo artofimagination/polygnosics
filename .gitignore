@@ -4,5 +4,5 @@ user-store
 __pycache__
 .pytest_cache
 
-tests/dummy-backend/test-data/uploads
+./tests/dummy-backend/test-data/uploads
 ./tests/dummy-backend/test-data/uploads/testData.json
