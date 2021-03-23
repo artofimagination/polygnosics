@@ -1,0 +1,166 @@
+{
+	"users": {
+		"f9ebc23d-81cc-4bf2-b908-7e88c58ebe91": {
+			"id": "f9ebc23d-81cc-4bf2-b908-7e88c58ebe91",
+			"username": "root",
+			"email": "root@test.com",
+      "password": "JDJhJDE2JFEuZTRnZ3dWeWFBYmtuWU95YlUyTE9xNlRGc1FmczlUT3IvQ0F6dW5QZklPcmFXNFhONlBP",
+			"assets": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+				  "avatar": "/user-assets/avatar-test.jpg"
+        }
+			},
+			"settings": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+          "privileges": {
+            "main_dashboard":1,
+            "misuse_metrics":1,
+            "product_stats":1,
+            "project_stats":1,
+            "delete_user":1
+          },
+          "group": "root",
+          "country": "New Zealand",
+          "city": "Auckland"
+        }
+			}
+		},
+		"e057d6bb-1cd6-4072-bca8-c04f05ca5036": {
+			"id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+			"username": "developer",
+			"email": "developer@test.com",
+      "password": "123",
+			"assets": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+				  "avatar": "/user-assets/avatar-test.jpg"
+        }
+			},
+			"settings": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+          "privileges": {
+            "main_dashboard":0,
+            "misuse_metrics":0,
+            "product_stats":1,
+            "project_stats":1,
+            "delete_user":0
+          },
+          "group": "developer",
+          "country": "New Zealand",
+          "city": "Auckland"
+        }
+			}
+		},
+		"e26d9dc6-f13a-4d54-8af0-a0be26a35ee5": {
+			"id": "e26d9dc6-f13a-4d54-8af0-a0be26a35ee5",
+			"username": "client",
+			"email": "client@test.com",
+      "password": "123",
+			"assets": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+				  "avatar": "/user-assets/avatar-test.jpg"
+        }
+			},
+			"settings": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+          "privileges": {
+            "main_dashboard":0,
+            "misuse_metrics":0,
+            "product_stats":0,
+            "project_stats":1,
+            "delete_user":0
+          },
+          "group": "client",
+          "country": "New Zealand",
+          "city": "Auckland"
+        }
+			}
+		},
+		"eca3aaa4-94a9-4282-9ff3-303fc3c46b70": {
+			"id": "eca3aaa4-94a9-4282-9ff3-303fc3c46b70",
+			"username": "admin",
+			"email": "admin@test.com",
+      "password": "123",
+			"assets": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+				  "avatar": "/user-assets/avatar-test.jpg"
+        }
+			},
+			"settings": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+          "privileges": {
+            "main_dashboard":1,
+            "misuse_metrics":1,
+            "product_stats":1,
+            "project_stats":1,
+            "delete_user":1
+          },
+          "group": "admin",
+          "country": "New Zealand",
+          "city": "Auckland"
+        }
+			}
+		},
+		"d479e0dd-c4b8-40ff-9e25-96edb1b1fd54": {
+			"id": "d479e0dd-c4b8-40ff-9e25-96edb1b1fd54",
+			"username": "visitor",
+			"email": "visitor@test.com",
+      "password": "123",
+			"assets": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+				  "avatar": "/user-assets/avatar-test.jpg"
+        }
+			},
+			"settings": {
+        "id": "e057d6bb-1cd6-4072-bca8-c04f05ca5036",
+        "datamap": {
+          "privileges": {
+            "main_dashboard":0,
+            "misuse_metrics":0,
+            "product_stats":0,
+            "project_stats":0,
+            "delete_user":0
+          },
+          "group": "visitor",
+          "country": "New Zealand",
+          "city": "Auckland"
+        }
+			}
+		}
+
+	},
+  "user_products":{
+
+  },
+  "user_projects":{
+
+  },
+	"products": {
+    "d479e0dd-c4b8-40ff-9e25-96edb1b1fd54": {
+      "details": {
+        "is_public": "unchecked",
+        "requires_3d": "checked",
+        "pricing": "Single Price",
+        "amount": "5"
+      }
+    }
+  },
+  "projects": {
+    "d479e0dd-c4b8-40ff-9e25-96edb1b1fd54": {
+
+    }
+  },
+  "categories":{
+    "civile_eng": "Civil Engineering",
+    "machine_learing": "Machine Learning",
+    "Pyhisics": "Physics"
+  }
+}

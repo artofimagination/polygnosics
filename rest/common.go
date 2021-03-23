@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-var FrontendAddress string = "http://172.18.0.5:8085"
-var UserDBAddress string = "http://172.18.0.3:8083"
+var FrontendAddress string = "http://172.18.0.5:8185"
+var UserDBAddress string = "http://172.18.0.3:8183"
 
 type ResponseWriter struct {
 	http.ResponseWriter
