@@ -121,9 +121,10 @@ func authenticate(password []byte, storedPassword []byte) error {
 func (c *Context) Login(email string, password []byte) (*models.UserData, error) {
 	// TODO Issue#45: replace this with elastic search
 	user, err := c.UserDBController.GetUserByEmail(email)
-	if err != nil && err.Error() == dbcontrollers.ErrUserNotFound.Error() {
-		return nil, errIncorrectEmailOrPass
-	} else if err != nil {
+	if err != nil {
+		if err.Error() == dbcontrollers.ErrUserNotFound.Error() {
+			return nil, errIncorrectEmailOrPass
+		}
 		return nil, err
 	}
 

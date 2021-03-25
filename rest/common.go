@@ -131,8 +131,8 @@ func Get(address string, path string, parameters string) (interface{}, error) {
 		return nil, err
 	}
 
-	if val, ok := dataMap["error"]; ok {
-		return nil, errors.New(val.(string))
+	if err, ok := dataMap["error"]; ok {
+		return nil, errors.New(err.(string))
 	}
 
 	if val, ok := dataMap["data"]; ok {
@@ -163,8 +163,8 @@ func Post(address string, path string, parameters map[string]interface{}) (inter
 		return nil, err
 	}
 
-	if _, ok := dataMap["error"]; ok {
-		return nil, errors.New(dataMap["error"].(string))
+	if err, ok := dataMap["error"]; ok {
+		return nil, errors.New(err.(string))
 	}
 
 	if val, ok := dataMap["data"]; ok {
