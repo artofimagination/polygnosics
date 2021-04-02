@@ -10,8 +10,8 @@ RUN go mod tidy
 
 RUN cd $GOPATH/src/dummy-userdb/ && go build main.go
 
-# This container exposes port 8082 to the outside world
-EXPOSE 8082
+# This container exposes port 8183 to the outside world
+EXPOSE 8183
 
 # Run the executable
 CMD ["./main"]

@@ -1,11 +1,11 @@
 package frontend
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/artofimagination/polygnosics/rest"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -29,9 +29,9 @@ func (c *RESTController) addUser(w rest.ResponseWriter, r *rest.Request) {
 	if err := c.BackendContext.AddUser(
 		requestData[UsersUsernameKey].(string),
 		requestData[UsersEmailKey].(string),
-		requestData[UsersPasswordKey].([]byte),
+		[]byte(requestData[UsersPasswordKey].(string)),
 		requestData[UserGroupKey].(string)); err != nil {
-		w.WriteError(fmt.Sprintf("Backend %s", errors.WithStack(err)), http.StatusAccepted)
+		w.WriteError(err.Error(), http.StatusAccepted)
 		return
 	}
 
@@ -48,32 +48,39 @@ func (c *RESTController) login(w rest.ResponseWriter, r *rest.Request) {
 	password := []byte(r.FormValue(UsersPasswordKey))
 	user, err := c.BackendContext.Login(email, password)
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusAccepted)
+		w.WriteError(err.Error(), http.StatusAccepted)
 		return
 	}
+	userMap := make(map[string]interface{})
+	response := make(map[string]interface{})
+	data, err := json.Marshal(user)
+	if err != nil {
+		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+	}
 
-	w.EncodeResponse(user)
+	err = json.Unmarshal(data, &userMap)
+	if err != nil {
+		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+	}
+	delete(userMap, "password")
+	response["data"] = userMap
+
+	w.EncodeResponse(response)
 }
 
 func (c *RESTController) detectRootUser(w rest.ResponseWriter, r *rest.Request) {
 	data := make(map[string]interface{})
-	rootFound, err := r.ForwardRequest(rest.UserDBAddress)
+	rootFound, err := c.BackendContext.DetectRootUser()
 	if err != nil {
 		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	data["data"] = rootFound
-
 	w.EncodeResponse(data)
 }
 
 func (c *RESTController) getUserByID(w rest.ResponseWriter, r *rest.Request) {
 	data := make(map[string]interface{})
-	if err := r.ParseForm(); err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusBadRequest)
-		return
-	}
-
 	user, err := r.ForwardRequest(rest.UserDBAddress)
 	if err != nil {
 		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)

@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/google/uuid"
+	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+	dbrest "github.com/artofimagination/mysql-user-db-go-interface/restcontrollers"
 	"github.com/gorilla/mux"
 )
 
@@ -20,9 +21,13 @@ const (
 	UsersPasswordKey = "password"
 	UserGroupKey     = "group"
 
-	SettingsKey = "settings"
-	DetailsKey  = "details"
-	AssetsKey   = "assets"
+	SettingsKey   = "settings"
+	SettingsIDKey = "id"
+	DetailsKey    = "details"
+	DetailsIDKey  = "id"
+	AssetsKey     = "assets"
+	AssetsIDKey   = "id"
+	DataMapKey    = "datamap"
 )
 
 const (
@@ -46,14 +51,14 @@ const (
 	ProjectKey = "projects"
 )
 
-const (
-	CategoriesKey = "categories"
-)
+var CategoriesKey = "categories"
 
-type Controller struct {
-	TestData    map[string]interface{}
-	RequestData map[string]interface{}
-}
+const (
+	UserTestUUID         = "026eede8-0b9b-4355-ad48-8a4f6cf0b49e"
+	UserSettingsTestUUID = "8b683a4c-198a-4cfd-abb1-7a3715a51bbb"
+	UserAssetsTestUUID   = "9f02fbd5-15b7-465a-a941-f4fdc11db23e"
+	RootUserTestUUID     = "f9ebc23d-81cc-4bf2-b908-7e88c58ebe91"
+)
 
 func convertCheckboxValueToText(input string) string {
 	if input == "" {
@@ -87,85 +92,86 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) CreateRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", sayHello)
-	r.HandleFunc("/update-test-data", c.updateTestData)
-	r.HandleFunc("/detect-root-user", c.detectRootUser)
-	r.HandleFunc("/add-user", c.addUser)
-	r.HandleFunc("/get-user-by-id", c.getUserByID)
-	r.HandleFunc("/login", c.login)
-	userMain := r.PathPrefix("/user-main").Subrouter()
-	userMain.HandleFunc("/product-wizard", c.addProduct)
-	r.HandleFunc("/get-products-by-user", c.getProductsByUserID)
-	r.HandleFunc("/get-projects-by-user", c.getProjectsByUserID)
-	r.HandleFunc("/get-categories", c.getCategoriesMap)
-	r.HandleFunc("/get-request-data", c.getRequestData)
+	r.HandleFunc(dbrest.UserPathAdd, makeHandler(c.addUser))
+	r.HandleFunc(dbrest.UserPathUpdateSettings, makeHandler(c.updateUserSettings))
+	r.HandleFunc(dbrest.UserPathUpdateAssets, makeHandler(c.updateUserAssets))
+	r.HandleFunc(dbrest.UserPathGetByID, makeHandler(c.getUserByID))
+	r.HandleFunc(dbrest.UserPathGetByEmail, makeHandler(c.getUserByEmail))
+	r.HandleFunc(dbrest.UserPathDeleteByID, makeHandler(c.deleteUserByID))
+
+	r.HandleFunc("/clear-request-data", makeHandler(c.clearRequestData))
+	r.HandleFunc("/get-request-data", makeHandler(c.getRequestData))
 
 	return r
 }
 
-func (c *Controller) addUser(w http.ResponseWriter, r *http.Request) {
-	requestData, err := c.decodeRequest(r)
+func (c *Controller) addUser(w ResponseWriter, r *Request) {
+	requestData, err := c.decodeRequest(r, dbrest.UserPathAdd)
 	if err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	for _, v := range c.TestData[UsersKey].(map[string]interface{}) {
 		if v.(map[string]interface{})[UsersUsernameKey] == requestData[UsersUsernameKey] {
-			writeError("User already exists", w, http.StatusAccepted)
+			w.writeError(dbcontrollers.ErrDuplicateNameEntry.Error(), http.StatusAccepted)
 			return
 		}
 	}
-	id := uuid.New()
 	userData := make(map[string]interface{})
 	userData[AssetsKey] = make(map[string]interface{})
+	userData[AssetsKey].(map[string]interface{})[AssetsIDKey] = UserAssetsTestUUID
+	userData[AssetsKey].(map[string]interface{})[DataMapKey] = make(map[string]interface{})
 	userData[SettingsKey] = make(map[string]interface{})
-	userData[SettingsKey].(map[string]interface{})[UserGroupKey] = requestData[UserGroupKey]
+	userData[SettingsKey].(map[string]interface{})[SettingsIDKey] = UserSettingsTestUUID
+	userData[SettingsKey].(map[string]interface{})[DataMapKey] = make(map[string]interface{})
 	userData[UsersUsernameKey] = requestData[UsersUsernameKey]
 	userData[UsersEmailKey] = requestData[UsersEmailKey]
 	userData[UsersPasswordKey] = requestData[UsersPasswordKey]
-	c.TestData[UsersKey].(map[string]interface{})[id.String()] = userData
-	writeData("OK", w, http.StatusCreated)
+	userData[UsersIDKey] = UserTestUUID
+	if requestData[UsersUsernameKey] == "root" {
+		userData[UsersIDKey] = RootUserTestUUID
+	}
+
+	c.TestData[UsersKey].(map[string]interface{})[UserTestUUID] = userData
+	data := make(map[string]interface{})
+	byteData, err := json.Marshal(c.TestData[UsersKey].(map[string]interface{})[UserTestUUID])
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	data["data"] = string(byteData)
+	w.encodeResponse(data, http.StatusCreated)
 }
 
-func (c *Controller) login(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	if err := c.ParseForm(r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
+func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
-	email := r.FormValue(UsersEmailKey)
-	pwd := r.FormValue(UsersPasswordKey)
-	data["data"] = make(map[string]interface{})
-	for _, v := range c.TestData[UsersKey].(map[string]interface{}) {
-		if v.(map[string]interface{})[UsersEmailKey].(string) == email && v.(map[string]interface{})[UsersPasswordKey].(string) == pwd {
-			for k, value := range v.(map[string]interface{}) {
-				if k != UsersPasswordKey {
-					data["data"].(map[string]interface{})[k] = value
-				}
-			}
-			encodeResponse(data, w)
-			return
-		}
-	}
-	writeError("Incorrect email or password", w, http.StatusAccepted)
+	user := c.TestData[UsersKey].(map[string]interface{})[requestData["user-id"].(string)].(map[string]interface{})
+	user[SettingsKey] = requestData["user-data"]
+	w.writeData("OK", http.StatusOK)
 }
 
-func (c *Controller) detectRootUser(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	for _, v := range c.TestData[UsersKey].(map[string]interface{}) {
-		if v.(map[string]interface{})[SettingsKey].(map[string]interface{})[UserGroupKey] == "root" {
-			data["data"] = "true"
-		}
+func (c *Controller) updateUserAssets(w ResponseWriter, r *Request) {
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateAssets)
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		return
 	}
 
-	encodeResponse(data, w)
+	user := c.TestData[UsersKey].(map[string]interface{})[requestData["user-id"].(string)].(map[string]interface{})
+	user[AssetsKey] = requestData["user-data"]
+	w.writeData("OK", http.StatusOK)
 }
 
-func (c *Controller) getUserByID(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) getUserByID(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
-	if err := c.ParseForm(r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
+	if err := c.ParseForm(r, dbrest.UserPathGetByID); err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -177,111 +183,44 @@ func (c *Controller) getUserByID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	encodeResponse(data, w)
+	w.encodeResponse(data, http.StatusOK)
 }
 
-func (c *Controller) addProduct(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
+func (c *Controller) getUserByEmail(w ResponseWriter, r *Request) {
+	data := make(map[string]interface{})
+	if err := c.ParseForm(r, dbrest.UserPathGetByEmail); err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
-
-	if err := uploadFile(ProductAvatarKey, "avatar.jpg", r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusInternalServerError)
-		return
-	}
-
-	if err := uploadFile(ProductMainAppKey, "main-app.tar.gz", r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusInternalServerError)
-		return
-	}
-
-	if err := uploadFile(ProductClientAppKey, "client-app.tar.gz", r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusInternalServerError)
-		return
-	}
-
-	id := uuid.New()
-	product := make(map[string]interface{})
-	product[id.String()] = make(map[string]interface{})
-	productData := product[id.String()].(map[string]interface{})
-	productData[AssetsKey] = make(map[string]interface{})
-	assets := productData[AssetsKey].(map[string]interface{})
-	productData[DetailsKey] = make(map[string]interface{})
-	details := productData[DetailsKey].(map[string]interface{})
-
-	assets[ProductAvatarKey] = fmt.Sprintf("/user-assets/uploads/avatar.jpg")
-	assets[ProductMainAppKey] = fmt.Sprintf("/user-assets/uploads/main-app.tar.gz")
-	assets[ProductClientAppKey] = fmt.Sprintf("/user-assets/uploads/client-app.tar.gz")
-
-	details[ProductNameKey] = r.FormValue(ProductNameKey)
-	details[ProductPriceKey] = r.FormValue(ProductPriceKey)
-	details[ProductPriceKey] = r.FormValue(ProductPriceKey)
-	details[ProductDescriptionKey] = r.FormValue(ProductDescriptionKey)
-	details[ProductShortDescriptionKey] = r.FormValue(ProductShortDescriptionKey)
-	details[ProductURLKey] = r.FormValue(ProductURLKey)
-	categoryList := make([]string, 0)
-	for k := range c.TestData[CategoriesKey].(map[string]interface{}) {
-		if r.FormValue(k) == "checked" {
-			categoryList = append(categoryList, k)
+	email := r.FormValue(UsersEmailKey)
+	for _, v := range c.TestData[UsersKey].(map[string]interface{}) {
+		if v.(map[string]interface{})[UsersEmailKey] == email {
+			data["data"] = v
+			break
 		}
 	}
-	details[ProductCategoriesKey] = categoryList
-	details[ProductRequires3DKey] = convertCheckboxValueToText(r.FormValue(ProductRequires3DKey))
-	details[ProductPublicKey] = convertCheckboxValueToText(r.FormValue(ProductPublicKey))
-	details[ProductTagsKey] = r.FormValue(ProductTagsKey)
-
-	c.TestData[ProductKey] = product
-	c.TestData[UserProductsKey].(map[string]interface{})[r.FormValue("user")] = id
-	writeData("OK", w, http.StatusCreated)
-}
-
-func (c *Controller) getProductsByUserID(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	if err := c.ParseForm(r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
+	if _, ok := data["data"]; !ok {
+		w.writeError(dbcontrollers.ErrUserNotFound.Error(), http.StatusAccepted)
 		return
 	}
-	data["data"] = make([]interface{}, 0)
-	id := r.FormValue(UsersIDKey)
-	for userKey, productKey := range c.TestData[UserProductsKey].(map[string]interface{}) {
-		if userKey == id {
-			for k, v := range c.TestData[ProductKey].(map[string]interface{}) {
-				if productKey == k {
-					data["data"] = append(data["data"].([]interface{}), v)
-					break
-				}
-			}
+
+	w.encodeResponse(data, http.StatusOK)
+}
+
+func (c *Controller) deleteUserByID(w ResponseWriter, r *Request) {
+	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	for k, _ := range c.TestData[UsersKey].(map[string]interface{}) {
+		if k == requestData["id"] {
+			delete(c.TestData[UsersKey].(map[string]interface{}), k)
+			w.writeData("OK", http.StatusOK)
+			return
 		}
 	}
 
-	encodeResponse(data, w)
-}
-
-func (c *Controller) getProjectsByUserID(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	if err := c.ParseForm(r); err != nil {
-		writeError(fmt.Sprintf("Backend: %s", err.Error()), w, http.StatusBadRequest)
-		return
-	}
-	data["data"] = make([]interface{}, 0)
-	id := r.FormValue(UsersIDKey)
-	for userKey, projectKey := range c.TestData[UsersProjectKey].(map[string]interface{}) {
-		if userKey == id {
-			for k, v := range c.TestData[ProjectKey].(map[string]interface{}) {
-				if projectKey == k {
-					data["data"] = append(data["data"].([]interface{}), v)
-					break
-				}
-			}
-		}
-	}
-
-	encodeResponse(data, w)
-}
-
-func (c *Controller) getCategoriesMap(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
-	data["data"] = c.TestData[CategoriesKey]
-	encodeResponse(data, w)
+	w.writeError(dbcontrollers.ErrUserNotFound.Error(), http.StatusAccepted)
 }

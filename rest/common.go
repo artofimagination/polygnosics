@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-var FrontendAddress string = "http://172.18.0.3:8081"
-var UserDBAddress string = "http://172.18.0.4:8083"
+var FrontendAddress string = "http://172.18.0.5:8185"
+var UserDBAddress string = "http://172.18.0.3:8183"
 
 type ResponseWriter struct {
 	http.ResponseWriter
@@ -32,12 +32,7 @@ func PrettyPrint(v interface{}) {
 
 func (r Request) DecodeRequest() (map[string]interface{}, error) {
 	data := make(map[string]interface{})
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(body, &data); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		return nil, err
 	}
 
@@ -136,8 +131,8 @@ func Get(address string, path string, parameters string) (interface{}, error) {
 		return nil, err
 	}
 
-	if val, ok := dataMap["error"]; ok {
-		return nil, errors.New(val.(string))
+	if err, ok := dataMap["error"]; ok {
+		return nil, errors.New(err.(string))
 	}
 
 	if val, ok := dataMap["data"]; ok {
@@ -168,7 +163,11 @@ func Post(address string, path string, parameters map[string]interface{}) (inter
 		return nil, err
 	}
 
-	if val, ok := dataMap["error"]; ok {
+	if err, ok := dataMap["error"]; ok {
+		return nil, errors.New(err.(string))
+	}
+
+	if val, ok := dataMap["data"]; ok {
 		return val, nil
 	}
 

@@ -28,7 +28,7 @@ func main() {
 	// Create Server and Route Handlers
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         ":8082",
+		Addr:         ":8184",
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}

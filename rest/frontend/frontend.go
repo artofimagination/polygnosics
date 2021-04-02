@@ -2,6 +2,7 @@ package frontend
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -45,12 +46,17 @@ func (m FileSystem) Open(name string) (result http.File, err error) {
 	return f, nil
 }
 
+func sayHello(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Hi! I am the backend server!")
+}
+
 // AddRouting adds front end endpoints.
 func (c *RESTController) AddRouting(r *mux.Router) {
+	r.HandleFunc("/", sayHello)
 	r.HandleFunc("/detect-root-user", rest.MakeHandler(c.detectRootUser))
 	r.HandleFunc("/add-user", rest.MakeHandler(c.addUser))
 	r.HandleFunc("/get-user-by-id", rest.MakeHandler(c.getUserByID))
-	r.HandleFunc("/login", rest.MakeHandler(c.login))
+	r.HandleFunc("/auth_login", rest.MakeHandler(c.login))
 
 	// Static file servers
 	var dirUserAssets string

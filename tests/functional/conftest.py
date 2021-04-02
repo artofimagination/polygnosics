@@ -3,9 +3,9 @@ import requests
 import time
 
 
-class HTTPConnectorFrontend():
+class HTTPConnectorBackend():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8081"
+        self.URL = "http://0.0.0.0:8184"
         connected = False
         timeout = 15
         while timeout > 0:
@@ -27,12 +27,13 @@ class HTTPConnectorFrontend():
 
     def POST(self, address, json):
         url = self.URL + address
-        return requests.post(url=url, json=json, data=json)
+        print(url, address, json)
+        return requests.post(url=url, json=json)
 
 
-class HTTPConnectorDummyBackend():
+class HTTPConnectorDummyUserDB():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8082"
+        self.URL = "http://0.0.0.0:8183"
         connected = False
         timeout = 15
         while timeout > 0:
@@ -58,10 +59,10 @@ class HTTPConnectorDummyBackend():
 
 
 @pytest.fixture
-def httpFrontend():
-    return HTTPConnectorFrontend()
+def httpBackend():
+    return HTTPConnectorBackend()
 
 
 @pytest.fixture
-def httpDummyBackend():
-    return HTTPConnectorDummyBackend()
+def httpDummyUserDB():
+    return HTTPConnectorDummyUserDB()
