@@ -34,6 +34,8 @@ github.com/artofimagination/golang-docker v0.0.2 h1:nsONDSK7+40YftTVqGeTWkrGDrnh
 github.com/artofimagination/golang-docker v0.0.2/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
 github.com/artofimagination/golang-docker v0.0.3 h1:bIMl9YK5HmC+BkQ5oDRYKlgZ1AUDWjUiCmpvRoVwERs=
 github.com/artofimagination/golang-docker v0.0.3/go.mod h1:nApjZM6VrtIo0r6P1Ay+OkHk0/m4VDsC+kZHV8h8wqk=
+github.com/artofimagination/mysql-resources-db-go-service v0.0.0 h1:CF32gu2X67zwQwNh5AQS4dq3x7tpnBF+cF6hddcpVHo=
+github.com/artofimagination/mysql-resources-db-go-service v0.0.0/go.mod h1:5/yKiMWfaX+td0Ra5z5Quhz9MoReQeVEpO4bqTbZ7yo=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11 h1:uQ7hdDAT4fR9ZMy9Jb+KIwTGLS5sug8R/YdREWmnNj8=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.11/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.12 h1:hyNmXLyJdQeFFlIQMPQPG7qmyeKZjR7aZJ9HJTGAw4k=
@@ -50,6 +52,8 @@ github.com/artofimagination/mysql-user-db-go-interface v0.0.18 h1:sBfaXgnfNFkoQf
 github.com/artofimagination/mysql-user-db-go-interface v0.0.18/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.19 h1:LPTSnarjP2BrOmjClRVrvOhhbT8sgfKEFzx7Qrp0wtA=
 github.com/artofimagination/mysql-user-db-go-interface v0.0.19/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.20 h1:S1F1YLvC6Ysr4e9BIq1vm1dATpfb7HM1fvN8DMEmIWQ=
+github.com/artofimagination/mysql-user-db-go-interface v0.0.20/go.mod h1:7JT7p08qv9viOdOHfHJcp3WXe8IWyiCxMuT1r1g8jTQ=
 github.com/aryann/difflib v0.0.0-20170710044230-e206f873d14a/go.mod h1:DAHtR1m6lCRdSC2Tm3DSWRPvIPr6xNKyeHdqDQSQT+A=
 github.com/aws/aws-lambda-go v1.13.3/go.mod h1:4UKl9IzQMoD+QF79YdCuzCwp8VbmG4VAQwij/eHl5CU=
 github.com/aws/aws-sdk-go v1.27.0/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=

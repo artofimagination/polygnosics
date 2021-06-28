@@ -1,8 +1,12 @@
 .env
 user-store
+archived_logs
+latest_logs
 
 __pycache__
 .pytest_cache
 
-./tests/dummy-backend/test-data/uploads
-./tests/dummy-backend/test-data/uploads/testData.json
+tests/dummy-userdb/test-data/uploads
+tests/dummy-userdb/test-data/uploads/testData.json
+tests/dummy-resourcedb/test-data/uploads
+tests/dummy-resourcedb/test-data/uploads/*

@@ -22,7 +22,7 @@ const (
 func (c *RESTController) addUser(w rest.ResponseWriter, r *rest.Request) {
 	requestData, err := r.DecodeRequest()
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusBadRequest)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (c *RESTController) addUser(w rest.ResponseWriter, r *rest.Request) {
 
 func (c *RESTController) login(w rest.ResponseWriter, r *rest.Request) {
 	if err := r.ParseForm(); err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusBadRequest)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -55,12 +55,12 @@ func (c *RESTController) login(w rest.ResponseWriter, r *rest.Request) {
 	response := make(map[string]interface{})
 	data, err := json.Marshal(user)
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 	}
 
 	err = json.Unmarshal(data, &userMap)
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 	}
 	delete(userMap, "password")
 	response["data"] = userMap
@@ -72,7 +72,7 @@ func (c *RESTController) detectRootUser(w rest.ResponseWriter, r *rest.Request) 
 	data := make(map[string]interface{})
 	rootFound, err := c.BackendContext.DetectRootUser()
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	data["data"] = rootFound
@@ -83,7 +83,7 @@ func (c *RESTController) getUserByID(w rest.ResponseWriter, r *rest.Request) {
 	data := make(map[string]interface{})
 	user, err := r.ForwardRequest(rest.UserDBAddress)
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	data["data"] = user

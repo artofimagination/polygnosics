@@ -6,18 +6,56 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+
+	httpModels "github.com/artofimagination/polygnosics/models/http"
 )
 
 var FrontendAddress string = "http://172.18.0.5:8185"
 var UserDBAddress string = "http://172.18.0.3:8183"
+var ResourcesDBAddress string = "http://172.18.0.2:8182"
 
 type ResponseWriter struct {
 	http.ResponseWriter
 }
 
+type RequestInterface interface {
+	FormFile(key string) (MultiPartFileImpl, *multipart.FileHeader, error)
+	ParseForm() error
+	FormValue(key string) string
+	ParseMultipartForm(maxMemory int64) error
+}
+
+// File is the interface class to redefine multipart.File with custom, i.e. mock implementations
+type MultiPartFile interface {
+	Close() error
+	Read(p []byte) (n int, err error)
+}
+
+type MultiPartFileImpl struct {
+	MultiPartFile
+}
+
 type Request struct {
-	*http.Request
+	request *http.Request
+}
+
+func (r Request) FormFile(key string) (MultiPartFileImpl, *multipart.FileHeader, error) {
+	file, handler, err := r.request.FormFile(key)
+	return MultiPartFileImpl{file}, handler, err
+}
+
+func (r *Request) ParseForm() error {
+	return r.request.ParseForm()
+}
+
+func (r *Request) FormValue(key string) string {
+	return r.request.FormValue(key)
+}
+
+func (r *Request) ParseMultipartForm(maxMemory int64) error {
+	return r.request.ParseMultipartForm(maxMemory)
 }
 
 // PrettyPrint logs maps and structs in formatted way in the console.
@@ -32,7 +70,7 @@ func PrettyPrint(v interface{}) {
 
 func (r Request) DecodeRequest() (map[string]interface{}, error) {
 	data := make(map[string]interface{})
-	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+	if err := json.NewDecoder(r.request.Body).Decode(&data); err != nil {
 		return nil, err
 	}
 
@@ -40,13 +78,19 @@ func (r Request) DecodeRequest() (map[string]interface{}, error) {
 }
 
 func (w *ResponseWriter) WriteError(message string, statusCode int) {
-	w.WriteResponse(fmt.Sprintf("{\"error\":\"%s\"}", message), statusCode)
+	response := httpModels.ResponseData{Error: message}
+	b, err := json.Marshal(response)
+	if err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	w.WriteResponse(string(b), statusCode)
 }
 
 func (w *ResponseWriter) EncodeResponse(data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	w.WriteResponse(string(b), http.StatusOK)
@@ -70,18 +114,18 @@ func MakeHandler(fn func(ResponseWriter, *Request)) http.HandlerFunc {
 }
 
 func (r Request) ForwardRequest(address string) (interface{}, error) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.request.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	r.Body = ioutil.NopCloser(bytes.NewReader(body))
-	proxyReq, err := http.NewRequest(r.Method, fmt.Sprintf("%s%s", address, r.RequestURI), bytes.NewReader(body))
+	r.request.Body = ioutil.NopCloser(bytes.NewReader(body))
+	proxyReq, err := http.NewRequest(r.request.Method, fmt.Sprintf("%s%s", address, r.request.RequestURI), bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
 
-	for header, values := range r.Header {
+	for header, values := range r.request.Header {
 		for _, value := range values {
 			proxyReq.Header.Add(header, value)
 		}
@@ -126,23 +170,19 @@ func Get(address string, path string, parameters string) (interface{}, error) {
 		return nil, err
 	}
 
-	dataMap := make(map[string]interface{})
-	if err := json.Unmarshal(body, &dataMap); err != nil {
+	responseContent := httpModels.ResponseData{}
+	if err := json.Unmarshal(body, &responseContent); err != nil {
 		return nil, err
 	}
 
-	if err, ok := dataMap["error"]; ok {
-		return nil, errors.New(err.(string))
+	if responseContent.Error != "" {
+		return nil, errors.New(responseContent.Error)
 	}
 
-	if val, ok := dataMap["data"]; ok {
-		return val, nil
-	}
-
-	return nil, errors.New("Invalid response")
+	return responseContent.Data, nil
 }
 
-func Post(address string, path string, parameters map[string]interface{}) (interface{}, error) {
+func Post(address string, path string, parameters interface{}) (interface{}, error) {
 	reqBody, err := json.Marshal(parameters)
 	if err != nil {
 		return nil, err
@@ -152,24 +192,21 @@ func Post(address string, path string, parameters map[string]interface{}) (inter
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	dataMap := make(map[string]interface{})
-	if err := json.Unmarshal(body, &dataMap); err != nil {
+	responseContent := httpModels.ResponseData{}
+	if err := json.Unmarshal(body, &responseContent); err != nil {
 		return nil, err
 	}
 
-	if err, ok := dataMap["error"]; ok {
-		return nil, errors.New(err.(string))
+	if responseContent.Error != "" {
+		return nil, errors.New(responseContent.Error)
 	}
 
-	if val, ok := dataMap["data"]; ok {
-		return val, nil
-	}
-
-	return nil, errors.New("Invalid response")
+	return responseContent.Data, nil
 }

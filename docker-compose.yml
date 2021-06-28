@@ -19,6 +19,17 @@ services:
     networks: 
       test-network:
         ipv4_address: 172.18.0.3
+  dummy-resourcedb:
+    build: ./tests/dummy-resourcedb
+    image: artofimagination/dummy-resourcedb
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${RESOURCES}:${RESOURCES_DOCKER}
+    ports:
+      - 8182:8182
+    networks: 
+      test-network:
+        ipv4_address: 172.18.0.2
   backend:
     build: ./
     image: artofimagination/polygnosics
@@ -26,8 +37,10 @@ services:
       - 8184:8184
     volumes:
       - ${USER_STORE}:${USER_STORE_DOCKER}
+      - ${RESOURCES}:${RESOURCES_DOCKER}
     networks: 
       test-network:
         ipv4_address: 172.18.0.4
     depends_on:
       - dummy-userdb
+      - dummy-resourcedb

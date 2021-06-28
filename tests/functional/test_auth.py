@@ -26,13 +26,23 @@ createTestData = [
 OCIAlK9YHqVQhUPArpMwlNyM6YUuviVS',
                     'username': 'signupUser'
                 },
+                common.UPDATE_USER_ASSETS_PATH: {
+                    'user-data': {
+                        'datamap': {
+                            'base_asset_path': '/user-assets/9f02/fbd5/\
+15b7/465a/a941/f4fd/c11d/b23e'
+                        },
+                        'id': '9f02fbd5-15b7-465a-a941-f4fdc11db23e'
+                    },
+                    'user-id': "026eede8-0b9b-4355-ad48-8a4f6cf0b49e"
+                },
                 common.UPDATE_USER_SETTINGS_PATH: {
-                    'user-id': "026eede8-0b9b-4355-ad48-8a4f6cf0b49e",
                     'user-data': {
                         'datamap': {
                             'group': 'client',
                             'privileges': {
                                 'delete_user': 0,
+                                'edit_page': 0,
                                 'main_dashboard': 0,
                                 'misuse_metrics': 0,
                                 'product_stats': 0,
@@ -40,17 +50,8 @@ OCIAlK9YHqVQhUPArpMwlNyM6YUuviVS',
                             }
                         },
                         'id': '8b683a4c-198a-4cfd-abb1-7a3715a51bbb'
-                    }
-                },
-                common.UPDATE_USER_ASSETS_PATH: {
-                    'user-id': "026eede8-0b9b-4355-ad48-8a4f6cf0b49e",
-                    'user-data': {
-                        'datamap': {
-                            'base_asset_path': '/user-assets/9f02/fbd5/\
-15b7/465a/a941/f4fd/c11d/b23e'
-                        },
-                        'id': '9f02fbd5-15b7-465a-a941-f4fdc11db23e'
-                    }
+                    },
+                    'user-id': "026eede8-0b9b-4355-ad48-8a4f6cf0b49e"
                 }
             }
         }),
@@ -81,6 +82,7 @@ ids = ['Success', 'Failure']
 
 @pytest.mark.parametrize(dataColumns, createTestData, ids=ids)
 def test_AddUser(httpBackend, httpDummyUserDB, data, expected):
+    # Clears all previously stored incoming requests on the dummy server
     try:
         r = httpDummyUserDB.POST("/clear-request-data", None)
     except Exception:
@@ -160,6 +162,7 @@ createTestData = [
                         "group": "client",
                         "privileges": {
                             "delete_user": 0,
+                            'edit_page': 0,
                             "main_dashboard": 0,
                             "misuse_metrics": 0,
                             "product_stats": 0,
@@ -196,6 +199,7 @@ ids = ['Success', 'Failure']
 
 @pytest.mark.parametrize(dataColumns, createTestData, ids=ids)
 def test_Signin(httpBackend, httpDummyUserDB, data, expected):
+    # Clears all previously stored incoming requests on the dummy server
     try:
         httpDummyUserDB.POST("/clear-request-data", None)
     except Exception:
@@ -298,6 +302,7 @@ def test_DetectRootUser(httpBackend, httpDummyUserDB, data, expected):
             pytest.fail("Failed to send POST request")
             return None
 
+    # Clears all previously stored incoming requests on the dummy server
     try:
         httpDummyUserDB.POST("/clear-request-data", None)
     except Exception:

@@ -34,7 +34,7 @@ func (c *Context) DeleteProject(project *models.ProjectData) error {
 		return err
 	}
 
-	folder := c.ModelFunctions.GetFilePath(project.Assets, models.BaseAssetPath, "")
+	folder := c.DBModelFunctions.GetFilePath(project.Assets, models.BaseAssetPath, "")
 	if err := removeContents(folder); err != nil {
 		return fmt.Errorf("Failed to delete project. %s", errors.WithStack(err))
 	}
@@ -52,7 +52,7 @@ func (c *Context) CreateDockerContainer(userID *uuid.UUID, produtID *uuid.UUID) 
 
 func (c *Context) getProjectState(details *models.Asset) string {
 	state := NotRunning
-	containerID := c.ModelFunctions.GetField(details, ProjectContainerID, "").(string)
+	containerID := c.DBModelFunctions.GetField(details, ProjectContainerID, "").(string)
 	if err := docker.ContainerExists(containerID); err != nil {
 		state = NotRunning
 	}
@@ -67,7 +67,7 @@ func (c *Context) CheckProject(id *uuid.UUID) (bool, error) {
 	// if err != nil {
 	// 	return false, err
 	// }
-	// containerID := c.UserDBController.ModelFunctions.GetField(project.Details, ProjectContainerID, "")
+	// containerID := c.UserDBController.DBModelFunctions.GetField(project.Details, ProjectContainerID, "")
 
 	// ip, err := docker.GetIPAddress(containerID.(string), "polygnosics_poly_backend")
 	// if err != nil {
@@ -87,20 +87,20 @@ func (c *Context) CheckProject(id *uuid.UUID) (bool, error) {
 }
 
 func (c *Context) SetProjectDetails(details *models.Asset, productDetails *models.Asset, r *http.Request, containerID string) {
-	c.ModelFunctions.SetField(details, ProjectContainerID, containerID)
-	c.ModelFunctions.SetField(details, ProjectState, c.getProjectState(details))
-	c.ModelFunctions.SetField(details, ProjectVisibilityKey, r.FormValue(ProjectVisibilityKey))
-	c.ModelFunctions.SetField(details, ProjectServerLogging, getBooleanString(r.FormValue(ProjectServerLogging)))
-	c.ModelFunctions.SetField(details, ProjectClientLogging, getBooleanString(r.FormValue(ProjectClientLogging)))
-	categories := c.ModelFunctions.GetField(productDetails, ProductCategoriesKey, "")
-	c.ModelFunctions.SetField(details, ProductCategoriesKey, categories.([]interface{}))
+	c.DBModelFunctions.SetField(details, ProjectContainerID, containerID)
+	c.DBModelFunctions.SetField(details, ProjectState, c.getProjectState(details))
+	c.DBModelFunctions.SetField(details, ProjectVisibilityKey, r.FormValue(ProjectVisibilityKey))
+	c.DBModelFunctions.SetField(details, ProjectServerLogging, getBooleanString(r.FormValue(ProjectServerLogging)))
+	c.DBModelFunctions.SetField(details, ProjectClientLogging, getBooleanString(r.FormValue(ProjectClientLogging)))
+	categories := c.DBModelFunctions.GetField(productDetails, ProductCategoriesKey, "")
+	c.DBModelFunctions.SetField(details, ProductCategoriesKey, categories.([]interface{}))
 }
 
 func (c *Context) EditProjectData(project *models.ProjectData, r *http.Request) error {
-	c.ModelFunctions.SetField(project.Details, ProjectNameKey, r.FormValue(ProjectNameKey))
-	c.ModelFunctions.SetField(project.Details, ProjectVisibilityKey, r.FormValue(ProjectVisibilityKey))
-	c.ModelFunctions.SetField(project.Details, ProjectServerLogging, getBooleanString(r.FormValue(ProjectServerLogging)))
-	c.ModelFunctions.SetField(project.Details, ProjectClientLogging, getBooleanString(r.FormValue(ProjectClientLogging)))
+	c.DBModelFunctions.SetField(project.Details, ProjectNameKey, r.FormValue(ProjectNameKey))
+	c.DBModelFunctions.SetField(project.Details, ProjectVisibilityKey, r.FormValue(ProjectVisibilityKey))
+	c.DBModelFunctions.SetField(project.Details, ProjectServerLogging, getBooleanString(r.FormValue(ProjectServerLogging)))
+	c.DBModelFunctions.SetField(project.Details, ProjectClientLogging, getBooleanString(r.FormValue(ProjectClientLogging)))
 	if err := c.UserDBController.UpdateProjectDetails(project); err != nil && err != dbcontrollers.ErrNoProjectDetailsUpdate {
 		return err
 	}
@@ -135,21 +135,21 @@ func (c *Context) RunProject(userID *uuid.UUID, projectID *uuid.UUID) error {
 		return err
 	}
 
-	containerID := c.ModelFunctions.GetField(project.Details, ProjectContainerID, "").(string)
+	containerID := c.DBModelFunctions.GetField(project.Details, ProjectContainerID, "").(string)
 	if err := docker.ContainerExists(containerID); err != nil {
 		containerID, err = c.CreateDockerContainer(userID, &project.ProductID)
 		if err != nil {
-			c.ModelFunctions.SetField(project.Details, ProjectState, NotRunning)
+			c.DBModelFunctions.SetField(project.Details, ProjectState, NotRunning)
 			return err
 		}
 	}
 
 	if err := docker.StartContainer(containerID, "polygnosics_poly_backend"); err != nil {
-		c.ModelFunctions.SetField(project.Details, ProjectState, NotRunning)
+		c.DBModelFunctions.SetField(project.Details, ProjectState, NotRunning)
 		return err
 	}
-	c.ModelFunctions.SetField(project.Details, ProjectContainerID, containerID)
-	c.ModelFunctions.SetField(project.Details, ProjectState, Running)
+	c.DBModelFunctions.SetField(project.Details, ProjectContainerID, containerID)
+	c.DBModelFunctions.SetField(project.Details, ProjectState, Running)
 
 	if err := c.UserDBController.UpdateProjectDetails(project); err != nil && err != dbcontrollers.ErrNoProjectDetailsUpdate {
 		return err

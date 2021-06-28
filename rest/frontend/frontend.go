@@ -57,6 +57,27 @@ func (c *RESTController) AddRouting(r *mux.Router) {
 	r.HandleFunc("/add-user", rest.MakeHandler(c.addUser))
 	r.HandleFunc("/get-user-by-id", rest.MakeHandler(c.getUserByID))
 	r.HandleFunc("/auth_login", rest.MakeHandler(c.login))
+	r.HandleFunc("/get-categories", rest.MakeHandler(c.getCategoriesMap))
+
+	r.HandleFunc("/get-tutorials", rest.MakeHandler(c.getTutorials))
+	r.HandleFunc("/get-tutorial", rest.MakeHandler(c.getSingleItem))
+	r.HandleFunc("/get-files", rest.MakeHandler(c.getFiles))
+	r.HandleFunc("/get-files-section", rest.MakeHandler(c.getSingleItem))
+	r.HandleFunc("/get-news-feed", rest.MakeHandler(c.getNewsFeed))
+	r.HandleFunc("/get-news-item", rest.MakeHandler(c.getSingleItem))
+	r.HandleFunc("/get-faqs", rest.MakeHandler(c.getFAQs))
+	r.HandleFunc("/get-faq", rest.MakeHandler(c.getSingleItem))
+	r.HandleFunc("/get-faq-groups", rest.MakeHandler(c.getFAQGroups))
+	resources := r.PathPrefix("/resources").Subrouter()
+	resources.HandleFunc("/create-news-item", rest.MakeHandler(c.addNewsFeedEntry))
+	resources.HandleFunc("/edit-news-item", rest.MakeHandler(c.updateNewsEntry))
+	resources.HandleFunc("/create-files-item", rest.MakeHandler(c.addFileSection))
+	resources.HandleFunc("/edit-files-item", rest.MakeHandler(c.updateFileSection))
+	resources.HandleFunc("/create-tutorial-item", rest.MakeHandler(c.addTutorial))
+	resources.HandleFunc("/edit-tutorial-item", rest.MakeHandler(c.updateTutorial))
+	resources.HandleFunc("/create-faq-item", rest.MakeHandler(c.addFAQ))
+	resources.HandleFunc("/edit-faq-item", rest.MakeHandler(c.updateFAQ))
+	resources.HandleFunc("/get-article", rest.MakeHandler(c.getSingleItem))
 
 	// Static file servers
 	var dirUserAssets string
@@ -64,4 +85,10 @@ func (c *RESTController) AddRouting(r *mux.Router) {
 	flag.Parse()
 	handlerUserAssets := http.FileServer(FileSystem{http.Dir(dirUserAssets)})
 	r.PathPrefix("/user-assets/").Handler(http.StripPrefix("/user-assets/", handlerUserAssets))
+
+	var dirResources string
+	flag.StringVar(&dirResources, "dirResources", os.Getenv("RESOURCES_DOCKER"), "the directory to serve public resources files from. Defaults to the current dir")
+	flag.Parse()
+	handlerResources := http.FileServer(FileSystem{http.Dir(dirResources)})
+	r.PathPrefix(businesslogic.ResourcesPath).Handler(http.StripPrefix(businesslogic.ResourcesPath, handlerResources))
 }

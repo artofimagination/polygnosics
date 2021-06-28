@@ -13,7 +13,7 @@ import (
 
 type Controller struct {
 	TestData    map[string]interface{}
-	RequestData map[string]interface{}
+	RequestData []map[string]interface{}
 }
 
 type ResponseWriter struct {
@@ -22,6 +22,11 @@ type ResponseWriter struct {
 
 type Request struct {
 	*http.Request
+}
+
+type ResponseData struct {
+	Error string      `json:"error" validation:"required"`
+	Data  interface{} `json:"data" validation:"required"`
 }
 
 func prettyPrint(v interface{}) {
@@ -38,7 +43,15 @@ func (w *ResponseWriter) writeError(message string, statusCode int) {
 }
 
 func (w *ResponseWriter) writeData(data string, statusCode int) {
-	w.writeResponse(fmt.Sprintf("{\"data\":\"%s\"}", data), statusCode)
+	responseData := ResponseData{
+		Data: data,
+	}
+	b, err := json.Marshal(responseData)
+	if err != nil {
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	w.writeResponse(string(b), statusCode)
 }
 
 func (w *ResponseWriter) writeResponse(data string, statusCode int) {
@@ -55,31 +68,31 @@ func makeHandler(fn func(ResponseWriter, *Request)) http.HandlerFunc {
 }
 
 func (c *Controller) clearRequestData(w ResponseWriter, r *Request) {
-	for k := range c.RequestData {
-		delete(c.RequestData, k)
-	}
+	c.RequestData = nil
 	data, err := ioutil.ReadFile("/resources/testData.json")
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
 	}
 	jsonData := make(map[string]interface{})
 	err = json.Unmarshal(data, &jsonData)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
 	}
+	c.TestData = jsonData
 }
 
 func (c *Controller) getRequestData(w ResponseWriter, r *Request) {
 	w.encodeResponse(c.RequestData, http.StatusOK)
 }
 
-func (c Controller) ParseForm(r *Request, requestPath string) error {
+func (c *Controller) ParseForm(r *Request, requestPath string) error {
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
-	if requestPath != "" {
-		c.RequestData[requestPath] = r.RequestURI
-	}
+
+	request := make(map[string]interface{})
+	request[requestPath] = r.RequestURI
+	c.RequestData = append(c.RequestData, request)
 	return nil
 }
 
@@ -95,7 +108,9 @@ func (c *Controller) decodeRequest(r *Request, requestPath string) (map[string]i
 	}
 
 	if requestPath != "" {
-		c.RequestData[requestPath] = data
+		request := make(map[string]interface{})
+		request[requestPath] = data
+		c.RequestData = append(c.RequestData, request)
 	}
 	return data, nil
 }
@@ -103,7 +118,7 @@ func (c *Controller) decodeRequest(r *Request, requestPath string) (map[string]i
 func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 	b, err := json.Marshal(data)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	w.writeResponse(string(b), statusCode)
@@ -112,7 +127,7 @@ func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 func (c *Controller) updateTestData(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, "")
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

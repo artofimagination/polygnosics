@@ -108,7 +108,7 @@ func (c *Controller) CreateRouter() *mux.Router {
 func (c *Controller) addUser(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, dbrest.UserPathAdd)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (c *Controller) addUser(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
 	byteData, err := json.Marshal(c.TestData[UsersKey].(map[string]interface{})[UserTestUUID])
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	data["data"] = string(byteData)
@@ -147,7 +147,7 @@ func (c *Controller) addUser(w ResponseWriter, r *Request) {
 func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -159,7 +159,7 @@ func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
 func (c *Controller) updateUserAssets(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateAssets)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -171,7 +171,7 @@ func (c *Controller) updateUserAssets(w ResponseWriter, r *Request) {
 func (c *Controller) getUserByID(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
 	if err := c.ParseForm(r, dbrest.UserPathGetByID); err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -189,7 +189,7 @@ func (c *Controller) getUserByID(w ResponseWriter, r *Request) {
 func (c *Controller) getUserByEmail(w ResponseWriter, r *Request) {
 	data := make(map[string]interface{})
 	if err := c.ParseForm(r, dbrest.UserPathGetByEmail); err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 	email := r.FormValue(UsersEmailKey)
@@ -210,7 +210,7 @@ func (c *Controller) getUserByEmail(w ResponseWriter, r *Request) {
 func (c *Controller) deleteUserByID(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, dbrest.UserPathUpdateSettings)
 	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
