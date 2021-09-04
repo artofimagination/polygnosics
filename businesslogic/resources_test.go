@@ -33,7 +33,7 @@ var testDataGetDataModel = []getDataModelTestData{
 	{
 		testCaseName: "TutorialDataModel",
 		input: getDataModelInput{
-			category: "Tutorial",
+			category: CategoryTutorial,
 		},
 		expected: getDataModelExpected{
 			reflectedType: reflect.TypeOf(&models.Tutorial{}),
@@ -42,7 +42,7 @@ var testDataGetDataModel = []getDataModelTestData{
 	{
 		testCaseName: "FAQDataModel",
 		input: getDataModelInput{
-			category: "FAQ",
+			category: CategoryFAQ,
 		},
 		expected: getDataModelExpected{
 			reflectedType: reflect.TypeOf(&models.FAQ{}),
@@ -216,7 +216,7 @@ var testDataUpdateHandler = []updateHandlerTestData{
 	{
 		testCaseName: "Success",
 		input: updateHandlerInput{
-			category: "Tutorial",
+			category: CategoryTutorial,
 			testParams: []interface{}{
 				"test_ID",
 			},
@@ -272,7 +272,7 @@ var testDataAddHandler = []addHandlerTestData{
 	{
 		testCaseName: "Success0Params",
 		input: addHandlerInput{
-			category:   "Tutorial",
+			category:   CategoryTutorial,
 			testParams: []interface{}{},
 			handlerFunc: func(r rest.RequestInterface, input ...interface{}) error {
 				test := input[0].(*models.Tutorial)
@@ -289,7 +289,7 @@ var testDataAddHandler = []addHandlerTestData{
 	{
 		testCaseName: "Success1Param",
 		input: addHandlerInput{
-			category: "Tutorial",
+			category: CategoryTutorial,
 			testParams: []interface{}{
 				"content set1",
 			},
@@ -1216,7 +1216,7 @@ func TestUpdateFAQ(t *testing.T) {
 
 			faq := &models.FAQ{}
 			err := context.UpdateFAQ(&testCase.input.request, faq)
-			tests.CheckResult(*faq, testCase.expected.faq, err, testCase.expected.err, testCase.testCaseName, t)
+			tests.CheckResult(nil, nil, err, testCase.expected.err, testCase.testCaseName, t)
 			tests.CheckResult(context.FileProcessor.(*FileProcessorMock).CallOrder, testCase.expected.fileProcessorCallOrder, nil, nil, testCase.testCaseName, t)
 		})
 	}

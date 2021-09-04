@@ -25,9 +25,9 @@ class HTTPConnectorBackend():
         url = self.URL + address
         return requests.get(url=url, params=params)
 
-    def POST(self, address, json=None, files=None):
+    def POST(self, address, json=None, files=None, data=None):
         url = self.URL + address
-        return requests.post(url=url, json=json, files=files)
+        return requests.post(url=url, json=json, files=files, data=data)
 
 
 class HTTPConnectorDummyUserDB():

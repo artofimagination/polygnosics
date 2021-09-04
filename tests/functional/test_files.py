@@ -498,3 +498,118 @@ test-data/avatar-test.jpg", 'rb'), 'application/octet-stream')
             Status code: {r.status_code}\n\
             Returned: {response}\n\
             Expected: {expectedRequest}")
+
+
+dataColumns = ("data", "expected")
+createTestData = [
+    (
+        # Input data
+        {
+            "id": "baca221f-0b14-4122-9d30-909e9b1014de"
+        },
+        # Expected
+        {
+            "error": "",
+            "response": {
+              "data": "OK"
+            },
+            "requests": [
+              {
+                common.GET_RESOURCE: \
+                '/get-resource-by-id?id=baca221f-0b14-4122-9d30-909e9b1014de'
+              }, {
+                common.GET_RESOURCE: \
+                '/get-resource-by-id?id=8ae5ae44-7b42-46d9-be18-08ea1d698883'
+              }, {
+                common.DELETE_RESOURCE: {
+                    'id': '8ae5ae44-7b42-46d9-be18-08ea1d698883'
+                }
+              }, {
+                common.GET_RESOURCE: \
+                '/get-resource-by-id?id=1130d177-7f68-4ef8-92ac-8bfb40aa144c'
+              }, {
+                common.DELETE_RESOURCE: {
+                    'id': '1130d177-7f68-4ef8-92ac-8bfb40aa144c'
+                }
+              }, {
+                common.DELETE_RESOURCE: {
+                    'id': 'baca221f-0b14-4122-9d30-909e9b1014de'
+                }
+              }
+            ]
+        }
+    ),
+    (
+        # Input data
+        {
+            "id": "caca221f-0b14-4122-9d30-909e9b1014de"
+        },
+        # Expected
+        {
+            "error": "Backend -> ResourceDB -> Missing resource",
+            "response": {},
+            "requests": [
+              {
+                common.GET_RESOURCE: \
+                '/get-resource-by-id?id=caca221f-0b14-4122-9d30-909e9b1014de'
+              }
+            ]
+        }
+    )
+]
+
+ids = ["Success", "Missing item"]
+
+
+@pytest.mark.parametrize(dataColumns, createTestData, ids=ids)
+def test_DeleteFilesSection(httpBackend, httpDummyResourceDB, data, expected):
+    # Clears all previously stored incoming requests on the dummy server
+    try:
+        r = httpDummyResourceDB.POST("/clear-request-data", None)
+    except Exception:
+        pytest.fail("Failed to send POST request")
+        return None
+
+    try:
+        r = httpBackend.POST(
+            "/resources/delete-files-item",
+            data)
+    except Exception:
+        pytest.fail("Failed to send POST request")
+        return None
+
+    try:
+        response = common.getResponse(r.text, expected["error"])
+        if response is not None:
+            expectedData = expected["response"]["data"]
+            if response != expectedData:
+                pytest.fail(
+                    f"Request failed\n\
+                    Status code: {r.status_code}\n\
+                    Returned: {r.text}\n\
+                    Expected: {expectedData}")
+    except Exception:
+        pytest.fail("Failed to process request")
+        return None
+
+    # Check the requests sent from the backend
+    try:
+        r = httpDummyResourceDB.GET("/get-request-data", None)
+    except Exception:
+        pytest.fail("Failed to send GET request")
+        return None
+
+    try:
+        response = json.loads(r.text)
+    except Exception:
+        pytest.fail(f"Failed to decode response text {r.text}")
+        return None
+
+    expectedRequest = expected["requests"]
+
+    if response != expectedRequest:
+        pytest.fail(
+            f"Request failed\n\
+            Status code: {r.status_code}\n\
+            Returned: {response}\n\
+            Expected: {expectedRequest}")

@@ -5,9 +5,82 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/artofimagination/polygnosics/businesslogic"
 	httpModels "github.com/artofimagination/polygnosics/models/http"
 	"github.com/artofimagination/polygnosics/rest"
 )
+
+func (c *RESTController) delete(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	requestData, err := r.DecodeRequest()
+	if err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if err := c.BackendContext.DeleteHandler(category, r, handler, requestData["id"].(string)); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	response := httpModels.ResponseData{Data: "OK"}
+	w.EncodeResponse(response)
+}
+
+func (c *RESTController) add(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if _, err := c.BackendContext.AddHandler(category, r, handler); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	response := httpModels.ResponseData{Data: "OK"}
+	w.EncodeResponse(response)
+}
+
+func (c *RESTController) addMultipart(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	c.add(category, handler, w, r)
+}
+
+func (c *RESTController) addForm(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if err := r.ParseForm(); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
+		return
+	}
+	log.Println("GGGG2", r.FormValue("group"))
+
+	c.add(category, handler, w, r)
+}
+
+func (c *RESTController) update(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if err := c.BackendContext.UpdateHandler(category, r, handler, r.FormValue("id")); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	response := httpModels.ResponseData{Data: "OK"}
+	w.EncodeResponse(response)
+}
+
+func (c *RESTController) updateMultipart(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	c.update(category, handler, w, r)
+}
+
+func (c *RESTController) updateForm(category string, handler func(rest.RequestInterface, ...interface{}) error, w rest.ResponseWriter, r *rest.Request) {
+	if err := r.ParseForm(); err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	c.update(category, handler, w, r)
+}
 
 func (c *RESTController) getSingleItem(w rest.ResponseWriter, r *rest.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -15,23 +88,27 @@ func (c *RESTController) getSingleItem(w rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 
-	faq, err := c.BackendContext.GetItem(r.FormValue("id"))
+	item, err := c.BackendContext.GetItem(r.FormValue("id"))
 	if err != nil {
 		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	response := httpModels.ResponseData{Data: faq}
+	response := httpModels.ResponseData{Data: item}
+	w.EncodeResponse(response)
+}
+
+func (c *RESTController) getAll(category string, w rest.ResponseWriter, r *rest.Request) {
+	items, err := c.BackendContext.GetAllItemsByCategory(category, r)
+	if err != nil {
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	response := httpModels.ResponseData{Data: items}
 	w.EncodeResponse(response)
 }
 
 func (c *RESTController) getFAQs(w rest.ResponseWriter, r *rest.Request) {
-	faqs, err := c.BackendContext.GetAllItemsByCategory("FAQ", r)
-	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	response := httpModels.ResponseData{Data: faqs}
-	w.EncodeResponse(response)
+	c.getAll(businesslogic.CategoryFAQ, w, r)
 }
 
 func (c *RESTController) getFAQGroups(w rest.ResponseWriter, r *rest.Request) {
@@ -46,72 +123,34 @@ func (c *RESTController) getFAQGroups(w rest.ResponseWriter, r *rest.Request) {
 
 func (c *RESTController) addFAQ(w rest.ResponseWriter, r *rest.Request) {
 	if err := r.ParseForm(); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
+		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
+	c.addForm(businesslogic.CategoryFAQ, c.BackendContext.AddFAQ, w, r)
+}
 
-	if _, err := c.BackendContext.AddHandler("FAQ", r, c.BackendContext.UpdateFAQ); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+func (c *RESTController) deleteFAQ(w rest.ResponseWriter, r *rest.Request) {
+	c.delete(businesslogic.CategoryFAQ, c.BackendContext.DeleteFAQ, w, r)
 }
 
 func (c *RESTController) updateFAQ(w rest.ResponseWriter, r *rest.Request) {
-	if err := r.ParseForm(); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	if err := c.BackendContext.UpdateHandler("FAQ", r, c.BackendContext.UpdateFAQ); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+	c.updateForm(businesslogic.CategoryFAQ, c.BackendContext.UpdateFAQ, w, r)
 }
 
 func (c *RESTController) getTutorials(w rest.ResponseWriter, r *rest.Request) {
-	tutorials, err := c.BackendContext.GetAllItemsByCategory("Tutorial", r)
-	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	response := httpModels.ResponseData{Data: tutorials}
-	w.EncodeResponse(response)
+	c.getAll(businesslogic.CategoryTutorial, w, r)
 }
 
 func (c *RESTController) getNewsFeed(w rest.ResponseWriter, r *rest.Request) {
-	tutorials, err := c.BackendContext.GetAllItemsByCategory("News feed", r)
-	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	response := httpModels.ResponseData{Data: tutorials}
-	w.EncodeResponse(response)
+	c.getAll(businesslogic.CategoryNews, w, r)
 }
 
 func (c *RESTController) addNewsFeedEntry(w rest.ResponseWriter, r *rest.Request) {
-	if err := c.BackendContext.AddNewsFeedEntry(r); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+	c.addForm(businesslogic.CategoryNews, c.BackendContext.AddNewsFeedEntry, w, r)
 }
 
 func (c *RESTController) updateNewsEntry(w rest.ResponseWriter, r *rest.Request) {
-	if err := c.BackendContext.UpdateNewsEntry(r); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+	c.addForm(businesslogic.CategoryNews, c.BackendContext.UpdateNewsEntry, w, r)
 }
 
 func (c *RESTController) getCategoriesMap(w rest.ResponseWriter, r *rest.Request) {
@@ -125,73 +164,29 @@ func (c *RESTController) getCategoriesMap(w rest.ResponseWriter, r *rest.Request
 }
 
 func (c *RESTController) updateTutorial(w rest.ResponseWriter, r *rest.Request) {
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	if err := c.BackendContext.UpdateHandler("Tutorial", r, c.BackendContext.UpdateTutorial); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+	c.updateMultipart(businesslogic.CategoryTutorial, c.BackendContext.UpdateTutorial, w, r)
 }
 
 func (c *RESTController) addTutorial(w rest.ResponseWriter, r *rest.Request) {
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
+	c.addMultipart(businesslogic.CategoryTutorial, c.BackendContext.AddTutorial, w, r)
+}
 
-	if _, err := c.BackendContext.AddHandler("Tutorial", r, c.BackendContext.AddTutorial); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+func (c *RESTController) deleteTutorial(w rest.ResponseWriter, r *rest.Request) {
+	c.delete(businesslogic.CategoryTutorial, c.BackendContext.DeleteTutorial, w, r)
 }
 
 func (c *RESTController) getFiles(w rest.ResponseWriter, r *rest.Request) {
-	files, err := c.BackendContext.GetAllItemsByCategory("Files", r)
-	if err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	response := httpModels.ResponseData{Data: files}
-	w.EncodeResponse(response)
+	c.getAll(businesslogic.CategoryFileContent, w, r)
 }
 
 func (c *RESTController) addFileSection(w rest.ResponseWriter, r *rest.Request) {
-	log.Println("Add files section")
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	if _, err := c.BackendContext.AddHandler("FilesSection", r, c.BackendContext.AddFileSection); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+	c.addMultipart(businesslogic.CategoryFileSection, c.BackendContext.AddFileSection, w, r)
 }
 
 func (c *RESTController) updateFileSection(w rest.ResponseWriter, r *rest.Request) {
-	log.Println("Update files section")
-	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
+	c.updateMultipart(businesslogic.CategoryFileSection, c.BackendContext.UpdateFileSection, w, r)
+}
 
-	if err := c.BackendContext.UpdateHandler("FilesSection", r, c.BackendContext.UpdateFileSection, r.FormValue("id")); err != nil {
-		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-
-	response := httpModels.ResponseData{Data: "OK"}
-	w.EncodeResponse(response)
+func (c *RESTController) deleteFileSection(w rest.ResponseWriter, r *rest.Request) {
+	c.delete(businesslogic.CategoryFileSection, c.BackendContext.DeleteFileSection, w, r)
 }

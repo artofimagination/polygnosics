@@ -1,5 +1,7 @@
 import json
 import pytest
+import pathlib
+import os
 
 ADD_USER_PATH = "/add-user"
 GET_USER_BY_EMAIL_PATH = "/get-user-by-email"
@@ -49,3 +51,30 @@ def deleteElement(key, jsonData):
             if element is not None:
                 return (element, deleted)
     return (None, False)
+
+
+def checkFileContent(filename, expectedContent):
+    p = pathlib.Path(filename)
+    p.parts[2:]
+    truncPath = pathlib.Path(*p.parts[2:])
+    testPath = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    print(testPath)
+    print(os.path.join(
+            testPath,
+            os.path.normpath("dummy-resourcedb/test-data/uploads")))
+
+    hostSidePath = \
+        os.path.join(
+            testPath,
+            os.path.normpath("dummy-resourcedb/test-data/uploads"),
+            truncPath)
+
+    with open(hostSidePath) as file:
+        lines = file.read()
+        if lines != expectedContent:
+            pytest.fail(
+                f"Invalid file content\n\
+                Returned: {lines}\n\
+                Expected: {expectedContent}")
+            return None
+        file.close()

@@ -70,10 +70,16 @@ func (c *Controller) getCategories(w ResponseWriter, r *Request) {
 func (c *Controller) getResource(w ResponseWriter, r *Request) {
 	log.Println("Get resource")
 	if err := c.ParseForm(r, "/get-resource-by-id"); err != nil {
-		w.writeError(fmt.Sprintf("UserDB: %s", err.Error()), http.StatusBadRequest)
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
+	log.Println(id)
+
+	if _, ok := c.TestData["resources"].(map[string]interface{})[id]; !ok {
+		w.writeError("ResourceDB -> Missing resource", http.StatusOK)
+		return
+	}
 
 	resource := c.TestData["resources"].(map[string]interface{})[id]
 	data := make(map[string]interface{})
@@ -111,7 +117,7 @@ func (c *Controller) updateResource(w ResponseWriter, r *Request) {
 	}
 
 	if _, ok := c.TestData["resources"].(map[string]interface{})[requestData["id"].(string)]; !ok {
-		w.writeError("ResourceDB -> Missing resource", http.StatusNoContent)
+		w.writeError("ResourceDB -> Missing resource", http.StatusOK)
 		return
 	}
 
@@ -129,7 +135,7 @@ func (c *Controller) deleteResource(w ResponseWriter, r *Request) {
 	}
 
 	if _, ok := c.TestData["resources"].(map[string]interface{})[requestData["id"].(string)]; !ok {
-		w.writeError("ResourceDB -> Missing resource", http.StatusNoContent)
+		w.writeError("ResourceDB -> Missing resource", http.StatusOK)
 		return
 	}
 

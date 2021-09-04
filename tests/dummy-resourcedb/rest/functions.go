@@ -39,7 +39,15 @@ func prettyPrint(v interface{}) {
 }
 
 func (w *ResponseWriter) writeError(message string, statusCode int) {
-	w.writeResponse(fmt.Sprintf("{\"error\":\"%s\"}", message), statusCode)
+	responseData := ResponseData{
+		Error: message,
+	}
+	b, err := json.Marshal(responseData)
+	if err != nil {
+		w.writeResponse(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	w.writeResponse(string(b), statusCode)
 }
 
 func (w *ResponseWriter) writeData(data string, statusCode int) {

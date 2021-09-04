@@ -9,6 +9,11 @@
       "id" : 1,
       "name" : "FilesSection",
       "description" : "Files Section Desc"
+    },
+    {
+      "id" : 2,
+      "name" : "FAQ",
+      "description" : "FAQ Desc"
     }
   ],
   "resources" : {

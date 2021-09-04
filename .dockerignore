@@ -6,6 +6,6 @@ run*.sh
 
 __pycache__
 .pytest_cache
-tests/dummy-backend
+tests/dummy-userdb
+tests/dummy-resourcedb
 tests/functional
-tests/ui

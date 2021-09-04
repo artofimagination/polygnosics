@@ -1,8 +1,11 @@
 package businesslogic
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -22,18 +25,29 @@ const (
 	FileSectionLinkType = "link"
 )
 
+const (
+	CategoryFAQ         = "FAQ"
+	CategoryFAQGroups   = "FAQGroups"
+	CategoryTutorial    = "Tutorial"
+	CategoryNews        = "NewsFeed"
+	CategoryFileContent = "FileContent"
+	CategoryFileSection = "FilesSection"
+)
+
 var MaxFileAttachements = 50
 
 func getDataModel(category string) (interface{}, error) {
 	switch category {
-	case "FAQ":
+	case CategoryFAQ:
 		return &models.FAQ{}, nil
-	case "Tutorial":
+	case CategoryTutorial:
 		return &models.Tutorial{}, nil
-	case "FilesSection":
+	case CategoryFileSection:
 		return &models.FilesSection{}, nil
-	case "FileContent":
+	case CategoryFileContent:
 		return &models.FileContent{}, nil
+	case CategoryNews:
+		return &models.NewsEntry{}, nil
 	default:
 		return nil, fmt.Errorf("Invalid resource category: %s", category)
 	}
@@ -98,6 +112,27 @@ func (c *Context) AddHandler(category string, r rest.RequestInterface, handler f
 	}
 
 	return id, nil
+}
+
+func (c *Context) DeleteHandler(category string, r rest.RequestInterface, handler func(rest.RequestInterface, ...interface{}) error, parameters ...interface{}) error {
+	dataModel, err := getDataModel(category)
+	if err != nil {
+		return err
+	}
+
+	if _, err := c.ResourcesDBController.GetResource(parameters[0].(string), dataModel); err != nil {
+		return err
+	}
+
+	if err := handler(r, dataModel); err != nil {
+		return err
+	}
+
+	if err := c.ResourcesDBController.DeleteResource(parameters[0].(string)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Context) setTutorialArticle(tutorial *models.Tutorial, r rest.RequestInterface) error {
@@ -180,6 +215,28 @@ func (c *Context) AddTutorial(r rest.RequestInterface, input ...interface{}) err
 	return nil
 }
 
+func (c *Context) DeleteTutorial(r rest.RequestInterface, input ...interface{}) error {
+	id := input[0].(string)
+	if err := c.DeleteHandler(CategoryTutorial, r, func(r rest.RequestInterface, parameters ...interface{}) error {
+		tutorial := parameters[0].(*models.Tutorial)
+		if tutorial.AvatarType == "image" {
+			if err := c.FileProcessor.RemoveFile(tutorial.AvatarSource); err != nil {
+				return err
+			}
+		}
+		if tutorial.Content != "" {
+			if err := c.FileProcessor.RemoveFile(tutorial.Content); err != nil {
+				return err
+			}
+		}
+		return nil
+	}, id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Context) setFileItem(r rest.RequestInterface, input ...interface{}) error {
 	fileItem := input[0].(*models.FileContent)
 	index := input[1].([]interface{})[0].(string)
@@ -224,7 +281,7 @@ func (c *Context) AddFileSection(r rest.RequestInterface, input ...interface{}) 
 	fileSection.ShortDescription = r.FormValue("short")
 	fileSection.ContentIDList = make([]string, count)
 	for i := 0; i < count; i++ {
-		resourceID, err := c.AddHandler("FileContent", r, c.setFileItem, "", fmt.Sprintf("%d", i))
+		resourceID, err := c.AddHandler(CategoryFileContent, r, c.setFileItem, "", fmt.Sprintf("%d", i))
 		if err != nil {
 			return err
 		}
@@ -237,6 +294,7 @@ func (c *Context) AddFileSection(r rest.RequestInterface, input ...interface{}) 
 func (c *Context) removeFileItem(id string, r rest.RequestInterface, fileSectionContentIDs []string) ([]string, error) {
 	formName := fmt.Sprintf("upload_file_%s", id)
 	fileName := fmt.Sprintf("%s%s", id, filepath.Ext(r.FormValue(formName)))
+
 	if err := c.FileProcessor.RemoveFile(fileName); err != nil {
 		return nil, err
 	}
@@ -282,13 +340,13 @@ func (c *Context) UpdateFileSection(r rest.RequestInterface, input ...interface{
 			count--
 			continue
 		}
-		if err := c.UpdateHandler("FileContent", r, c.setFileItem, resourceIDString, ""); err != nil {
+		if err := c.UpdateHandler(CategoryFileContent, r, c.setFileItem, resourceIDString, ""); err != nil {
 			return err
 		}
 	}
 
 	for i := len(fileSection.ContentIDList); i < count; i++ {
-		resourceID, err := c.AddHandler("FileContent", r, c.setFileItem, "", fmt.Sprintf("%d", i))
+		resourceID, err := c.AddHandler(CategoryFileContent, r, c.setFileItem, "", fmt.Sprintf("%d", i))
 		if err != nil {
 			return err
 		}
@@ -298,19 +356,74 @@ func (c *Context) UpdateFileSection(r rest.RequestInterface, input ...interface{
 	return nil
 }
 
-func (c *Context) UpdateFAQ(r rest.RequestInterface, input ...interface{}) error {
-	faq := input[0].(*models.FAQ)
+func (c *Context) DeleteFileSection(r rest.RequestInterface, input ...interface{}) error {
+	fileSection := input[0].(*models.FilesSection)
 
+	for _, resourceIDString := range fileSection.ContentIDList {
+		resourceIDString := resourceIDString
+		if err := c.DeleteHandler(CategoryFileContent, r, func(r rest.RequestInterface, parameters ...interface{}) error {
+			fileItem := parameters[0].(*models.FileContent)
+			if fileItem.Type != FileSectionFileType {
+				return nil
+			}
+			if err := c.FileProcessor.RemoveFile(fileItem.RefName); err != nil {
+				return err
+			}
+			return nil
+		}, resourceIDString); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (c *Context) AddFAQ(r rest.RequestInterface, input ...interface{}) error {
+	faq := input[0].(*models.FAQ)
+	log.Println("GGGG", r.FormValue("group"))
 	faq.Group = r.FormValue("group")
 	pairPath := c.FileProcessor.GenerateID()
-	faq.Answer = filepath.Join(ResourcesPath, FAQPath, pairPath, "answer.txt")
-	faq.Question = filepath.Join(ResourcesPath, FAQPath, pairPath, "question.txt")
+	path := filepath.Join(ResourcesPath, FAQPath, pairPath)
+	faq.Answer = filepath.Join(path, "answer.txt")
+	faq.Question = filepath.Join(path, "question.txt")
+
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return err
+	}
 
 	if err := c.FileProcessor.WriteToFile(faq.Answer, r.FormValue("answer")); err != nil {
 		return err
 	}
 
 	if err := c.FileProcessor.WriteToFile(faq.Question, r.FormValue("question")); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Context) UpdateFAQ(r rest.RequestInterface, input ...interface{}) error {
+	faq := input[0].(*models.FAQ)
+
+	if err := c.FileProcessor.WriteToFile(faq.Answer, r.FormValue("answer")); err != nil {
+		return err
+	}
+
+	if err := c.FileProcessor.WriteToFile(faq.Question, r.FormValue("question")); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Context) DeleteFAQ(r rest.RequestInterface, input ...interface{}) error {
+	faq := input[0].(*models.FAQ)
+
+	if err := c.FileProcessor.RemoveFile(faq.Answer); err != nil {
+		return err
+	}
+
+	if err := c.FileProcessor.RemoveFile(faq.Question); err != nil {
 		return err
 	}
 
@@ -352,7 +465,7 @@ func (c *Context) GetAllItemsByCategory(categoryName string, r *rest.Request) ([
 }
 
 func (c *Context) GetFAQGroups(r *rest.Request) ([]string, error) {
-	categoryID, err := c.getCategoryID("FAQ Groups")
+	categoryID, err := c.getCategoryID(CategoryFAQGroups)
 	if err != nil {
 		return nil, err
 	}
@@ -360,6 +473,10 @@ func (c *Context) GetFAQGroups(r *rest.Request) ([]string, error) {
 	resources, err := c.ResourcesDBController.GetResourcesByCategory(categoryID)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(resources) > 0 {
+		return nil, errors.New("To many FAQ group entries")
 	}
 
 	faqGroups := make([]string, 0)
@@ -370,9 +487,10 @@ func (c *Context) GetFAQGroups(r *rest.Request) ([]string, error) {
 	return faqGroups, nil
 }
 
-func (c *Context) AddNewsFeedEntry(r *rest.Request) error {
+func (c *Context) AddNewsFeedEntry(r rest.RequestInterface, input ...interface{}) error {
+	newsEntry := input[0].(*models.NewsEntry)
 
-	dt, err := time.Parse("Mon Jan 02 2006 15:04:05.0000 GMT-0700", "Mon Jan 02 2006 15:04:05.0000 GMT-0700")
+	dt, err := time.Parse("Mon Jan 02 2006 15:04:05.0000 GMT-0700", time.Now().String())
 	if err != nil {
 		return err
 	}
@@ -380,12 +498,10 @@ func (c *Context) AddNewsFeedEntry(r *rest.Request) error {
 	day := strconv.Itoa(dt.Day())
 
 	entryTextFile := fmt.Sprintf("%s.%s", uuid.New().String(), "txt")
-	newsEntry := models.NewsEntry{
-		Text:  filepath.Join(ResourcesPath, FAQPath, uuid.New().String(), entryTextFile),
-		Day:   day,
-		Month: dt.Month().String()[0:3],
-		Year:  year,
-	}
+	newsEntry.Text = filepath.Join(ResourcesPath, FAQPath, uuid.New().String(), entryTextFile)
+	newsEntry.Day = day
+	newsEntry.Month = dt.Month().String()[0:3]
+	newsEntry.Year = year
 
 	if err := c.FileProcessor.WriteToFile(newsEntry.Text, r.FormValue("news_text")); err != nil {
 		return err
@@ -394,11 +510,8 @@ func (c *Context) AddNewsFeedEntry(r *rest.Request) error {
 	return nil
 }
 
-func (c *Context) UpdateNewsEntry(r *rest.Request) error {
-	newsEntry := models.NewsEntry{}
-	if _, err := c.ResourcesDBController.GetResource(r.FormValue("id"), newsEntry); err != nil {
-		return err
-	}
+func (c *Context) UpdateNewsEntry(r rest.RequestInterface, input ...interface{}) error {
+	newsEntry := input[0].(*models.NewsEntry)
 
 	if err := c.FileProcessor.WriteToFile(newsEntry.Text, r.FormValue("news_text")); err != nil {
 		return err

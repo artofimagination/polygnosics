@@ -53,12 +53,14 @@ func sayHello(w http.ResponseWriter, r *http.Request) {
 // AddRouting adds front end endpoints.
 func (c *RESTController) AddRouting(r *mux.Router) {
 	r.HandleFunc("/", sayHello)
+	// User endpoints
 	r.HandleFunc("/detect-root-user", rest.MakeHandler(c.detectRootUser))
 	r.HandleFunc("/add-user", rest.MakeHandler(c.addUser))
 	r.HandleFunc("/get-user-by-id", rest.MakeHandler(c.getUserByID))
 	r.HandleFunc("/auth_login", rest.MakeHandler(c.login))
 	r.HandleFunc("/get-categories", rest.MakeHandler(c.getCategoriesMap))
 
+	// Resource endpoints
 	r.HandleFunc("/get-tutorials", rest.MakeHandler(c.getTutorials))
 	r.HandleFunc("/get-tutorial", rest.MakeHandler(c.getSingleItem))
 	r.HandleFunc("/get-files", rest.MakeHandler(c.getFiles))
@@ -73,10 +75,13 @@ func (c *RESTController) AddRouting(r *mux.Router) {
 	resources.HandleFunc("/edit-news-item", rest.MakeHandler(c.updateNewsEntry))
 	resources.HandleFunc("/create-files-item", rest.MakeHandler(c.addFileSection))
 	resources.HandleFunc("/edit-files-item", rest.MakeHandler(c.updateFileSection))
+	resources.HandleFunc("/delete-files-item", rest.MakeHandler(c.deleteFileSection))
 	resources.HandleFunc("/create-tutorial-item", rest.MakeHandler(c.addTutorial))
 	resources.HandleFunc("/edit-tutorial-item", rest.MakeHandler(c.updateTutorial))
+	resources.HandleFunc("/delete-tutorial-item", rest.MakeHandler(c.deleteTutorial))
 	resources.HandleFunc("/create-faq-item", rest.MakeHandler(c.addFAQ))
 	resources.HandleFunc("/edit-faq-item", rest.MakeHandler(c.updateFAQ))
+	resources.HandleFunc("/delete-faq-item", rest.MakeHandler(c.deleteFAQ))
 	resources.HandleFunc("/get-article", rest.MakeHandler(c.getSingleItem))
 
 	// Static file servers
