@@ -81,7 +81,7 @@ func (c *RESTController) detectRootUser(w rest.ResponseWriter, r *rest.Request) 
 
 func (c *RESTController) getUserByID(w rest.ResponseWriter, r *rest.Request) {
 	data := make(map[string]interface{})
-	user, err := r.ForwardRequest(rest.UserDBAddress)
+	user, err := c.ForwardUserDBRequest(r)
 	if err != nil {
 		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +12,6 @@ import (
 
 	app "github.com/artofimagination/polygnosics/context"
 
-	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
 
@@ -21,14 +21,11 @@ func main() {
 		log.Fatalf("Failed to initiate context. %s\n", errors.WithStack(err))
 	}
 
-	r := mux.NewRouter()
-	appContext.RESTFrontend.AddRouting(r)
-	appContext.RESTUserDB.AddRouting(r)
-
 	// Create Server and Route Handlers
+	port := fmt.Sprintf(":%d", appContext.Config.Port)
 	srv := &http.Server{
-		Handler:      r,
-		Addr:         ":8184",
+		Handler:      appContext.Router,
+		Addr:         port,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}

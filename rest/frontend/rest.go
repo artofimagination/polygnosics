@@ -18,12 +18,24 @@ type FileSystem struct {
 }
 
 type RESTController struct {
-	BackendContext *businesslogic.Context
+	BackendContext    *businesslogic.Context
+	UserDBAddress     *rest.Server
+	ResourceDBAddress *rest.Server
+}
+
+func (c *RESTController) ForwardResourceDBRequest(r *rest.Request) (interface{}, error) {
+	return r.ForwardRequest(c.ResourceDBAddress.GetAddress())
+}
+
+func (c *RESTController) ForwardUserDBRequest(r *rest.Request) (interface{}, error) {
+	return r.ForwardRequest(c.UserDBAddress.GetAddress())
 }
 
 func NewRESTController(backend *businesslogic.Context) *RESTController {
 	controller := &RESTController{
-		BackendContext: backend,
+		BackendContext:    backend,
+		UserDBAddress:     &rest.Server{},
+		ResourceDBAddress: &rest.Server{},
 	}
 	return controller
 }

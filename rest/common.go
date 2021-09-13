@@ -6,15 +6,22 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 
 	httpModels "github.com/artofimagination/polygnosics/models/http"
 )
 
-var FrontendAddress string = "http://172.18.0.5:8185"
-var UserDBAddress string = "http://172.18.0.3:8183"
-var ResourcesDBAddress string = "http://172.18.0.2:8182"
+type Server struct {
+	IP   string
+	Port int
+	Name string
+}
+
+func (c *Server) GetAddress() string {
+	return fmt.Sprintf("http://%s:%d", c.IP, c.Port)
+}
 
 type ResponseWriter struct {
 	http.ResponseWriter
@@ -159,6 +166,7 @@ func (r Request) ForwardRequest(address string) (interface{}, error) {
 }
 
 func Get(address string, path string, parameters string) (interface{}, error) {
+	log.Println(fmt.Sprintf("%s%s%s", address, path, parameters))
 	resp, err := http.Get(fmt.Sprintf("%s%s%s", address, path, parameters))
 	if err != nil {
 		return nil, err

@@ -1,11 +1,24 @@
 import pytest
 import requests
 import time
+import os
+
+
+def getAttributes():
+    variables = {}
+    fileName = os.path.dirname(os.path.realpath(__file__)) + \
+        "/../.env.functional_test"
+    with open(fileName) as envFile:
+        for line in envFile:
+            name, var = line.partition("=")[::2]
+            variables[name.strip()] = var.strip()
+        return variables
 
 
 class HTTPConnectorBackend():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8184"
+        self.URL = "http://127.0.0.1:" + getAttributes()["BACKEND_SERVER_PORT"]
+        print(self.URL)
         connected = False
         timeout = 15
         while timeout > 0:
@@ -32,7 +45,8 @@ class HTTPConnectorBackend():
 
 class HTTPConnectorDummyUserDB():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8183"
+        self.URL = "http://127.0.0.1:" + getAttributes()["USER_DB_PORT"]
+        print(self.URL)
         connected = False
         timeout = 15
         while timeout > 0:
@@ -59,7 +73,7 @@ class HTTPConnectorDummyUserDB():
 
 class HTTPConnectorDummyResourceDB():
     def __init__(self):
-        self.URL = "http://0.0.0.0:8182"
+        self.URL = "http://127.0.0.1:" + getAttributes()["RESOURCE_DB_PORT"]
         connected = False
         timeout = 15
         while timeout > 0:

@@ -1,6 +1,7 @@
 FROM golang:1.15.2-alpine
 
 WORKDIR $GOPATH/src/polygnosics
+ARG SERVER_PORT
 
 # Copy everything from the current directory to the PWD(Present Working Directory) inside the container
 COPY . .
@@ -11,8 +12,9 @@ RUN go mod tidy
 RUN cd $GOPATH/src/polygnosics/ && go build main.go
 RUN chmod 0766 $GOPATH/src/polygnosics/scripts/init.sh
 
-# This container exposes port 8184 to the outside world
-EXPOSE 8184
+# This application is exposed through BACKEND_SERVER_PORT to the outside
+# See .env to change the value.
+EXPOSE $SERVER_PORT
 
 # Run the executable
 CMD ["./scripts/init.sh"]

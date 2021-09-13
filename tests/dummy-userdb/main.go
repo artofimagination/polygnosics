@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,9 +20,10 @@ func main() {
 	}
 
 	// Create Server and Route Handlers
+	port := fmt.Sprintf(":%s", os.Getenv("SERVER_PORT"))
 	srv := &http.Server{
 		Handler:      restController.CreateRouter(),
-		Addr:         ":8183",
+		Addr:         port,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}

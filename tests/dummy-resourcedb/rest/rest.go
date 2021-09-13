@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -68,13 +67,11 @@ func (c *Controller) getCategories(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) getResource(w ResponseWriter, r *Request) {
-	log.Println("Get resource")
 	if err := c.ParseForm(r, "/get-resource-by-id"); err != nil {
 		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("id")
-	log.Println(id)
 
 	if _, ok := c.TestData["resources"].(map[string]interface{})[id]; !ok {
 		w.writeError("ResourceDB -> Missing resource", http.StatusOK)
@@ -88,8 +85,6 @@ func (c *Controller) getResource(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) addResource(w ResponseWriter, r *Request) {
-	log.Println("Add resource")
-
 	requestData, err := c.decodeRequest(r, "/add-resource")
 	if err != nil {
 		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusBadRequest)
@@ -109,7 +104,6 @@ func (c *Controller) addResource(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) updateResource(w ResponseWriter, r *Request) {
-	log.Println("Update resource")
 	requestData, err := c.decodeRequest(r, "/update-resource")
 	if err != nil {
 		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusBadRequest)
@@ -127,7 +121,6 @@ func (c *Controller) updateResource(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) deleteResource(w ResponseWriter, r *Request) {
-	log.Println("Delete resource")
 	requestData, err := c.decodeRequest(r, "/delete-resource")
 	if err != nil {
 		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusBadRequest)

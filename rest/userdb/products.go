@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
-	"github.com/artofimagination/polygnosics/rest"
 	"github.com/google/uuid"
 )
 
@@ -20,7 +19,7 @@ const (
 func (c *RESTController) CreateProduct(owner *uuid.UUID) (*models.ProductData, error) {
 	params := make(map[string]interface{})
 	params["owner_id"] = owner.String()
-	data, err := rest.Post(rest.UserDBAddress, productPathAdd, params)
+	data, err := c.Post(productPathAdd, params)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +35,7 @@ func (c *RESTController) CreateProduct(owner *uuid.UUID) (*models.ProductData, e
 func (c *RESTController) DeleteProduct(productID *uuid.UUID) error {
 	params := make(map[string]interface{})
 	params["id"] = productID.String()
-	_, err := rest.Post(rest.UserDBAddress, productPathDelete, params)
+	_, err := c.Post(productPathDelete, params)
 	if err != nil {
 		return err
 	}
@@ -45,7 +44,7 @@ func (c *RESTController) DeleteProduct(productID *uuid.UUID) error {
 
 func (c *RESTController) GetProduct(productID *uuid.UUID) (*models.ProductData, error) {
 	params := fmt.Sprintf("?id=%s", productID.String())
-	data, err := rest.Get(rest.UserDBAddress, productPathGet, params)
+	data, err := c.Get(productPathGet, params)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +63,7 @@ func (c *RESTController) UpdateProductDetails(productData *models.ProductData) e
 		return err
 	}
 	params["product-data"] = productDataBytes
-	_, err = rest.Post(rest.UserDBAddress, productPathUpdateDetails, params)
+	_, err = c.Post(productPathUpdateDetails, params)
 	if err != nil {
 		return err
 	}
@@ -78,7 +77,7 @@ func (c *RESTController) UpdateProductAssets(productData *models.ProductData) er
 		return err
 	}
 	params["product-data"] = productDataBytes
-	_, err = rest.Post(rest.UserDBAddress, productPathUpdateAssets, params)
+	_, err = c.Post(productPathUpdateAssets, params)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package resourcesdb
 
 import (
 	"github.com/artofimagination/polygnosics/models"
+	"github.com/artofimagination/polygnosics/rest"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
@@ -17,7 +18,16 @@ type ResourceDBInterface interface {
 }
 
 type RESTController struct {
-	modelFunc models.ResourceModels
+	modelFunc     models.ResourceModels
+	ServerAddress *rest.Server
+}
+
+func (c *RESTController) Post(path string, parameters interface{}) (interface{}, error) {
+	return rest.Post(c.ServerAddress.GetAddress(), path, parameters)
+}
+
+func (c *RESTController) Get(path string, parameters string) (interface{}, error) {
+	return rest.Get(c.ServerAddress.GetAddress(), path, parameters)
 }
 
 func NewRESTController() *RESTController {

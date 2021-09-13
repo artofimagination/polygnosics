@@ -49,7 +49,6 @@ func (c *RESTController) addForm(category string, handler func(rest.RequestInter
 		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusBadRequest)
 		return
 	}
-	log.Println("GGGG2", r.FormValue("group"))
 
 	c.add(category, handler, w, r)
 }
@@ -154,7 +153,7 @@ func (c *RESTController) updateNewsEntry(w rest.ResponseWriter, r *rest.Request)
 }
 
 func (c *RESTController) getCategoriesMap(w rest.ResponseWriter, r *rest.Request) {
-	respondData, err := r.ForwardRequest(rest.UserDBAddress)
+	respondData, err := c.ForwardResourceDBRequest(r)
 	if err != nil {
 		w.WriteError(fmt.Sprintf("Backend -> %s", err.Error()), http.StatusInternalServerError)
 		return

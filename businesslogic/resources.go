@@ -3,7 +3,6 @@ package businesslogic
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -380,7 +379,6 @@ func (c *Context) DeleteFileSection(r rest.RequestInterface, input ...interface{
 
 func (c *Context) AddFAQ(r rest.RequestInterface, input ...interface{}) error {
 	faq := input[0].(*models.FAQ)
-	log.Println("GGGG", r.FormValue("group"))
 	faq.Group = r.FormValue("group")
 	pairPath := c.FileProcessor.GenerateID()
 	path := filepath.Join(ResourcesPath, FAQPath, pairPath)

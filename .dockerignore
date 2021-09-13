@@ -1,5 +1,6 @@
 .env.example
 user-store
+resources
 docker-compose.yml
 docker-compose-test.yml
 run*.sh

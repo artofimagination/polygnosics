@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/artofimagination/polygnosics/models"
-	"github.com/artofimagination/polygnosics/rest"
 	"github.com/google/uuid"
 )
 
@@ -23,7 +22,7 @@ const (
 func (c *RESTController) DeleteResource(id string) error {
 	data := make(map[string]string)
 	data["id"] = id
-	_, err := rest.Post(rest.ResourcesDBAddress, DeleteResourceURI, data)
+	_, err := c.Post(DeleteResourceURI, data)
 	if err != nil {
 
 		return err
@@ -40,7 +39,7 @@ func (c *RESTController) AddResource(categoryID int, data interface{}) (*uuid.UU
 	if err := c.modelFunc.ToResourceContent(resource, data); err != nil {
 		return nil, err
 	}
-	data, err := rest.Post(rest.ResourcesDBAddress, AddResourceURI, resource)
+	data, err := c.Post(AddResourceURI, resource)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +54,7 @@ func (c *RESTController) AddResource(categoryID int, data interface{}) (*uuid.UU
 }
 
 func (c *RESTController) GetCategories() (models.Categories, error) {
-	data, err := rest.Get(rest.ResourcesDBAddress, GetCategoriesURI, "")
+	data, err := c.Get(GetCategoriesURI, "")
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +77,7 @@ func (c *RESTController) GetCategories() (models.Categories, error) {
 
 func (c *RESTController) GetResource(id string, parsedData interface{}) (*models.Resource, error) {
 	params := fmt.Sprintf("?id=%s", id)
-	data, err := rest.Get(rest.ResourcesDBAddress, GetResourceURI, params)
+	data, err := c.Get(GetResourceURI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +99,7 @@ func (c *RESTController) GetResources(ids []string) ([]models.Resource, error) {
 	for _, id := range ids {
 		params = fmt.Sprintf("%sid=%s&", params, id)
 	}
-	data, err := rest.Get(rest.ResourcesDBAddress, GetResourcesByIDsURI, params[0:len(params)-1])
+	data, err := c.Get(GetResourcesByIDsURI, params[0:len(params)-1])
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +118,7 @@ func (c *RESTController) GetResources(ids []string) ([]models.Resource, error) {
 
 func (c *RESTController) GetResourcesByCategory(id int) ([]models.Resource, error) {
 	params := fmt.Sprintf("?category-id=%d", id)
-	data, err := rest.Get(rest.ResourcesDBAddress, GetResourcesByCategoryURI, params)
+	data, err := c.Get(GetResourcesByCategoryURI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +140,7 @@ func (c *RESTController) UpdateResource(resource *models.Resource, data interfac
 		return err
 	}
 
-	_, err := rest.Post(rest.ResourcesDBAddress, UpdateResourceURI, resource)
+	_, err := c.Post(UpdateResourceURI, resource)
 	if err != nil {
 		return err
 	}

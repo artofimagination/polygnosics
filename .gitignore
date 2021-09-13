@@ -1,5 +1,6 @@
 .env
 user-store
+resources
 archived_logs
 latest_logs
 
