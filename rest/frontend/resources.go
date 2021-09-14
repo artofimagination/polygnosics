@@ -2,7 +2,6 @@ package frontend
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/artofimagination/polygnosics/businesslogic"
