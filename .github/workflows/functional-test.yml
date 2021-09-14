@@ -22,7 +22,4 @@ jobs:
         run: cp tests/.env.functional_test .env && docker-compose up -d backend
 
       - name: Run functional test
-        run: pip3 install -r tests/requirements.txt && pytest -v tests/functional
-
-      - name: Log
-        run: docker logs -f dummy-resourcedb
+        run: pip3 install -r tests/requirements.txt && pytest -v tests/functional && docker logs dummy-resourcedb && curl 0.0.0.0:8183
