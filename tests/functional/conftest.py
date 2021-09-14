@@ -18,7 +18,6 @@ def getAttributes():
 class HTTPConnectorBackend():
     def __init__(self):
         self.URL = "http://127.0.0.1:" + getAttributes()["BACKEND_SERVER_PORT"]
-        print(self.URL)
         connected = False
         timeout = 15
         while timeout > 0:
@@ -74,6 +73,7 @@ class HTTPConnectorDummyUserDB():
 class HTTPConnectorDummyResourceDB():
     def __init__(self):
         self.URL = "http://127.0.0.1:" + getAttributes()["RESOURCE_DB_PORT"]
+        print(self.URL)
         connected = False
         timeout = 15
         while timeout > 0:

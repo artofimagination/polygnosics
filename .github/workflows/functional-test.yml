@@ -23,3 +23,6 @@ jobs:
 
       - name: Run functional test
         run: pip3 install -r tests/requirements.txt && pytest -v tests/functional
+
+      - name: Log
+        run: docker logs -f dummy-resourcedb
