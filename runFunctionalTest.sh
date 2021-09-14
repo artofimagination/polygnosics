@@ -1,6 +1,13 @@
 #!/bin/bash
 
-# pip3 install -r tests/requirements.txt
+pip3 install -r tests/requirements.txt
+
+./copyTestFiles.sh
+status=$?; 
+if [[ $status != 0 ]]; then 
+  exit $status; 
+fi
+
 docker-compose down
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)

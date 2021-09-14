@@ -58,6 +58,15 @@ func (c *Controller) clearRequestData(w ResponseWriter, r *Request) {
 	for k := range c.RequestData {
 		delete(c.RequestData, k)
 	}
+	data, err := ioutil.ReadFile("/resources/testData.json")
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+	}
+	jsonData := make(map[string]interface{})
+	err = json.Unmarshal(data, &jsonData)
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+	}
 }
 
 func (c *Controller) getRequestData(w ResponseWriter, r *Request) {
@@ -94,7 +103,7 @@ func (c *Controller) decodeRequest(r *Request, requestPath string) (map[string]i
 func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 	b, err := json.Marshal(data)
 	if err != nil {
-		w.writeError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	w.writeResponse(string(b), statusCode)
@@ -103,7 +112,7 @@ func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 func (c *Controller) updateTestData(w ResponseWriter, r *Request) {
 	requestData, err := c.decodeRequest(r, "")
 	if err != nil {
-		w.writeError(fmt.Sprintf("Backend: %s", err.Error()), http.StatusInternalServerError)
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

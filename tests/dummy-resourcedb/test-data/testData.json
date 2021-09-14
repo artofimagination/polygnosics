@@ -1,0 +1,53 @@
+{
+  "categories" : [
+    {
+      "id" : 0,
+      "name" : "FileContent",
+      "description" : "FileContent Desc"
+    },
+    {
+      "id" : 1,
+      "name" : "FilesSection",
+      "description" : "Files Section Desc"
+    },
+    {
+      "id" : 2,
+      "name" : "FAQ",
+      "description" : "FAQ Desc"
+    }
+  ],
+  "resources" : {
+    "8ae5ae44-7b42-46d9-be18-08ea1d698883" : {
+      "id" : "8ae5ae44-7b42-46d9-be18-08ea1d698883",
+      "category" : 0,
+      "content" : {
+        "orig_file_name": "",
+        "ref": "http://",
+        "ref_name": "TestRef1",
+        "type": "link"
+      }
+    },
+    "1130d177-7f68-4ef8-92ac-8bfb40aa144c" : {
+      "id" : "1130d177-7f68-4ef8-92ac-8bfb40aa144c",
+      "category" : 0,
+      "content" : {
+        "orig_file_name": "",
+        "ref": "/resources/files/test.txt",
+        "ref_name": "TestRef2",
+        "type": "file"
+      }
+    },
+    "baca221f-0b14-4122-9d30-909e9b1014de" : {
+      "id" : "baca221f-0b14-4122-9d30-909e9b1014de",
+      "category" : 1,
+      "content" : {
+        "files": [
+          "8ae5ae44-7b42-46d9-be18-08ea1d698883",
+          "1130d177-7f68-4ef8-92ac-8bfb40aa144c"
+        ],
+        "short": "testFileShort",
+        "title": "testFiles"
+      }
+    }
+  }
+}

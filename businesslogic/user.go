@@ -39,6 +39,7 @@ const (
 )
 
 const (
+	PrivilegeShowEditPage      = "edit_page"
 	PrivilegeShowMainDashboard = "main_dashboard"
 	PrivilegeShowMisuseMetrics = "misuse_metrics"
 	PrivilegeShowProductStats  = "product_stats"
@@ -55,49 +56,54 @@ func (c *Context) setGroupPrivileges(userData *models.UserData, group string) er
 	privilegeMap := make(map[string]interface{})
 	switch group {
 	case UserGroupRoot:
+		privilegeMap[PrivilegeShowEditPage] = 1
 		privilegeMap[PrivilegeShowMainDashboard] = 1
 		privilegeMap[PrivilegeShowMisuseMetrics] = 1
 		privilegeMap[PrivilegeShowProductStats] = 1
 		privilegeMap[PrivilegeShowProjectStats] = 1
 
 		privilegeMap[PrivilegeActionDeleteUser] = 1
-		c.ModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupRoot)
+		c.DBModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupRoot)
 	case UserGroupAdmin:
+		privilegeMap[PrivilegeShowEditPage] = 1
 		privilegeMap[PrivilegeShowMainDashboard] = 1
 		privilegeMap[PrivilegeShowMisuseMetrics] = 1
 		privilegeMap[PrivilegeShowProductStats] = 1
 		privilegeMap[PrivilegeShowProjectStats] = 1
 
 		privilegeMap[PrivilegeActionDeleteUser] = 1
-		c.ModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupAdmin)
+		c.DBModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupAdmin)
 	case UserGroupDeveloper:
+		privilegeMap[PrivilegeShowEditPage] = 0
 		privilegeMap[PrivilegeShowMainDashboard] = 0
 		privilegeMap[PrivilegeShowMisuseMetrics] = 0
 		privilegeMap[PrivilegeShowProductStats] = 1
 		privilegeMap[PrivilegeShowProjectStats] = 1
 
 		privilegeMap[PrivilegeActionDeleteUser] = 0
-		c.ModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupDeveloper)
+		c.DBModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupDeveloper)
 	case UserGroupClient:
+		privilegeMap[PrivilegeShowEditPage] = 0
 		privilegeMap[PrivilegeShowMainDashboard] = 0
 		privilegeMap[PrivilegeShowMisuseMetrics] = 0
 		privilegeMap[PrivilegeShowProductStats] = 0
 		privilegeMap[PrivilegeShowProjectStats] = 1
 
 		privilegeMap[PrivilegeActionDeleteUser] = 0
-		c.ModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupClient)
+		c.DBModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupClient)
 	case UserGroupVisitor:
+		privilegeMap[PrivilegeShowEditPage] = 0
 		privilegeMap[PrivilegeShowMainDashboard] = 0
 		privilegeMap[PrivilegeShowMisuseMetrics] = 0
 		privilegeMap[PrivilegeShowProductStats] = 0
 		privilegeMap[PrivilegeShowProjectStats] = 0
 
 		privilegeMap[PrivilegeActionDeleteUser] = 0
-		c.ModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupVisitor)
+		c.DBModelFunctions.SetField(userData.Settings, UserGroupKey, UserGroupVisitor)
 	default:
 		return fmt.Errorf("Invalid user group: %s", group)
 	}
-	c.ModelFunctions.SetField(userData.Settings, UserPrivilegesKey, privilegeMap)
+	c.DBModelFunctions.SetField(userData.Settings, UserPrivilegesKey, privilegeMap)
 	return nil
 }
 
@@ -148,7 +154,7 @@ func (c *Context) AddUser(uName string, email string, password []byte, group str
 		return err
 	}
 
-	if err := GeneratePath(userData.Assets); err != nil {
+	if err := c.FileProcessor.GeneratePath(userData.Assets); err != nil {
 		return err
 	}
 

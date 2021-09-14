@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/artofimagination/mysql-user-db-go-interface/dbcontrollers"
+	"github.com/artofimagination/polygnosics/rest"
 
 	"github.com/artofimagination/golang-docker/docker"
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
@@ -84,14 +85,14 @@ func (c *Context) DeleteProduct(product *models.ProductData) error {
 		return err
 	}
 
-	folder := c.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, "")
+	folder := c.DBModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, "")
 	if err := removeFolder(folder); err != nil {
 		return fmt.Errorf("Failed to delete product main app folder. %s", errors.WithStack(err))
 	}
 	return nil
 }
 
-func (c *Context) AddProduct(userID *uuid.UUID, r *http.Request) (*models.ProductData, error) {
+func (c *Context) AddProduct(userID *uuid.UUID, r *rest.Request) (*models.ProductData, error) {
 	product, err := c.UserDBController.CreateProduct(userID)
 	if err != nil {
 		return nil, err
@@ -108,16 +109,38 @@ func (c *Context) AddProduct(userID *uuid.UUID, r *http.Request) (*models.Produc
 	return product, nil
 }
 
-func (c *Context) UploadFiles(assets *models.Asset, r *http.Request) error {
-	if err := c.UploadFile(assets, ProductAvatarKey, DefaultProductAvatarPath, r); err != nil {
+func (c *Context) uploadAsset(key string, defaultPath string, asset *models.Asset, r *rest.Request) error {
+	fileExt := filepath.Ext(r.FormValue(key))
+	if err := c.DBModelFunctions.SetFilePath(asset, key, fileExt); err != nil {
+		return err
+	}
+	path := c.DBModelFunctions.GetFilePath(asset, key, defaultPath)
+	if err := c.FileProcessor.UploadFile(key, path, r); err != nil {
+		if err == http.ErrMissingFile {
+			path := c.DBModelFunctions.GetFilePath(asset, key, defaultPath)
+			if err := c.DBModelFunctions.SetFilePath(asset, key, path); err != nil {
+				return err
+			}
+			return nil
+		}
+		if err2 := c.DBModelFunctions.ClearAsset(asset, key); err2 != nil {
+			err = errors.Wrap(errors.WithStack(err), err2.Error())
+		}
+		return err
+	}
+	return nil
+}
+
+func (c *Context) UploadFiles(asset *models.Asset, r *rest.Request) error {
+	if err := c.uploadAsset(ProductAvatarKey, DefaultProductAvatarPath, asset, r); err != nil {
 		return err
 	}
 
-	if err := c.UploadFile(assets, ProductMainAppKey, "", r); err != nil {
+	if err := c.uploadAsset(ProductMainAppKey, "", asset, r); err != nil {
 		return err
 	}
 
-	if err := c.UploadFile(assets, ProductClientApp, "", r); err != nil {
+	if err := c.uploadAsset(ProductClientApp, "", asset, r); err != nil {
 		return err
 	}
 
@@ -125,7 +148,7 @@ func (c *Context) UploadFiles(assets *models.Asset, r *http.Request) error {
 }
 
 func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UUID) error {
-	pathString := c.ModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
+	pathString := c.DBModelFunctions.GetFilePath(product.Assets, ProductMainAppKey, "")
 	if err := untar(pathString); err != nil {
 		return err
 	}
@@ -135,7 +158,7 @@ func (c *Context) CreateDockerImage(product *models.ProductData, userID *uuid.UU
 	if err := docker.CreateImage(sourcePath, imageName); err != nil {
 		return err
 	}
-	pathString = path.Join(c.ModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, ""), "build")
+	pathString = path.Join(c.DBModelFunctions.GetFilePath(product.Assets, models.BaseAssetPath, ""), "build")
 	if err := removeFolder(pathString); err != nil {
 		return err
 	}
@@ -159,25 +182,25 @@ func (c *Context) storeProductCategories(details *models.Asset, r *http.Request)
 			categoryList = append(categoryList, k)
 		}
 	}
-	c.ModelFunctions.SetField(details, ProductCategoriesKey, categoryList)
+	c.DBModelFunctions.SetField(details, ProductCategoriesKey, categoryList)
 }
 
 // SetProductDetails sets the key-value content of product details based on form values.
 func (c *Context) SetProductDetails(details *models.Asset, r *http.Request) {
-	c.ModelFunctions.SetField(details, ProductNameKey, r.FormValue(ProductNameKey))
-	c.ModelFunctions.SetField(details, ProductDescriptionKey, r.FormValue(ProductDescriptionKey))
-	c.ModelFunctions.SetField(details, ProductShortDescriptionKey, r.FormValue(ProductShortDescriptionKey))
-	c.ModelFunctions.SetField(details, ProductRequires3DKey, getBooleanString(r.FormValue(ProductRequires3DKey)))
-	c.ModelFunctions.SetField(details, ProductPublicKey, getBooleanString(r.FormValue(ProductPublicKey)))
-	c.ModelFunctions.SetField(details, ProductURLKey, r.FormValue(ProductURLKey))
-	c.ModelFunctions.SetField(details, ProductPricingKey, r.FormValue(ProductPricingKey))
-	c.ModelFunctions.SetField(details, ProductPriceKey, r.FormValue(ProductPriceKey))
-	c.ModelFunctions.SetField(details, ProductTagsKey, r.FormValue(ProductTagsKey))
+	c.DBModelFunctions.SetField(details, ProductNameKey, r.FormValue(ProductNameKey))
+	c.DBModelFunctions.SetField(details, ProductDescriptionKey, r.FormValue(ProductDescriptionKey))
+	c.DBModelFunctions.SetField(details, ProductShortDescriptionKey, r.FormValue(ProductShortDescriptionKey))
+	c.DBModelFunctions.SetField(details, ProductRequires3DKey, getBooleanString(r.FormValue(ProductRequires3DKey)))
+	c.DBModelFunctions.SetField(details, ProductPublicKey, getBooleanString(r.FormValue(ProductPublicKey)))
+	c.DBModelFunctions.SetField(details, ProductURLKey, r.FormValue(ProductURLKey))
+	c.DBModelFunctions.SetField(details, ProductPricingKey, r.FormValue(ProductPricingKey))
+	c.DBModelFunctions.SetField(details, ProductPriceKey, r.FormValue(ProductPriceKey))
+	c.DBModelFunctions.SetField(details, ProductTagsKey, r.FormValue(ProductTagsKey))
 
-	c.ModelFunctions.SetField(details, CreditCardNameKey, r.FormValue(CreditCardNameKey))
-	c.ModelFunctions.SetField(details, CreditCardNumberKey, r.FormValue(CreditCardNumberKey))
-	c.ModelFunctions.SetField(details, CreditCardExpiryKey, r.FormValue(CreditCardExpiryKey))
-	c.ModelFunctions.SetField(details, CreditCardCVCKey, r.FormValue(CreditCardCVCKey))
+	c.DBModelFunctions.SetField(details, CreditCardNameKey, r.FormValue(CreditCardNameKey))
+	c.DBModelFunctions.SetField(details, CreditCardNumberKey, r.FormValue(CreditCardNumberKey))
+	c.DBModelFunctions.SetField(details, CreditCardExpiryKey, r.FormValue(CreditCardExpiryKey))
+	c.DBModelFunctions.SetField(details, CreditCardCVCKey, r.FormValue(CreditCardCVCKey))
 	c.storeProductCategories(details, r)
 }
 

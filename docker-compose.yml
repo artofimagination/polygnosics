@@ -9,25 +9,68 @@ networks:
 
 services:
   dummy-userdb:
-    build: ./tests/dummy-userdb
+    build:
+      context: ./tests/dummy-userdb
+      dockerfile: Dockerfile
+      args:
+        SERVER_PORT: ${USER_DB_PORT}
     image: artofimagination/dummy-userdb
+    container_name: ${USER_DB_NAME}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${USER_STORE}:${USER_STORE_DOCKER}
     ports:
-      - 8183:8183
+      - ${USER_DB_PORT}:${USER_DB_PORT}
     networks: 
       test-network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: ${USER_DB_ADDRESS}
+    environment:
+      SERVER_PORT: ${USER_DB_PORT}
+  dummy-resourcedb:
+    build:
+      context: ./tests/dummy-resourcedb
+      dockerfile: Dockerfile
+      args:
+        SERVER_PORT: ${RESOURCE_DB_PORT}
+    image: artofimagination/dummy-resourcedb
+    container_name: ${RESOURCE_DB_NAME}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${RESOURCES}:${RESOURCES_DOCKER}
+    ports:
+      - ${RESOURCE_DB_PORT}:${RESOURCE_DB_PORT}
+    networks: 
+      test-network:
+        ipv4_address: ${RESOURCE_DB_ADDRESS}
+    environment:
+      SERVER_PORT: ${RESOURCE_DB_PORT}
   backend:
-    build: ./
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        SERVER_PORT: ${BACKEND_SERVER_PORT}
+    container_name: ${BACKEND_SERVER_NAME}
     image: artofimagination/polygnosics
     ports:
-      - 8184:8184
+      - ${BACKEND_SERVER_PORT}:${BACKEND_SERVER_PORT}
     volumes:
+      - ${RESOURCES}:${RESOURCES_DOCKER}
       - ${USER_STORE}:${USER_STORE_DOCKER}
     networks: 
       test-network:
-        ipv4_address: 172.18.0.4
+        ipv4_address: ${BACKEND_SERVER_ADDRESS}
+    environment:
+      SERVER_PORT: ${BACKEND_SERVER_PORT}
+      SERVER_ADDRESS: ${BACKEND_SERVER_ADDRESS}
+      SERVER_NAME: ${BACKEND_SERVER_NAME}
+      USER_DB_ADDRESS: ${USER_DB_ADDRESS}
+      USER_DB_PORT: ${USER_DB_PORT}
+      USER_DB_NAME: ${USER_DB_NAME}
+      RESOURCE_DB_ADDRESS: ${RESOURCE_DB_ADDRESS}
+      RESOURCE_DB_PORT: ${RESOURCE_DB_PORT}
+      RESOURCE_DB_NAME: ${RESOURCE_DB_NAME}
+      USER_STORE_DOCKER: ${USER_STORE_DOCKER}
     depends_on:
       - dummy-userdb
+      - dummy-resourcedb

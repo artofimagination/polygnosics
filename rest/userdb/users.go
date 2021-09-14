@@ -6,7 +6,6 @@ import (
 
 	"github.com/artofimagination/mysql-user-db-go-interface/models"
 	dbrest "github.com/artofimagination/mysql-user-db-go-interface/restcontrollers"
-	"github.com/artofimagination/polygnosics/rest"
 	"github.com/google/uuid"
 )
 
@@ -19,7 +18,7 @@ func (c *RESTController) CreateUser(
 	params["username"] = name
 	params["email"] = email
 	params["password"] = password
-	data, err := rest.Post(rest.UserDBAddress, dbrest.UserPathAdd, params)
+	data, err := c.Post(dbrest.UserPathAdd, params)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +34,7 @@ func (c *RESTController) CreateUser(
 func (c *RESTController) DeleteUser(ID *uuid.UUID, nominatedOwners map[uuid.UUID]uuid.UUID) error {
 	params := make(map[string]interface{})
 	params["id"] = ID.String()
-	_, err := rest.Post(rest.UserDBAddress, dbrest.UserPathDeleteByID, params)
+	_, err := c.Post(dbrest.UserPathDeleteByID, params)
 	if err != nil {
 		return err
 	}
@@ -44,7 +43,7 @@ func (c *RESTController) DeleteUser(ID *uuid.UUID, nominatedOwners map[uuid.UUID
 
 func (c *RESTController) GetUserByEmail(email string) (*models.UserData, error) {
 	params := fmt.Sprintf("?email=%s", email)
-	data, err := rest.Get(rest.UserDBAddress, dbrest.UserPathGetByEmail, params)
+	data, err := c.Get(dbrest.UserPathGetByEmail, params)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func (c *RESTController) UpdateUserSettings(userData *models.UserData) error {
 	params := make(map[string]interface{})
 	params["user-id"] = userData.ID
 	params["user-data"] = userData.Settings
-	_, err := rest.Post(rest.UserDBAddress, dbrest.UserPathUpdateSettings, params)
+	_, err := c.Post(dbrest.UserPathUpdateSettings, params)
 	if err != nil {
 		return err
 	}
@@ -76,7 +75,7 @@ func (c *RESTController) UpdateUserAssets(userData *models.UserData) error {
 	params := make(map[string]interface{})
 	params["user-id"] = userData.ID
 	params["user-data"] = userData.Assets
-	_, err := rest.Post(rest.UserDBAddress, dbrest.UserPathUpdateAssets, params)
+	_, err := c.Post(dbrest.UserPathUpdateAssets, params)
 	if err != nil {
 		return err
 	}
