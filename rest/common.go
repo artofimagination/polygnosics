@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 
@@ -166,7 +165,6 @@ func (r Request) ForwardRequest(address string) (interface{}, error) {
 }
 
 func Get(address string, path string, parameters string) (interface{}, error) {
-	log.Println(fmt.Sprintf("%s%s%s", address, path, parameters))
 	resp, err := http.Get(fmt.Sprintf("%s%s%s", address, path, parameters))
 	if err != nil {
 		return nil, err

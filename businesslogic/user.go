@@ -143,6 +143,11 @@ func (c *Context) Login(email string, password []byte) (*models.UserData, error)
 	return user, nil
 }
 
+func (c *Context) initUserSettings(userData *models.UserData) {
+	userData.Settings.DataMap["country"] = ""
+	userData.Settings.DataMap["city"] = ""
+}
+
 func (c *Context) AddUser(uName string, email string, password []byte, group string) error {
 	hashedPassword, err := encryptPassword(password)
 	if err != nil {
@@ -161,6 +166,8 @@ func (c *Context) AddUser(uName string, email string, password []byte, group str
 	if err := c.setGroupPrivileges(userData, group); err != nil {
 		return err
 	}
+
+	c.initUserSettings(userData)
 
 	if err := c.UserDBController.UpdateUserSettings(userData); err != nil {
 		return err

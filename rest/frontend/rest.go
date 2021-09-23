@@ -69,7 +69,7 @@ func (c *RESTController) AddRouting(r *mux.Router) {
 	r.HandleFunc("/detect-root-user", rest.MakeHandler(c.detectRootUser))
 	r.HandleFunc("/add-user", rest.MakeHandler(c.addUser))
 	r.HandleFunc("/get-user-by-id", rest.MakeHandler(c.getUserByID))
-	r.HandleFunc("/auth_login", rest.MakeHandler(c.login))
+	r.HandleFunc("/login", rest.MakeHandler(c.login))
 	r.HandleFunc("/get-categories", rest.MakeHandler(c.getCategoriesMap))
 
 	// Resource endpoints

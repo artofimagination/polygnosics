@@ -39,6 +39,8 @@ OCIAlK9YHqVQhUPArpMwlNyM6YUuviVS',
                 common.UPDATE_USER_SETTINGS_PATH: {
                     'user-data': {
                         'datamap': {
+                            "country": "",
+                            "city": "",
                             'group': 'client',
                             'privileges': {
                                 'delete_user': 0,
@@ -160,6 +162,8 @@ createTestData = [
                 "settings": {
                     "datamap": {
                         "group": "client",
+                        "country": "",
+                        "city": "",
                         "privileges": {
                             "delete_user": 0,
                             'edit_page': 0,
@@ -207,7 +211,7 @@ def test_Signin(httpBackend, httpDummyUserDB, data, expected):
         return None
 
     try:
-        r = httpBackend.GET("/auth_login", data)
+        r = httpBackend.GET("/login", data)
     except Exception:
         pytest.fail("Failed to send POST request")
         return None

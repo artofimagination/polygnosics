@@ -23,11 +23,15 @@ func (c *RESTController) CreateUser(
 		return nil, err
 	}
 
-	userData := &models.UserData{}
-	if err := json.Unmarshal([]byte(data.(string)), &userData); err != nil {
+	bytesData, err := json.Marshal(data)
+	if err != nil {
 		return nil, err
 	}
 
+	userData := &models.UserData{}
+	if err := json.Unmarshal(bytesData, userData); err != nil {
+		return nil, err
+	}
 	return userData, nil
 }
 
@@ -47,16 +51,16 @@ func (c *RESTController) GetUserByEmail(email string) (*models.UserData, error) 
 	if err != nil {
 		return nil, err
 	}
-
 	bytesData, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
 	userData := &models.UserData{}
-	if err := json.Unmarshal(bytesData, &userData); err != nil {
+	if err := json.Unmarshal(bytesData, userData); err != nil {
 		return nil, err
 	}
+
 	return userData, nil
 }
 

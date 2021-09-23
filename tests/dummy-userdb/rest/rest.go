@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -127,21 +128,19 @@ func (c *Controller) addUser(w ResponseWriter, r *Request) {
 	userData[SettingsKey].(map[string]interface{})[DataMapKey] = make(map[string]interface{})
 	userData[UsersUsernameKey] = requestData[UsersUsernameKey]
 	userData[UsersEmailKey] = requestData[UsersEmailKey]
-	userData[UsersPasswordKey] = requestData[UsersPasswordKey]
+	pwd, err := base64.URLEncoding.DecodeString(requestData[UsersPasswordKey].(string))
+	if err != nil {
+		w.writeError("Failed to encode bytes", http.StatusAccepted)
+		return
+	}
+	userData[UsersPasswordKey] = pwd
 	userData[UsersIDKey] = UserTestUUID
 	if requestData[UsersUsernameKey] == "root" {
 		userData[UsersIDKey] = RootUserTestUUID
 	}
 
 	c.TestData[UsersKey].(map[string]interface{})[UserTestUUID] = userData
-	data := make(map[string]interface{})
-	byteData, err := json.Marshal(c.TestData[UsersKey].(map[string]interface{})[UserTestUUID])
-	if err != nil {
-		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	data["data"] = string(byteData)
-	w.encodeResponse(data, http.StatusCreated)
+	w.writeData(userData, http.StatusCreated)
 }
 
 func (c *Controller) updateUserSettings(w ResponseWriter, r *Request) {
