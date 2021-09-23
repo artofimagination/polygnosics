@@ -5,7 +5,6 @@ import (
 	"github.com/artofimagination/polygnosics/businesslogic"
 	"github.com/artofimagination/polygnosics/initialization"
 	"github.com/artofimagination/polygnosics/models"
-	"github.com/artofimagination/polygnosics/rest"
 	"github.com/artofimagination/polygnosics/rest/frontend"
 	"github.com/artofimagination/polygnosics/rest/ipresolver"
 	"github.com/artofimagination/polygnosics/rest/resourcesdb"
@@ -26,7 +25,6 @@ type Context struct {
 func NewContext() (*Context, error) {
 	cfg := &initialization.Config{}
 	initialization.InitConfig(cfg)
-	rest.PrettyPrint(cfg)
 
 	userdbController := userdb.NewRESTController()
 	resourcedbController := resourcesdb.NewRESTController()
@@ -69,6 +67,5 @@ func NewContext() (*Context, error) {
 		Router:         r,
 	}
 
-	rest.PrettyPrint(context)
 	return context, nil
 }

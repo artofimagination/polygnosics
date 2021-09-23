@@ -117,9 +117,13 @@ func (c *RESTController) GetResources(ids []string) ([]models.Resource, error) {
 }
 
 func (c *RESTController) GetResourcesByCategory(id int) ([]models.Resource, error) {
-	params := fmt.Sprintf("?category-id=%d", id)
+	params := fmt.Sprintf("?category=%d", id)
+	resources := []models.Resource{}
 	data, err := c.Get(GetResourcesByCategoryURI, params)
 	if err != nil {
+		if err.Error() == "The selected resource not found" {
+			return resources, nil
+		}
 		return nil, err
 	}
 
@@ -128,7 +132,6 @@ func (c *RESTController) GetResourcesByCategory(id int) ([]models.Resource, erro
 		return nil, err
 	}
 
-	resources := []models.Resource{}
 	if err := json.Unmarshal(bytesData, &resources); err != nil {
 		return nil, err
 	}

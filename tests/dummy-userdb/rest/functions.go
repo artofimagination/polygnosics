@@ -24,6 +24,11 @@ type Request struct {
 	*http.Request
 }
 
+type ResponseData struct {
+	Error string      `json:"error" validation:"required"`
+	Data  interface{} `json:"data" validation:"required"`
+}
+
 func prettyPrint(v interface{}) {
 	b, err := json.MarshalIndent(v, "", "  ")
 	if err == nil {
@@ -34,16 +39,23 @@ func prettyPrint(v interface{}) {
 }
 
 func (w *ResponseWriter) writeError(message string, statusCode int) {
-	w.writeResponse(fmt.Sprintf("{\"error\":\"%s\"}", message), statusCode)
+	response := ResponseData{
+		Error: message,
+		Data:  nil,
+	}
+	w.encodeResponse(response, statusCode)
 }
 
-func (w *ResponseWriter) writeData(data string, statusCode int) {
-	w.writeResponse(fmt.Sprintf("{\"data\":\"%s\"}", data), statusCode)
+func (w *ResponseWriter) writeData(data interface{}, statusCode int) {
+	response := ResponseData{
+		Data: data,
+	}
+	w.encodeResponse(response, statusCode)
 }
 
-func (w *ResponseWriter) writeResponse(data string, statusCode int) {
+func (w *ResponseWriter) writeResponse(data []byte, statusCode int) {
 	w.WriteHeader(statusCode)
-	fmt.Fprint(w, data)
+	w.Write(data)
 }
 
 func makeHandler(fn func(ResponseWriter, *Request)) http.HandlerFunc {
@@ -70,7 +82,7 @@ func (c *Controller) clearRequestData(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) getRequestData(w ResponseWriter, r *Request) {
-	w.encodeResponse(c.RequestData, http.StatusOK)
+	w.encodeStringResponse(c.RequestData, http.StatusOK)
 }
 
 func (c Controller) ParseForm(r *Request, requestPath string) error {
@@ -106,7 +118,17 @@ func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	w.writeResponse(string(b), statusCode)
+	w.writeResponse(b, statusCode)
+}
+
+func (w *ResponseWriter) encodeStringResponse(data interface{}, statusCode int) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		w.writeError(fmt.Sprintf("UserDB -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(statusCode)
+	fmt.Fprint(w, string(b))
 }
 
 func (c *Controller) updateTestData(w ResponseWriter, r *Request) {

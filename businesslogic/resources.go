@@ -28,7 +28,7 @@ const (
 	CategoryFAQ         = "FAQ"
 	CategoryFAQGroups   = "FAQGroups"
 	CategoryTutorial    = "Tutorial"
-	CategoryNews        = "NewsFeed"
+	CategoryNews        = "News feed"
 	CategoryFileContent = "FileContent"
 	CategoryFileSection = "FilesSection"
 )

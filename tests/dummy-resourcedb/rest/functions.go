@@ -42,29 +42,19 @@ func (w *ResponseWriter) writeError(message string, statusCode int) {
 	responseData := ResponseData{
 		Error: message,
 	}
-	b, err := json.Marshal(responseData)
-	if err != nil {
-		w.writeResponse(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	w.writeResponse(string(b), statusCode)
+	w.encodeResponse(responseData, statusCode)
 }
 
 func (w *ResponseWriter) writeData(data string, statusCode int) {
 	responseData := ResponseData{
 		Data: data,
 	}
-	b, err := json.Marshal(responseData)
-	if err != nil {
-		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
-		return
-	}
-	w.writeResponse(string(b), statusCode)
+	w.encodeResponse(responseData, statusCode)
 }
 
-func (w *ResponseWriter) writeResponse(data string, statusCode int) {
+func (w *ResponseWriter) writeResponse(data []byte, statusCode int) {
 	w.WriteHeader(statusCode)
-	fmt.Fprint(w, data)
+	w.Write(data)
 }
 
 func makeHandler(fn func(ResponseWriter, *Request)) http.HandlerFunc {
@@ -90,7 +80,7 @@ func (c *Controller) clearRequestData(w ResponseWriter, r *Request) {
 }
 
 func (c *Controller) getRequestData(w ResponseWriter, r *Request) {
-	w.encodeResponse(c.RequestData, http.StatusOK)
+	w.encodeStringResponse(c.RequestData, http.StatusOK)
 }
 
 func (c *Controller) ParseForm(r *Request, requestPath string) error {
@@ -129,7 +119,17 @@ func (w *ResponseWriter) encodeResponse(data interface{}, statusCode int) {
 		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
-	w.writeResponse(string(b), statusCode)
+	w.writeResponse(b, statusCode)
+}
+
+func (w *ResponseWriter) encodeStringResponse(data interface{}, statusCode int) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		w.writeError(fmt.Sprintf("ResourceDB -> %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(statusCode)
+	fmt.Fprint(w, string(b))
 }
 
 func (c *Controller) updateTestData(w ResponseWriter, r *Request) {
